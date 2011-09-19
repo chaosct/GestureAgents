@@ -9,29 +9,40 @@ from RecognizerPaint import RecognizerPaint
 import Screen
 import Reactor
 import PaintingApp
-
-
+from Render import initializeDisplay,calibrate,drawT,copyT,saveCalibration,ConfKey
 
 pygame.init()
 
-window = pygame.display.set_mode(Screen.size) 
-screen = pygame.display.get_surface() 
+initializeDisplay()
 
-app = PaintingApp.PaintingApp(screen)
+tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
+
+app = PaintingApp.PaintingApp(tscreen)
 
 mouse = Mouse.MouseAgentGenerator()
 RecognizerStick()
 RecognizerPaint()
 
 def input(events): 
-   for event in events: 
-      if event.type == QUIT: 
-         sys.exit(0) 
-      else: 
-         mouse.event(event)
+    global running
+    for event in events: 
+        if event.type == QUIT: 
+            running = False 
+        else: 
+            mouse.event(event)
+            ConfKey(event)
 
-while True: 
-   input(pygame.event.get())
-   Reactor.run_all_now()
-   Screen.ScreenDraw.call()
-   pygame.display.flip()
+
+
+running = True
+
+while running: 
+    calibrate()
+    input(pygame.event.get())
+    Reactor.run_all_now()
+    Screen.ScreenDraw.call()
+    #screen.blit(tscreen,(0,0))
+    drawT(tscreen)
+    pygame.display.flip()
+
+saveCalibration()
