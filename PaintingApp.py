@@ -7,7 +7,7 @@ import pygame.locals
 import pygame.draw
 from RecognizerStick import RecognizerStick
 from RecognizerPaint import RecognizerPaint
-from RecognizerTap import RecognizerTap
+from RecognizerDoubleTap import RecognizerDoubleTap
 
 class PaintingApp:
     def __init__(self,screen):
@@ -18,7 +18,7 @@ class PaintingApp:
         RecognizerStick.E_finishStick.register(PaintingApp.event_finish_stick,self)
         RecognizerPaint.E_Painting.register(PaintingApp.event_painting,self)
         RecognizerPaint.E_NewPaint.register(PaintingApp.event_new_paint,self)
-        RecognizerTap.E_NewTap.register(PaintingApp.event_new_tap,self)
+        RecognizerDoubleTap.E_NewDoubleTap.register(PaintingApp.event_new_tap,self)
     
     def draw(self):
         self.screen.blit(self.surface,(0,0))

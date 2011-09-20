@@ -7,6 +7,7 @@ import Mouse
 from RecognizerStick import RecognizerStick
 from RecognizerPaint import RecognizerPaint
 from RecognizerTap import RecognizerTap
+from RecognizerDoubleTap import RecognizerDoubleTap
 import Screen
 import Reactor
 import PaintingApp
@@ -28,6 +29,7 @@ sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
 RecognizerStick()
 RecognizerPaint()
 RecognizerTap()
+RecognizerDoubleTap()
 
 def input(events): 
     global running
