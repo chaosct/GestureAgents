@@ -10,6 +10,7 @@ import Screen
 import Reactor
 import PaintingApp
 from Render import initializeDisplay,calibrate,drawT,copyT,saveCalibration,ConfKey
+import Tuio
 
 pygame.init()
 
@@ -20,6 +21,9 @@ tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
 app = PaintingApp.PaintingApp(tscreen)
 
 mouse = Mouse.MouseAgentGenerator()
+
+sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
+
 RecognizerStick()
 RecognizerPaint()
 
@@ -28,8 +32,10 @@ def input(events):
     for event in events: 
         if event.type == QUIT: 
             running = False 
-        else: 
-            mouse.event(event)
+        else:
+            for s in sensors:
+                if hasattr(s,'event'):
+                    s.event(event)
             ConfKey(event)
 
 
@@ -40,6 +46,9 @@ while running:
     calibrate()
     input(pygame.event.get())
     Reactor.run_all_now()
+    for s in sensors:
+        if hasattr(s,'update'):
+            s.update()
     Screen.ScreenDraw.call()
     #screen.blit(tscreen,(0,0))
     drawT(tscreen)

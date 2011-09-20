@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-import Mouse
+import Tuio
 from math import sqrt, fabs
 from Recognizer import Recognizer, newHypothesis
 from Events import Event
@@ -24,7 +24,7 @@ class RecognizerStick (Recognizer):
         print "new RecognizerStick, we are", RecognizerStick.allr
         Recognizer.__init__(self)
         self.finger = None
-        self.cursorEvents = Mouse.MouseEvents
+        self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(self.cursorEvents.newCursor,RecognizerStick.EventNewCursor)
         self.positions = []
         self.agent = Agent()

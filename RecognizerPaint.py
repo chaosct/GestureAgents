@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Mouse
+import Tuio
 from Recognizer import Recognizer, newHypothesis
 from Agent import Agent
 from Events import Event
@@ -15,7 +15,7 @@ class RecognizerPaint(Recognizer):
         RecognizerPaint.allr += 1
         print "new RecognizerPaint, we are", RecognizerPaint.allr
         Recognizer.__init__(self)
-        self.cursorEvents = Mouse.MouseEvents
+        self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(self.cursorEvents.newCursor,RecognizerPaint.EventNewCursor)
         self.agent = Agent()
         self.previousPoints = []
@@ -34,7 +34,8 @@ class RecognizerPaint(Recognizer):
     
     
     def EventMoveCursorTemporary(self, Cursor):
-        self.previousPoints.append(Cursor.pos)
+        if Cursor == self.finger:
+            self.previousPoints.append(Cursor.pos)
         
     def execute(self):
         self.unregister_event(self.cursorEvents.moveCursor)
@@ -44,12 +45,14 @@ class RecognizerPaint(Recognizer):
         print "Start painting!"
         
     def EventMoveCursorConfirmed(self, Cursor):
-        self.agent.pos = Cursor.pos
-        RecognizerPaint.E_Painting.call(self.agent)
-        print "Painting",Cursor.pos
+        if Cursor == self.finger:
+            self.agent.pos = Cursor.pos
+            RecognizerPaint.E_Painting.call(self.agent)
+            print "Painting",Cursor.pos
         
     def EventRemoveCursor(self, Cursor):
-        self.fail()
+        if Cursor == self.finger:
+            self.fail()
             
     def __del__(self):
         RecognizerPaint.allr -= 1
