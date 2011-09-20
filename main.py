@@ -6,6 +6,7 @@ from pygame.locals import *
 import Mouse
 from RecognizerStick import RecognizerStick
 from RecognizerPaint import RecognizerPaint
+from RecognizerTap import RecognizerTap
 import Screen
 import Reactor
 import PaintingApp
@@ -26,6 +27,7 @@ sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
 
 RecognizerStick()
 RecognizerPaint()
+RecognizerTap()
 
 def input(events): 
     global running
