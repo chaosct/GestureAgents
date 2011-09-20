@@ -36,7 +36,7 @@ class Tracking(object):
         SO_REUSEPORT to be as robust as possible.
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.setblocking(0)
         self.socket.bind((self.host, self.port))
     start = open_socket
@@ -89,7 +89,8 @@ class Tracking(object):
         to analyze.
         """
         try:
-            self.manager.handle(self.socket.recv(1024))
+            while True:
+                self.manager.handle(self.socket.recv(1024))
         except socket.error:
             pass
 
