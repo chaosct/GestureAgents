@@ -33,16 +33,13 @@ class RecognizerStick (Recognizer):
     @newHypothesis    
     def EventNewCursor(self,Cursor):
         #cursor is an Agent
-        if self.finger == None:
-            #it interest me
-            self.finger = Cursor
-            self.positions.append(Cursor.pos)
-            self.unregister_event(self.cursorEvents.newCursor)
-            self.register_event(self.cursorEvents.moveCursor,RecognizerStick.EventMoveCursor)
-            self.register_event(self.cursorEvents.removeCursor,RecognizerStick.EventRemoveCursor)
-            #acquire should be the last thing to do
-            self.acquire(Cursor)
-            return True
+        self.finger = Cursor
+        self.positions.append(Cursor.pos)
+        self.unregister_event(self.cursorEvents.newCursor)
+        self.register_event(self.cursorEvents.moveCursor,RecognizerStick.EventMoveCursor)
+        self.register_event(self.cursorEvents.removeCursor,RecognizerStick.EventRemoveCursor)
+        #acquire should be the last thing to do
+        self.acquire(Cursor)
     
     def EventMoveCursor(self,Cursor):
         if Cursor == self.finger:

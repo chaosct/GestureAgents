@@ -23,14 +23,12 @@ class RecognizerPaint(Recognizer):
         
     @newHypothesis    
     def EventNewCursor(self,Cursor):
-        if not self.finger:
-            self.finger = Cursor
-            self.unregister_event(self.cursorEvents.newCursor)
-            self.register_event(self.cursorEvents.moveCursor,RecognizerPaint.EventMoveCursorTemporary)
-            self.register_event(self.cursorEvents.removeCursor,RecognizerPaint.EventRemoveCursor)
-            self.acquire(Cursor)
-            self.complete()
-            return True
+        self.finger = Cursor
+        self.unregister_event(self.cursorEvents.newCursor)
+        self.register_event(self.cursorEvents.moveCursor,RecognizerPaint.EventMoveCursorTemporary)
+        self.register_event(self.cursorEvents.removeCursor,RecognizerPaint.EventRemoveCursor)
+        self.acquire(Cursor)
+        self.complete()
     
     
     def EventMoveCursorTemporary(self, Cursor):

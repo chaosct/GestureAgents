@@ -28,15 +28,14 @@ class RecognizerTap(Recognizer):
     
     @newHypothesis
     def EventNewCursor(self,Cursor):
-        if not self.finger:
-            self.finger = Cursor
-            self.unregister_event(self.cursorEvents.newCursor)
-            self.register_event(self.cursorEvents.moveCursor,RecognizerTap.EventMoveCursor)
-            self.register_event(self.cursorEvents.removeCursor,RecognizerTap.EventRemoveCursor)
-            Reactor.schedule_after(self.time,self,RecognizerTap.fail)
-            self.origin = Cursor.pos
-            self.acquire(Cursor)
-            return True
+        self.finger = Cursor
+        self.unregister_event(self.cursorEvents.newCursor)
+        self.register_event(self.cursorEvents.moveCursor,RecognizerTap.EventMoveCursor)
+        self.register_event(self.cursorEvents.removeCursor,RecognizerTap.EventRemoveCursor)
+        Reactor.schedule_after(self.time,self,RecognizerTap.fail)
+        self.origin = Cursor.pos
+        self.acquire(Cursor)
+
     
     def EventMoveCursor(self,Cursor):
         if self.finger == Cursor:

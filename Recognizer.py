@@ -70,9 +70,7 @@ def newHypothesis(f):
     def newHipothesisAndRun(self,*args,**kwargs):
         if self.is_someone_interested():
             d = self.duplicate()
-            if not f(self,*args,**kwargs):
-                #it was not updated by this event
-                d.fail()
+            f(self,*args,**kwargs):
         elif not self.is_pristine():
             self.fail()
     return newHipothesisAndRun

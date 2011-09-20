@@ -31,18 +31,19 @@ class RecognizerDoubleTap(Recognizer):
         self.register_event(RecognizerTap.E_NewTap,RecognizerDoubleTap.SecondTap)
         Reactor.schedule_after(self.time,self,RecognizerDoubleTap.timeout)
         self.acquire(Tap)
-        return True
     
     @newHypothesis
     def SecondTap(self,Tap):
         print "secondtap"
-        if self.dist(Tap.pos,self.firstap.pos) < self.maxd:
+        if self.dist(Tap.pos,self.firstap.pos) > self.maxd:
+            self.fail()
+        else
             self.secondtap = Tap
             self.unregister_event(RecognizerTap.E_NewTap)
             Reactor.cancel_schedule(self)
             self.acquire(Tap)
             self.complete()
-            return True
+
     
     def timeout(self):
         print "dying..."
