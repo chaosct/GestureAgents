@@ -25,8 +25,8 @@ class PaintingApp:
         pygame.draw.line(self.surface, (255,255,255) , Stick.pos1, Stick.pos2, 5)
     
     def event_painting(self,Point):
-        pygame.draw.circle(self.surface, (255,100,100) , Point.pos, 10, 0)
+        pygame.draw.circle(self.surface, (255,100,100) , map(int,Point.pos), 10, 0)
     
     def event_new_paint(self,Paint):
         for p in Paint.previousPoints:
-            pygame.draw.circle(self.surface, (255,100,100) , p, 10, 0)
+            pygame.draw.circle(self.surface, (255,100,100) , map(int,p), 10, 0)
