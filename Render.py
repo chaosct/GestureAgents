@@ -141,10 +141,10 @@ CParal = {pygame.K_w:lambda: c_change('ay',sd),
           pygame.K_d:lambda: c_change('ax',sd),
           'name': "Lateral angles"}
 
-CRota = {pygame.K_w:lambda: c_change('z',sd),
-         pygame.K_s:lambda: c_change('z',-sd),
-         pygame.K_a:lambda: c_change('az',-s),
-         pygame.K_d:lambda: c_change('az',s),
+CRota = {pygame.K_w:lambda: c_change('z',s),
+         pygame.K_s:lambda: c_change('z',-s),
+         pygame.K_a:lambda: c_change('az',-sd),
+         pygame.K_d:lambda: c_change('az',sd),
          'name': "Rotation and Z"}
 
 configurators = (None,CMove,CZoom,CParal,CRota)
