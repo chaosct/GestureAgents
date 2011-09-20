@@ -51,6 +51,7 @@ class Recognizer(EventClient):
         for a in self.agentsAcquired:
             d.acquire(a)
         EventClient.copy_to(self,d)
+        Reactor.duplicate_instance(self,d)
     
     def is_pristine(self):
         return ( len(self.agentsAcquired) + len(self.agentsConfirmed) ) == 0
