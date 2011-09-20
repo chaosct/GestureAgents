@@ -73,6 +73,8 @@ class RecognizerStick (Recognizer):
             dist = sqrt((last[0]-first[0])**2 + (last[1]-first[1])**2 )
             if self.is_line() and dist > 30:
                 self.complete()
+            else:
+                self.fail()
     
     def duplicate(self):
         d = RecognizerStick()
