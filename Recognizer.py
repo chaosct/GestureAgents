@@ -29,6 +29,7 @@ class Recognizer(EventClient):
         Reactor.cancel_schedule(self)
     
     def fail(self):
+        self.failed=True
         Reactor.run_after(lambda: self._fail())
         
     def _fail(self):
