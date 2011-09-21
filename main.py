@@ -52,6 +52,10 @@ class MemSummary:
         print "===========MEMORY=========="
         for t,c in counter.most_common():
             print t,":",c
+        
+        print
+          
+        print "%d Failed" % len([obj for obj in gc.get_objects() if isinstance(obj, Recognizer) and obj.failed])
         print "="*30
         Reactor.schedule_after(2,self,MemSummary.digest)
         
