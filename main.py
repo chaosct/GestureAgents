@@ -22,9 +22,10 @@ tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
 
 app = PaintingApp.PaintingApp(tscreen)
 
-mouse = Mouse.MouseAgentGenerator()
+#mouse = Mouse.MouseAgentGenerator()
 
-sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
+#sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
+sensors = (Tuio.TuioAgentGenerator(),)
 
 RecognizerStick()
 RecognizerPaint()

@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import Reactor
+from Events import Event
+from Recognizer import Recognizer
 
 class Agent:
     """This class represents something that generates Events.
@@ -22,9 +24,15 @@ class Agent:
     Recognizers must call these through their own helpers
     in the class Recognizer.
     """
-    def __init__(self):
+    def __init__(self,eventnames):
+        "eventnames is a list of names that will become member events"
+        #TODO: newEvent when done
         self.recognizers_acquired = []
         self.recognizer_complete = None
+        self.events = {}
+        for ename in eventnames:
+            self.events[ename]=Event()
+            setattr(self,ename,self.events[ename])
         
     def acquire(self,Recognizer):
         #print "Agent acquire", Recognizer
@@ -38,6 +46,7 @@ class Agent:
         #print "Agent discard", Recognizer
         if Recognizer == self.recognizer_complete:
             self.recognizer_complete = None
+            #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
         elif Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
             if not self.recognizers_acquired and self.recognizer_complete:
@@ -59,3 +68,17 @@ class Agent:
         if Recognizer not in self.recognizers_acquired:
             if not self.acquire(Recognizer): return
         Reactor.run_after(lambda : self._complete(Recognizer) )
+    
+    def is_someone_subscribed(self):
+        for ename,event in self.events.iteritems():
+            if event.registered:
+                return True
+        return False
+    
+    def fail(self):
+        "The Recognizer owner of this agent fails before really existing, so All the recognizers based on it must fail"
+        l = set([r for ename,event in self.events.iteritems() for r in event.registered])
+        print "Agent failed, killing %d things" % len(l)
+        for r in l:
+            if isinstance(r,Recognizer):
+                r.fail()

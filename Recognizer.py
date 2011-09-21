@@ -10,20 +10,38 @@ class Recognizer(EventClient):
         EventClient.__init__(self)
         self.agentsAcquired = []
         self.agentsConfirmed = []
+        #TODO: replace self.failed with self.died and self.failed to indicate different things?
         self.failed = False
+        self.agent = None
+    
+    def finish(self):
+        self.failed=True
+        #we die but not fail
+        assert(not self.agentsAcquired)
+        for a in self.agentsConfirmed:
+            #TODO: that shouldn't do discard, it should recover the agent for further use bu another Recognizer
+            #using newAgent
+            a.discard(self)
+        self.unregister_all()
+        
+    def unregister_all(self):
+        EventClient.unregister_all(self)
+        Reactor.cancel_schedule(self)
     
     def fail(self):
         Reactor.run_after(lambda: self._fail())
         
     def _fail(self):
         #if self.failed: return
+        self.failed=True
         for a in self.agentsAcquired+self.agentsConfirmed:
             a.discard(self)
         self.agentsAcquired = []
         self.agentsConfirmed = []
         self.unregister_all()
-        #force fail depending registers as they ar recognizing
-        #unexisting agents
+        if self.agent:
+            self.agent.fail()
+            self.agent = None
     
     def acquire(self,agent):
         if self.failed: return 
@@ -57,12 +75,11 @@ class Recognizer(EventClient):
         return ( len(self.agentsAcquired) + len(self.agentsConfirmed) ) == 0
     
     def is_someone_interested(self):
-        for e in self.events:
-            for f,i in e.registered:
-                if not isinstance(i,Recognizer):
-                    return True
-                elif i.is_someone_interested():
-                    return True
+        for f,i in self.newAgent.registered:
+            if not isinstance(i,Recognizer):
+                return True
+            elif i.is_someone_interested():
+                return True
         return False
         
 def newHypothesis(f):
@@ -70,7 +87,7 @@ def newHypothesis(f):
     def newHipothesisAndRun(self,*args,**kwargs):
         if self.is_someone_interested():
             d = self.duplicate()
-            f(self,*args,**kwargs):
+            f(self,*args,**kwargs)
         elif not self.is_pristine():
             self.fail()
     return newHipothesisAndRun

@@ -8,11 +8,8 @@ import Screen
 
 
 class TuioCursorEvents:
-    #newAgent = Event()
-    newCursor = Event()
-    updateCursor = Event()
-    removeCursor = Event()
-    moveCursor = updateCursor
+    newAgent = Event()
+
 
 class TuioAgentGenerator:
     def __init__(self):
@@ -28,23 +25,27 @@ class TuioAgentGenerator:
         for c in dict(self.cursors):
             if c not in cursors:
                 del self.cursors[c]
-                TuioCursorEvents.removeCursor.call(self.agents[c])
+                a = self.agents[c]
+                a.removeCursor.call(a)
                 del self.agents[c]
         #send new info
         for c,content in cursors.iteritems():
             if c not in self.cursors:
                 #newCursor
-                a = Agent()
+                a = self.makeCursorAgent()
                 self._updateAgent(a,content)
+                a.ontable = False
                 self.cursors[c]=content
                 self.agents[c]=a
-                TuioCursorEvents.newCursor.call(a)
+                TuioCursorEvents.newAgent.call(a)
+                a.ontable = True
+                a.newCursor.call(a)
             elif content != self.cursors[c]:
                 #updateCursor
                 a = self.agents[c]
                 self._updateAgent(a,content)
                 self.cursors[c]=content
-                TuioCursorEvents.updateCursor.call(a)
+                a.updateCursor.call(a)
 
     
     def __del__(self):
@@ -63,3 +64,8 @@ class TuioAgentGenerator:
             setattr(agent,member,value)
         #pos is legacy as Mouse emulator
         agent.pos = (agent.xpos*Screen.size[0],agent.ypos*Screen.size[1])
+    
+    @staticmethod
+    def makeCursorAgent():
+        evts = ('newCursor','updateCursor','removeCursor')
+        return Agent(evts)
