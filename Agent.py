@@ -82,3 +82,15 @@ class Agent:
         for r in l:
             if isinstance(r,Recognizer):
                 r.fail()
+    
+    def fail_all_others(self,winner):
+        Reactor.run_after(lambda: self._fail_all_others(winner))
+                
+    def _fail_all_others(self,winner):
+        #assert(self.recognizer_complete is winner) we are all consenting adults here
+        target = type(winner)
+        for r in list(self.recognizers_acquired):
+            if type(r) == target and r is not winner:
+                r.fail()
+        
+        

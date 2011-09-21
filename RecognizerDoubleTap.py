@@ -61,6 +61,7 @@ class RecognizerDoubleTap(Recognizer):
             Reactor.cancel_schedule(self)
             self.acquire(Tap)
             self.complete()
+            self.fail_all_others()
 
     
     def timeout(self):

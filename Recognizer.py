@@ -81,6 +81,10 @@ class Recognizer(EventClient):
             elif i.is_someone_interested():
                 return True
         return False
+    
+    def fail_all_others(self):
+        for a in self.agentsAcquired+self.agentsConfirmed:
+            a.fail_all_others(self)
         
 def newHypothesis(f):
     "Decorator to create a new hypothesis every time that is called"

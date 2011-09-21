@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-class Event:
+class Event(object):
     "A simple event with subscription"
     def __init__(self):
         self.registered = []
@@ -24,7 +24,7 @@ class Event:
     
     __call__ = call
 
-class EventClient:
+class EventClient(object):
     "A class that unregisters itself from events"
     def __init__(self):
         self.registers = dict()
