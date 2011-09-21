@@ -21,6 +21,8 @@ class Event:
     def call(self,*args,**kwargs):
         for f,i in list(self.registered):
             f(i,*args,**kwargs)
+    
+    __call__ = call
 
 class EventClient:
     "A class that unregisters itself from events"
