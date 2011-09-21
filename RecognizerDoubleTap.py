@@ -9,15 +9,10 @@ from Agent import Agent
 import math
 
 class RecognizerDoubleTap(Recognizer):
-    allr = 0
-    #E_NewDoubleTap = Event()
     newAgent = Event()
     def __init__(self):
-        RecognizerDoubleTap.allr += 1
-        print "new RecognizerDoubleTap, we are",RecognizerDoubleTap.allr
         Recognizer.__init__(self)
         self.agent = None
-        #self.events = (self.E_NewDoubleTap,)
         self.firstap = None
         self.secondtap = None
         self.register_event(RecognizerTap.newAgent,RecognizerDoubleTap.EventNewAgent)
@@ -52,7 +47,6 @@ class RecognizerDoubleTap(Recognizer):
             self.register_event(Tap.newTap,RecognizerDoubleTap.SecondTap)
         
     def SecondTap(self,Tap):
-        print "secondtap"
         if self.dist(Tap.pos,self.firstap.pos) > self.maxd:
             self.fail()
         else:
@@ -65,16 +59,12 @@ class RecognizerDoubleTap(Recognizer):
 
     
     def timeout(self):
-        print "dying..."
         self.fail()
     
     def execute(self):
         self.agent.pos = self.secondtap.pos
         self.agent.newDoubleTap(self.agent)
         self.finish()
-    
-    def __del__(self):
-        RecognizerDoubleTap.allr -= 1
     
     def duplicate(self):
         d = RecognizerDoubleTap()

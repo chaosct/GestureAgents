@@ -11,11 +11,8 @@ from Agent import Agent
 
 
 class RecognizerStick (Recognizer):
-    allr = 0
     newAgent = Event()
     def __init__(self):
-        RecognizerStick.allr += 1
-        print "new RecognizerStick, we are", RecognizerStick.allr
         Recognizer.__init__(self)
         self.finger = None
         self.cursorEvents = Tuio.TuioCursorEvents
@@ -90,9 +87,6 @@ class RecognizerStick (Recognizer):
         
         self.agent.newStick.call(self.agent)
         self.finish()
-    
-    def __del__(self):
-        RecognizerStick.allr -= 1
     
     @staticmethod
     def make_StickAgent():

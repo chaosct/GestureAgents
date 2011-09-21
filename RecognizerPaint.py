@@ -7,12 +7,9 @@ from Agent import Agent
 from Events import Event
 
 class RecognizerPaint(Recognizer):
-    allr = 0
     newAgent = Event()
     def __init__(self):
         self.finger = None
-        RecognizerPaint.allr += 1
-        print "new RecognizerPaint, we are", RecognizerPaint.allr
         Recognizer.__init__(self)
         self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(self.cursorEvents.newAgent,RecognizerPaint.EventNewAgent)
@@ -63,9 +60,6 @@ class RecognizerPaint(Recognizer):
             self.fail()
         else:
             self.finish()
-            
-    def __del__(self):
-        RecognizerPaint.allr -= 1
         
     def duplicate(self):
         d = RecognizerPaint()

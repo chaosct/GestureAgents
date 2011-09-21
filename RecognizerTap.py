@@ -10,19 +10,15 @@ import Reactor
 
 class RecognizerTap(Recognizer):
     #for debugging porpuses we have a count of instances
-    allr = 0
     newAgent = Event()
     def __init__(self):
         self.finger = None
-        RecognizerTap.allr += 1
-        print "new RecognizerTap, we are",RecognizerTap.allr
         Recognizer.__init__(self)
         self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(self.cursorEvents.newAgent,RecognizerTap.EventNewAgent)
         self.maxd = 10
         self.time = 0.5
         self.origin = None
-        self.agent = None
     
     @newHypothesis
     def EventNewAgent(self,Cursor):
@@ -33,7 +29,7 @@ class RecognizerTap(Recognizer):
         # Let's ask our subscribbers
         self.agent = self.make_TapAgent()
         self.agent.pos = Cursor.pos
-        self.newAgent.call(self.agent)
+        self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
             self.fail()
         else:
@@ -51,25 +47,20 @@ class RecognizerTap(Recognizer):
 
     
     def EventMoveCursor(self,Cursor):
-        if self.finger == Cursor:
-            if self.dist(Cursor.pos,self.origin) > self.maxd:
-                self.fail()
+        if self.dist(Cursor.pos,self.origin) > self.maxd:
+            self.fail()
     
     def EventRemoveCursor(self,Cursor):
-        if self.finger == Cursor:
-            Reactor.cancel_schedule(self)
-            self.unregister_event(Cursor.updateCursor)
-            self.unregister_event(Cursor.removeCursor)
-            self.complete()
+        Reactor.cancel_schedule(self)
+        self.unregister_event(Cursor.updateCursor)
+        self.unregister_event(Cursor.removeCursor)
+        self.complete()
             
     def execute(self):
         self.agent.pos = self.origin
         self.agent.newTap.call(self.agent)
         print "Tap!"
         self.finish()
-    
-    def __del__(self):
-        RecognizerTap.allr -= 1
     
     @staticmethod
     def dist(a,b):
