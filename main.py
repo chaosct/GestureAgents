@@ -43,9 +43,24 @@ def input(events):
                     s.event(event)
             ConfKey(event)
 
+class MemSummary:
+    def digest(self):
+        import gc
+        from Recognizer import Recognizer
+        from collections import Counter
+        counter = Counter(type(obj) for obj in gc.get_objects() if isinstance(obj, Recognizer))
+        print "===========MEMORY=========="
+        for t,c in counter.most_common():
+            print t,":",c
+        print "="*30
+        Reactor.schedule_after(2,self,MemSummary.digest)
+        
 
+    
 
 running = True
+
+MemSummary().digest()
 
 while running: 
     calibrate()
