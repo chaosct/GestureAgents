@@ -5,9 +5,7 @@ import Screen
 import pygame
 import pygame.locals
 import pygame.draw
-from RecognizerStick import RecognizerStick
-from RecognizerPaint import RecognizerPaint
-from RecognizerDoubleTap import RecognizerDoubleTap
+from Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap
 import random, math
 
 class PaintingApp:

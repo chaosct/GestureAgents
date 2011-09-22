@@ -4,15 +4,12 @@
 import pygame, sys,os
 from pygame.locals import *
 import Mouse
-from RecognizerStick import RecognizerStick
-from RecognizerPaint import RecognizerPaint
-from RecognizerTap import RecognizerTap
-from RecognizerDoubleTap import RecognizerDoubleTap
 import Screen
 import Reactor
 import PaintingApp
 from Render import initializeDisplay,calibrate,drawT,copyT,saveCalibration,ConfKey
 import Tuio
+import Gestures
 
 pygame.init()
 
@@ -27,10 +24,11 @@ app = PaintingApp.PaintingApp(tscreen)
 #sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
 sensors = (Tuio.TuioAgentGenerator(),)
 
-RecognizerStick()
-RecognizerPaint()
-RecognizerTap()
-RecognizerDoubleTap()
+if Gestures.recognizers:
+    print "Found %d gesture recognizers:"
+    for r in Gestures.recognizers:
+        print "\t%s" % str(r)
+Gestures.load_all()
 
 def input(events): 
     global running
