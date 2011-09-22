@@ -5,7 +5,8 @@ import Screen
 import pygame
 import pygame.locals
 import pygame.draw
-from Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap
+from Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
+from AppRecognizer import AppRecognizer
 import random, math
 
 class PaintingApp:
@@ -14,18 +15,20 @@ class PaintingApp:
         self.surface = pygame.Surface(Screen.size,flags=pygame.locals.SRCALPHA)
         self.screen = screen
         #pygame.draw.line(self.surface, (255,255,255) , (50,50), (100,100), 5)
-        #RecognizerStick.newAgent.register(PaintingApp.newAgentStick,self)
-        RecognizerPaint.newAgent.register(PaintingApp.newAgentPaint,self)
-        RecognizerDoubleTap.newAgent.register(PaintingApp.newAgentDoubleTap,self)
+        AppRecognizer(RecognizerStick).newAgent.register(PaintingApp.newAgentStick,self)
+        AppRecognizer(RecognizerPaint).newAgent.register(PaintingApp.newAgentPaint,self)
+        AppRecognizer(RecognizerDoubleTap).newAgent.register(PaintingApp.newAgentDoubleTap,self)
+        AppRecognizer(RecognizerTap).newAgent.register(PaintingApp.newAgentTap,self)
         self.button = (200,200)
         self.buttoncolor = (0,100,255)
     
     def newAgentDoubleTap(self,agent):
         #context here
-        print "newAgentDoubleTap"
         if self.dist(agent.pos,self.button) < 50:
-            agent.newDoubleTap.register(PaintingApp.event_new_tap,self)
-            print "newAgentDoubleTap OK"
+            agent.newDoubleTap.register(PaintingApp.event_new_dtap,self)
+    
+    def newAgentTap(self,agent):
+        agent.newTap.register(PaintingApp.event_new_tap,self)
         
     def newAgentPaint(self,agent):
         #context here
@@ -51,10 +54,13 @@ class PaintingApp:
         for p in Paint.previousPoints:
             pygame.draw.circle(self.surface, (255,100,100) , map(int,p), 10, 0)
     
-    def event_new_tap(self,Tap):
+    def event_new_dtap(self,Tap):
         #pygame.draw.circle(self.surface, (0,255,100) , map(int,Tap.pos), 10, 0)
         self.buttoncolor = [random.randint(0,255) for i in self.buttoncolor]
         self.surface.fill((0,0,0))
+    
+    def event_new_tap(self,Tap):
+        pygame.draw.circle(self.surface, (0,100,200) , map(int,Tap.pos), 10, 0)
         
     @staticmethod
     def dist(a,b):
