@@ -90,24 +90,42 @@ def calibrate():
     glScale(1,-1,1)
     
     
-    glTranslate(calibration['x'],calibration['y'],calibration['z'])
+    glTranslate(calibration['x'],calibration['y'],calibration['z']-1)
     glRotate(calibration['ax'],1,0,0)
     glRotate(calibration['ay'],0,1,0)
     glRotate(calibration['az'],0,0,1)
     glScale(calibration['w'],calibration['h'],1)
     
-    glTranslate(-0.5,-0.5,-1)
+    glTranslate(-0.5,-0.5,0)
     
-    #glTranslate(1,0,0)
-    glBegin(GL_QUADS)
-    glVertex2f(-0.01, 0.01)
-    glVertex2f(-0.01, -0.01)
-    glVertex2f(0.01, -0.01)
-    glVertex2f(0.01, 0.01)
+    #glTranslate(1,0,0
+    if configurators[configurator]:
+        glBegin(GL_LINES)
+        for x in (v/8.0 for v in range(0,8)):
+            glVertex2f(x, 0)
+            glVertex2f(x, 1)
+        glVertex2f(1,0)
+        glVertex2f(1,1)
+        for y in (v/6.0 for v in range(0,6)):
+            glVertex2f(0, y)
+            glVertex2f(1, y)
+        glVertex2f(0,1)
+        glVertex2f(1,1)
+        glEnd()
+        drawCircle((0.5,0.5),0.5)
+        drawCircle((0.5,0.5),1.0/3)
+        drawCircle((0.5,0.5),1.0/6)
+
+def drawCircle(center,radius):
+    import math
+    aberration = 3.0/4
+    glBegin(GL_LINE_STRIP)
+    for angle in range(361):
+        x = center[0]+math.cos(math.radians(angle))*radius*aberration
+        y = center[1]+math.sin(math.radians(angle))*radius
+        glVertex2f(x,y)
     glEnd()
-
-
-
+    
 def saveCalibration():
     print "Saving "+CALIBRATION_FILE
     fcalibration = open(CALIBRATION_FILE,'w')
@@ -135,10 +153,10 @@ CZoom = {pygame.K_w:lambda: c_change('h',s),
          pygame.K_d:lambda: c_change('w',s),
          'name': "Zoom"}
          
-CParal = {pygame.K_w:lambda: c_change('ay',sd),
-          pygame.K_s:lambda: c_change('ay',-sd),
-          pygame.K_a:lambda: c_change('ax',-sd),
-          pygame.K_d:lambda: c_change('ax',sd),
+CParal = {pygame.K_w:lambda: c_change('ax',sd),
+          pygame.K_s:lambda: c_change('ax',-sd),
+          pygame.K_a:lambda: c_change('ay',-sd),
+          pygame.K_d:lambda: c_change('ay',sd),
           'name': "Lateral angles"}
 
 CRota = {pygame.K_w:lambda: c_change('z',s),
