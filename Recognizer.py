@@ -67,6 +67,7 @@ class Recognizer(EventClient):
     def copy_to(self,d):
         if self.failed: print "WARNING: copying a failed Recognizer!"
         if self.agentsConfirmed: print "WARNING: copying a Recognizer in confirmation!"
+        d.unregister_all()
         for a in self.agentsAcquired:
             d.acquire(a)
         EventClient.copy_to(self,d)
