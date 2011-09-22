@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import Screen
 import pygame, sys,os
 from pygame.locals import *
 import Mouse
-import Screen
 import Reactor
 import PaintingApp
 from Render import initializeDisplay,calibrate,drawT,copyT,saveCalibration,ConfKey
 import Tuio
 import Gestures
+import pygame.display
 
 pygame.init()
 
@@ -34,7 +35,11 @@ def input(events):
     global running
     for event in events: 
         if event.type == QUIT: 
-            running = False 
+            running = False
+        if event.type == KEYDOWN and event.key == K_ESCAPE:
+            running = False
+        if event.type == KEYDOWN and event.key == K_f:
+            pygame.display.toggle_fullscreen()
         else:
             for s in sensors:
                 if hasattr(s,'event'):
