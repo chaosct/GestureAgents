@@ -19,7 +19,7 @@ class PaintingApp:
         AppRecognizer(RecognizerPaint).newAgent.register(PaintingApp.newAgentPaint,self)
         AppRecognizer(RecognizerDoubleTap).newAgent.register(PaintingApp.newAgentDoubleTap,self)
         AppRecognizer(RecognizerTap).newAgent.register(PaintingApp.newAgentTap,self)
-        self.button = (200,200)
+        self.button = (400,400)
         self.buttoncolor = (0,100,255)
     
     def newAgentDoubleTap(self,agent):

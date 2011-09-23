@@ -5,4 +5,4 @@ from Events import Event
 
 ScreenDraw = Event()
 
-size = (800,600)
+size = (1024,768)
