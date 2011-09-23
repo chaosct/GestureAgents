@@ -28,13 +28,19 @@ def cancel_schedule(instance):
     
 def run_all_now():
     global all_tasks
-    l = all_tasks
-    all_tasks = []
-    for t in l:
-        t()
+    while all_tasks:
+        l = all_tasks
+        all_tasks = []
+        for t in l:
+            t()
     if scheduled_tasks:
         now = datetime.datetime.now()
         while scheduled_tasks and scheduled_tasks[0][0]<now:
             t,(i,f) = heappop(scheduled_tasks)
             f(i)
+    while all_tasks:
+        l = all_tasks
+        all_tasks = []
+        for t in l:
+            t()
     
