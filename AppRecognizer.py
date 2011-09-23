@@ -35,8 +35,7 @@ class AppRecognizer(Recognizer):
             self.fail()
         else:
             for ename,event in agent.events.iteritems():
-                def ffff(self,a,eventname=ename):
-                    self.enqueueEvent(a,eventname)
+                ffff = lambda self,a,eventname=ename: self.enqueueEvent(a,eventname)
                 self.register_event(event,ffff )
     
     def enqueueEvent(self,a,e):

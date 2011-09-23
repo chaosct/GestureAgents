@@ -55,6 +55,7 @@ class MemSummary:
         print "===========MEMORY=========="
         for t,c in counter.most_common():
             print t,":",c
+            if c > 100: import pdb; pdb.set_trace()
         
         print
           

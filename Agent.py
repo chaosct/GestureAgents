@@ -67,7 +67,7 @@ class Agent:
     def complete(self,Recognizer):
         if Recognizer not in self.recognizers_acquired:
             if not self.acquire(Recognizer): return
-        Reactor.run_after(lambda : self._complete(Recognizer) )
+        Reactor.run_after(lambda Recognizer=Recognizer, self=self: self._complete(Recognizer) )
     
     def is_someone_subscribed(self):
         for ename,event in self.events.iteritems():
@@ -84,7 +84,7 @@ class Agent:
                 r.fail()
     
     def fail_all_others(self,winner):
-        Reactor.run_after(lambda: self._fail_all_others(winner))
+        Reactor.run_after(lambda winner=winner,self=self: self._fail_all_others(winner))
                 
     def _fail_all_others(self,winner):
         #assert(self.recognizer_complete is winner) we are all consenting adults here

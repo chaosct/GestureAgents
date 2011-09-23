@@ -30,10 +30,9 @@ class Recognizer(EventClient):
     
     def fail(self):
         self.failed=True
-        Reactor.run_after(lambda: self._fail())
+        Reactor.run_after(lambda self=self: self._fail())
         
     def _fail(self):
-        #if self.failed: return
         self.failed=True
         for a in self.agentsAcquired+self.agentsConfirmed:
             a.discard(self)
