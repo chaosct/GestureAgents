@@ -25,13 +25,13 @@ class Agent:
     in the class Recognizer.
     """
     def __init__(self,eventnames):
-        "eventnames is a list of names that will become member events"
+        "eventnames is a list of names that will become member events. finishAgent will allways be created."
         #TODO: newEvent when done
         self.recognizers_acquired = []
         self.recognizer_complete = None
         self.events = {}
         self.owners = []
-        for ename in eventnames:
+        for ename in list(eventnames)+["finishAgent"]:
             self.events[ename]=Event()
             setattr(self,ename,self.events[ename])
         
@@ -42,6 +42,10 @@ class Agent:
         else:
             self.recognizers_acquired.append(Recognizer)
             return True
+    
+    def finish(self):
+        "The owner of the event will not generate more events"
+        self.finishAgent(self)
             
     def discard(self,Recognizer):
         #print "Agent discard", Recognizer

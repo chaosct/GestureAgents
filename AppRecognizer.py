@@ -47,13 +47,18 @@ class AppRecognizer(Recognizer):
             copyagent.original_agent = copy.copy(copyagent.original_agent)
             self.eventqueue.append((e,copyagent))
         else:
-            self.agent.events[e](self.agent)
-    
+            if e == "finishAgent":
+                self.finish()
+            else:
+                self.agent.events[e](self.agent)
+
     def execute(self):
         self.willenqueue = False
         for event_name,agent in self.eventqueue:
-            self.agent.events[event_name](agent)
-        #self.finish() we deliberately don't finnish
+            if event_name == "finishAgent":
+                self.finish()
+            else:
+                self.agent.events[event_name](agent)
     
     def _makeAgentAgent(self,agent):
         a =  FakeAgent(agent)

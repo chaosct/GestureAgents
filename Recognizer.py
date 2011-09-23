@@ -26,6 +26,8 @@ class Recognizer(EventClient):
             #using newAgent
             a.discard(self)
         self.unregister_all()
+        self.agent.owners.remove(self) #removing a complex reference cycle preventing gc
+        self.agent.finish()
         
     def unregister_all(self):
         EventClient.unregister_all(self)
