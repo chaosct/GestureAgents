@@ -9,6 +9,7 @@ import math
 
 class RecognizerDoubleTap(Recognizer):
     newAgent = Event()
+    rtotal = 0
     def __init__(self):
         Recognizer.__init__(self)
         self.agent = None
@@ -17,6 +18,8 @@ class RecognizerDoubleTap(Recognizer):
         self.register_event(RecognizerTap.newAgent,RecognizerDoubleTap.EventNewAgent)
         self.time = 0.3
         self.maxd = 10
+        self.name = "RecognizerDoubleTap %d" % RecognizerDoubleTap.rtotal
+        RecognizerDoubleTap.rtotal+=1
         
     @newHypothesis
     def EventNewAgent(self,Tap):
@@ -54,10 +57,15 @@ class RecognizerDoubleTap(Recognizer):
             self.cancel_expire()
             self.acquire(Tap)
             self.complete()
+            #print "I win",self
+            #print self.agent.newDoubleTap.registered
+            #import pdb; pdb.set_trace()
             self.fail_all_others()
  
     def execute(self):
+        #print "I execute",self
         self.agent.pos = self.secondtap.pos
+        #print self.agent.newDoubleTap.registered
         self.agent.newDoubleTap(self.agent)
         self.finish()
     
@@ -82,3 +90,6 @@ class RecognizerDoubleTap(Recognizer):
         a =  Agent(("newDoubleTap",))
         a.owners.append(self)
         return a
+        
+    def __repr__(self):
+        return self.name
