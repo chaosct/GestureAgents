@@ -57,7 +57,8 @@ class Agent:
         #print "Agent complete", Recognizer
         if self.recognizer_complete:
             #which one is preferable?
-            self.recognizer_complete.fail()
+            assert(Recognizer is not self.recognizer_complete)
+            self.recognizer_complete.safe_fail()
             self.recognizer_complete = None
         self.recognizer_complete = Recognizer
         if Recognizer in self.recognizers_acquired:
@@ -78,11 +79,11 @@ class Agent:
     
     def fail(self):
         "The Recognizer owner of this agent fails before really existing, so All the recognizers based on it must fail"
-        l = set([r for ename,event in self.events.iteritems() for r in event.registered])
-        print "Agent failed, killing %d things" % len(l)
+        l = set([r[1] for ename,event in self.events.iteritems() for r in event.registered])
+        #print "Agent failed, killing %d things:" % len(l)
         for r in l:
             if isinstance(r,Recognizer):
-                r.fail()
+                r.safe_fail()
     
     def fail_all_others(self,winner):
         Reactor.run_after(lambda winner=winner,self=self: self._fail_all_others(winner))
@@ -90,8 +91,13 @@ class Agent:
     def _fail_all_others(self,winner):
         #assert(self.recognizer_complete is winner) we are all consenting adults here
         target = type(winner)
+        #print "fail_all_others :",winner,"wants to fail",target
         for r in list(self.recognizers_acquired):
             if type(r) == target and r is not winner:
-                r.fail()
+                #print "fail_all_others by",winner,":", r, "is target"
+                r.safe_fail(cause="Fail all others by %s"%str(winner))
+            else:
+                #print "fail_all_others :", r, "is not target"
+                pass
         
         

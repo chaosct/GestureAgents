@@ -41,7 +41,7 @@ class RecognizerTap(Recognizer):
         self.unregister_event(Cursor.newCursor)
         self.register_event(Cursor.updateCursor,RecognizerTap.EventMoveCursor)
         self.register_event(Cursor.removeCursor,RecognizerTap.EventRemoveCursor)
-        Reactor.schedule_after(self.time,self,RecognizerTap.fail)
+        self.expire_in(self.time)
         self.origin = Cursor.pos
         self.acquire(Cursor)
 
@@ -51,7 +51,7 @@ class RecognizerTap(Recognizer):
             self.fail()
     
     def EventRemoveCursor(self,Cursor):
-        Reactor.cancel_schedule(self)
+        self.cancel_expire()
         self.unregister_event(Cursor.updateCursor)
         self.unregister_event(Cursor.removeCursor)
         self.complete()

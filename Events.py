@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 class Event(object):
-    "A simple event with subscription"
+    "A simple event with subscription, it catches AgentFailedException"
     def __init__(self):
         self.registered = []
         self.lookupf = {}
@@ -19,8 +19,12 @@ class Event(object):
         self.registered.remove((f,i))
         
     def call(self,*args,**kwargs):
+        from Recognizer import AgentFailedException
         for f,i in list(self.registered):
-            f(i,*args,**kwargs)
+            try:
+                f(i,*args,**kwargs)
+            except AgentFailedException:
+                pass
     
     __call__ = call
 

@@ -4,6 +4,9 @@
 from Events import Event, EventClient
 import Reactor
 
+class AgentFailedException(Exception):
+    pass
+
 class Recognizer(EventClient):
     
     def __init__(self):
@@ -28,11 +31,11 @@ class Recognizer(EventClient):
         EventClient.unregister_all(self)
         Reactor.cancel_schedule(self)
     
-    def fail(self):
-        self.failed=True
-        Reactor.run_after(lambda self=self: self._fail())
+    #def fail(self):
+    #    self.failed=True
+    #    Reactor.run_after(lambda self=self: self._fail())
         
-    def _fail(self):
+    def fail(self,cause="Unknown"):
         self.failed=True
         for a in self.agentsAcquired+self.agentsConfirmed:
             a.discard(self)
@@ -45,13 +48,13 @@ class Recognizer(EventClient):
             if not self.agent.owners:
                 self.agent.fail()
             self.agent = None
+        raise AgentFailedException()
     
     def acquire(self,agent):
         if self.failed: return 
         if agent.acquire(self):
             self.agentsAcquired.append(agent)
         else:
-            self.failed = True
             self.fail()
             
     def complete(self):
@@ -93,6 +96,19 @@ class Recognizer(EventClient):
     def fail_all_others(self):
         for a in self.agentsAcquired+self.agentsConfirmed:
             a.fail_all_others(self)
+    
+    def safe_fail(self,cause="Unknown"):
+        try:
+            self.fail(cause=cause)
+        except AgentFailedException:
+            pass
+    
+    def expire_in(self,s):
+        l = lambda self: self.safe_fail(cause="Timeout")
+        Reactor.schedule_after(s,self,l)
+    
+    def cancel_expire(self):
+        Reactor.cancel_schedule(self)
         
 def newHypothesis(f):
     "Decorator to create a new hypothesis every time that is called"
@@ -101,5 +117,5 @@ def newHypothesis(f):
             d = self.duplicate()
             f(self,*args,**kwargs)
         elif not self.is_pristine():
-            self.fail()
+            self.safe_fail()
     return newHipothesisAndRun

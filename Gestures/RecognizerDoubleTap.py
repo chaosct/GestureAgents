@@ -4,7 +4,6 @@
 from Recognizer import Recognizer, newHypothesis
 from Events import Event
 from RecognizerTap import RecognizerTap
-import Reactor
 from Agent import Agent
 import math
 
@@ -25,7 +24,7 @@ class RecognizerDoubleTap(Recognizer):
         self.agent.pos = Tap.pos
         self.newAgent.call(self.agent)
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail(cause="Noone Interested")
         else:
             self.unregister_event(RecognizerTap.newAgent)
             self.register_event(Tap.newTap,RecognizerDoubleTap.FirstTap)
@@ -34,33 +33,29 @@ class RecognizerDoubleTap(Recognizer):
         self.firstap = Tap
         self.unregister_event(Tap.newTap)
         self.register_event(RecognizerTap.newAgent,RecognizerDoubleTap.EventNewAgent2)
-        Reactor.schedule_after(self.time,self,RecognizerDoubleTap.timeout)
+        self.expire_in(self.time)
         self.acquire(Tap)
     
     
     @newHypothesis
     def EventNewAgent2(self,Tap):
         if self.dist(Tap.pos,self.firstap.pos) > self.maxd:
-            self.fail()
+            self.fail(cause="Max distance")
         else:
             self.unregister_event(RecognizerTap.newAgent)
             self.register_event(Tap.newTap,RecognizerDoubleTap.SecondTap)
         
     def SecondTap(self,Tap):
         if self.dist(Tap.pos,self.firstap.pos) > self.maxd:
-            self.fail()
+            self.fail(cause="Max distance")
         else:
             self.secondtap = Tap
             self.unregister_event(Tap.newTap)
-            Reactor.cancel_schedule(self)
+            self.cancel_expire()
             self.acquire(Tap)
             self.complete()
             self.fail_all_others()
-
-    
-    def timeout(self):
-        self.fail()
-    
+ 
     def execute(self):
         self.agent.pos = self.secondtap.pos
         self.agent.newDoubleTap(self.agent)
@@ -72,6 +67,11 @@ class RecognizerDoubleTap(Recognizer):
         d.firstap = self.firstap
         d.secondtap = self.secondtap
         return d
+    
+    #def fail(self, cause="Unknown"):
+    #    print "RecognizerDoubleTap(",self,") fail, cause="+cause
+    #    #raise Exception("RecognizerDoubleTap fail")
+    #    Recognizer.fail(self)
     
     @staticmethod
     def dist(a,b):
