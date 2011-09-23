@@ -66,10 +66,9 @@ class RecognizerPaint(Recognizer):
         Recognizer.copy_to(self,d)
         d.finger = self.finger
         d.previousPoints = list(self.previousPoints)
-        #if not self.is_pristine():
-        d.agent = self.agent
         return d
     
-    @staticmethod
-    def make_PaintAgent():
-        return Agent(("newPaint","updatePaint"))
+    def make_PaintAgent(self):
+        a = Agent(("newPaint","updatePaint"))
+        a.owners.append(self)
+        return a

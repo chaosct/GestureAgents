@@ -39,8 +39,11 @@ class Recognizer(EventClient):
         self.agentsAcquired = []
         self.agentsConfirmed = []
         self.unregister_all()
+        # we have to fail only if we are the solely owner of self.agent.
         if self.agent:
-            self.agent.fail()
+            self.agent.owners.remove(self)
+            if not self.agent.owners:
+                self.agent.fail()
             self.agent = None
     
     def acquire(self,agent):
@@ -71,6 +74,10 @@ class Recognizer(EventClient):
             d.acquire(a)
         EventClient.copy_to(self,d)
         Reactor.duplicate_instance(self,d)
+        #we duplicate agents
+        if self.agent:
+            d.agent = self.agent
+            self.agent.owners.append(d)
     
     def is_pristine(self):
         return ( len(self.agentsAcquired) + len(self.agentsConfirmed) ) == 0

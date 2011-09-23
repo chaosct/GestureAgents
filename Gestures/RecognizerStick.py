@@ -76,8 +76,6 @@ class RecognizerStick (Recognizer):
         Recognizer.copy_to(self,d)
         d.finger = self.finger
         d.positions = list(self.positions)
-        #if not self.is_pristine():
-        d.agent = self.agent
         return d
         
     def execute(self):
@@ -88,9 +86,10 @@ class RecognizerStick (Recognizer):
         self.agent.newStick.call(self.agent)
         self.finish()
     
-    @staticmethod
-    def make_StickAgent():
-        return Agent(("newStick",))
+    def make_StickAgent(self):
+        a = Agent(("newStick",))
+        a.owners.append(self)
+        return a
     
     @staticmethod        
     def pdis(a, b, c):

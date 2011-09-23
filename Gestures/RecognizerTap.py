@@ -72,10 +72,9 @@ class RecognizerTap(Recognizer):
         Recognizer.copy_to(self,d)
         d.finger = self.finger
         d.origin = self.origin
-        #if not self.is_pristine():
-        d.agent = self.agent
         return d
         
-    @staticmethod
-    def make_TapAgent():
-        return Agent(("newTap",))
+    def make_TapAgent(self):
+        a = Agent(("newTap",))
+        a.owners.append(self)
+        return a

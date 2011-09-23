@@ -71,8 +71,6 @@ class RecognizerDoubleTap(Recognizer):
         Recognizer.copy_to(self,d)
         d.firstap = self.firstap
         d.secondtap = self.secondtap
-        #if not self.is_pristine():
-        d.agent = self.agent
         return d
     
     @staticmethod
@@ -80,6 +78,7 @@ class RecognizerDoubleTap(Recognizer):
         dx,dy = (a[0]-b[0],a[1]-b[1])
         return math.sqrt(dx**2 + dy**2)
     
-    @staticmethod
-    def make_DoubleTapAgent():
-        return Agent(("newDoubleTap",))
+    def make_DoubleTapAgent(self):
+        a =  Agent(("newDoubleTap",))
+        a.owners.append(self)
+        return a

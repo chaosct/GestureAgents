@@ -55,9 +55,10 @@ class AppRecognizer(Recognizer):
             self.agent.events[event_name](agent)
         #self.finish() we deliberately don't finnish
     
-    @staticmethod
-    def _makeAgentAgent(agent):
-        return FakeAgent(agent)
+    def _makeAgentAgent(self,agent):
+        a =  FakeAgent(agent)
+        a.owners.append(self)
+        return a
     
     def duplicate(self):
         d = AppRecognizer(self.recognizer)

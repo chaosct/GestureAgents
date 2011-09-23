@@ -30,6 +30,7 @@ class Agent:
         self.recognizers_acquired = []
         self.recognizer_complete = None
         self.events = {}
+        self.owners = []
         for ename in eventnames:
             self.events[ename]=Event()
             setattr(self,ename,self.events[ename])
