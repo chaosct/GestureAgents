@@ -72,13 +72,13 @@ def drawT(textureSurface):
     glTexCoord2f(0, 1); glVertex2f(0, 0)
  
     # Top Left Of The Texture and Quad
-    glTexCoord2f(0, 0); glVertex2f(0, 1)
+    glTexCoord2f(0, 0); glVertex2f(0, Screen.size[1])
  
     # Top Right Of The Texture and Quad
-    glTexCoord2f(1, 0); glVertex2f( 1,  1)
+    glTexCoord2f(1, 0); glVertex2f( Screen.size[0],  Screen.size[1])
  
     # Bottom Right Of The Texture and Quad
-    glTexCoord2f(1, 1); glVertex2f(1, 0)
+    glTexCoord2f(1, 1); glVertex2f(Screen.size[0], 0)
     glEnd()
     glDisable(GL_TEXTURE_2D)
 
@@ -96,9 +96,8 @@ def calibrate():
     glRotate(calibration['az'],0,0,1)
     glScale(calibration['w'],calibration['h'],1)
     
+    glPushMatrix()
     glTranslate(-0.5,-0.5,0)
-    
-    #glTranslate(1,0,0
     if configurators[configurator]:
         glBegin(GL_LINES)
         for x in (v/8.0 for v in range(0,8)):
@@ -115,6 +114,10 @@ def calibrate():
         drawCircle((0.5,0.5),0.5)
         drawCircle((0.5,0.5),1.0/3)
         drawCircle((0.5,0.5),1.0/6)
+    glPopMatrix()
+    glScale(1.0/Screen.size[0],1.0/Screen.size[1], 1)
+    glTranslate(-Screen.size[0]/2,-Screen.size[1]/2, 0)
+    
 
 def drawCircle(center,radius):
     import math
