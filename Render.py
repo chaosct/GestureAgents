@@ -7,6 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import Screen
 import pygame
+import atexit
 
 width, height = Screen.size
 
@@ -129,11 +130,7 @@ def drawCircle(center,radius):
         glVertex2f(x,y)
     glEnd()
     
-def saveCalibration():
-    print "Saving "+CALIBRATION_FILE
-    fcalibration = open(CALIBRATION_FILE,'w')
-    json.dump(calibration,fcalibration,sort_keys=True, indent=4)
-    
+  
     
 
 s = 0.01
@@ -184,3 +181,9 @@ def ConfKey(event):
             print "Configurator: "+ configurators[configurator]['name']
         else:
             print "No Configurator"
+
+@atexit.register
+def saveCalibration():
+    print "Saving "+CALIBRATION_FILE
+    fcalibration = open(CALIBRATION_FILE,'w')
+    json.dump(calibration,fcalibration,sort_keys=True, indent=4)
