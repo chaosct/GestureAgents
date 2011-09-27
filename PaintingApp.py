@@ -8,12 +8,12 @@ import pygame.draw
 from Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
 from AppRecognizer import AppRecognizer
 import random, math
+import Render
 
 class PaintingApp:
-    def __init__(self,screen):
+    def __init__(self):
         Screen.ScreenDraw.register(PaintingApp.draw,self)
         self.surface = pygame.Surface(Screen.size,flags=pygame.locals.SRCALPHA)
-        self.screen = screen
         #pygame.draw.line(self.surface, (255,255,255) , (50,50), (100,100), 5)
         AppRecognizer(RecognizerStick).newAgent.register(PaintingApp.newAgentStick,self)
         AppRecognizer(RecognizerPaint).newAgent.register(PaintingApp.newAgentPaint,self)
@@ -41,7 +41,7 @@ class PaintingApp:
     
     def draw(self):
         pygame.draw.circle(self.surface, self.buttoncolor , self.button , 50, 3)
-        self.screen.blit(self.surface,(0,0))
+        Render.drawT(self.surface)
         
         
     def event_finish_stick(self,Stick):
@@ -67,3 +67,7 @@ class PaintingApp:
         dx,dy = (a[0]-b[0],a[1]-b[1])
         return math.sqrt(dx**2 + dy**2)
         
+if __name__ == "__main__":
+    import main
+    app = PaintingApp()
+    main.run_apps()

@@ -7,44 +7,10 @@ from pygame.locals import *
 import Mouse
 import Reactor
 import PaintingApp
-from Render import initializeDisplay,calibrate,drawT,copyT,saveCalibration,ConfKey
+from Render import initializeDisplay,calibrate,ConfKey
 import Tuio
 import Gestures
 import pygame.display
-
-pygame.init()
-
-initializeDisplay()
-
-tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
-
-app = PaintingApp.PaintingApp(tscreen)
-
-#mouse = Mouse.MouseAgentGenerator()
-
-#sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
-sensors = (Tuio.TuioAgentGenerator(),)
-
-if Gestures.recognizers:
-    print "Found %d gesture recognizers:"
-    for r in Gestures.recognizers:
-        print "\t%s" % str(r)
-Gestures.load_all()
-
-def input(events): 
-    global running
-    for event in events: 
-        if event.type == QUIT: 
-            running = False
-        if event.type == KEYDOWN and event.key == K_ESCAPE:
-            running = False
-        if event.type == KEYDOWN and event.key == K_f:
-            pygame.display.toggle_fullscreen()
-        else:
-            for s in sensors:
-                if hasattr(s,'event'):
-                    s.event(event)
-            ConfKey(event)
 
 class MemSummary:
     def digest(self):
@@ -62,25 +28,51 @@ class MemSummary:
         print "%d Failed" % len([obj for obj in gc.get_objects() if isinstance(obj, Recognizer) and obj.failed])
         print "="*30
         Reactor.schedule_after(2,self,MemSummary.digest)
-        
 
-    
+running = False
 
-running = True
+def run_apps(debugMem=False):
+    global running
+    pygame.init()
+    initializeDisplay()
+    tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
+    #app = PaintingApp.PaintingApp(tscreen)
+    #mouse = Mouse.MouseAgentGenerator()
+    #sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
+    sensors = (Tuio.TuioAgentGenerator(),)
 
-MemSummary().digest()
+    if Gestures.recognizers:
+        print "Found %d gesture recognizers:" % len(Gestures.recognizers)
+        for r in Gestures.recognizers:
+            print "\t%s" % str(r)
+    Gestures.load_all()
 
-while running: 
-    calibrate()
-    tscreen.fill(0)
-    input(pygame.event.get())
-    Reactor.run_all_now()
-    for s in sensors:
-        if hasattr(s,'update'):
-            s.update()
-    Screen.ScreenDraw.call()
-    #screen.blit(tscreen,(0,0))
-    drawT(tscreen)
-    pygame.display.flip()
+    def input(events): 
+        global running
+        for event in events: 
+            if event.type == QUIT: 
+                running = False
+            if event.type == KEYDOWN and event.key == K_ESCAPE:
+                running = False
+            if event.type == KEYDOWN and event.key == K_f:
+                pygame.display.toggle_fullscreen()
+            else:
+                for s in sensors:
+                    if hasattr(s,'event'):
+                        s.event(event)
+                ConfKey(event)
+    running = True
 
-saveCalibration()
+    if debugMem:
+        MemSummary().digest()
+
+    while running: 
+        calibrate()
+        input(pygame.event.get())
+        Reactor.run_all_now()
+        for s in sensors:
+            if hasattr(s,'update'):
+                s.update()
+        Screen.ScreenDraw.call()
+        pygame.display.flip()
+
