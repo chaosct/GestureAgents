@@ -57,7 +57,7 @@ class PaintingApp:
     def event_new_dtap(self,Tap):
         #pygame.draw.circle(self.surface, (0,255,100) , map(int,Tap.pos), 10, 0)
         self.buttoncolor = [random.randint(0,255) for i in self.buttoncolor]
-        self.surface.fill((0,0,0))
+        self.surface.fill(0)
     
     def event_new_tap(self,Tap):
         pygame.draw.circle(self.surface, (0,100,200) , map(int,Tap.pos), 10, 0)

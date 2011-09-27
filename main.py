@@ -72,6 +72,7 @@ MemSummary().digest()
 
 while running: 
     calibrate()
+    tscreen.fill(0)
     input(pygame.event.get())
     Reactor.run_all_now()
     for s in sensors:
