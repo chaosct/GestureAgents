@@ -7,7 +7,7 @@ import os
 import os.path
 import sys
 import inspect
-from Recognizer import Recognizer
+from GestureAgents.Recognizer import Recognizer
 
 _DIR,_FNAME = os.path.split(__file__)
 _current_module = sys.modules[__name__]

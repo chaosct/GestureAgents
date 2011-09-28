@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Tuio
-from Recognizer import Recognizer, newHypothesis
-from Events import Event
-from Agent import Agent
+import GestureAgents.Tuio as Tuio
+from GestureAgents.Recognizer import Recognizer, newHypothesis
+from GestureAgents.Events import Event
+from GestureAgents.Agent import Agent
 import math
-import Reactor
+
 
 class RecognizerTap(Recognizer):
     #for debugging porpuses we have a count of instances

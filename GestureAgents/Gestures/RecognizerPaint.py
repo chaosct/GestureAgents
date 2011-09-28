@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Tuio
-from Recognizer import Recognizer, newHypothesis
-from Agent import Agent
-from Events import Event
+import GestureAgents.Tuio as Tuio
+from GestureAgents.Recognizer import Recognizer, newHypothesis
+from GestureAgents.Agent import Agent
+from GestureAgents.Events import Event
 
 class RecognizerPaint(Recognizer):
     newAgent = Event()

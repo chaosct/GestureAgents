@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-import Tuio
+import GestureAgents.Tuio as Tuio
 from math import sqrt, fabs
-from Recognizer import Recognizer, newHypothesis
-from Events import Event
-from Agent import Agent
+from GestureAgents.Recognizer import Recognizer, newHypothesis
+from GestureAgents.Events import Event
+from GestureAgents.Agent import Agent
 
 
 

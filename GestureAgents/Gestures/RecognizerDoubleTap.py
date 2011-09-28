@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Recognizer import Recognizer, newHypothesis
-from Events import Event
+from GestureAgents.Recognizer import Recognizer, newHypothesis
+from GestureAgents.Events import Event
 from RecognizerTap import RecognizerTap
-from Agent import Agent
+from GestureAgents.Agent import Agent
 import math
 
 class RecognizerDoubleTap(Recognizer):
