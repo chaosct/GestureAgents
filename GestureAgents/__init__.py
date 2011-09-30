@@ -6,7 +6,6 @@ import pygame, sys,os
 from pygame.locals import *
 import Mouse
 import Reactor
-import PaintingApp
 from Render import initializeDisplay,calibrate,ConfKey
 import Tuio
 import Gestures
