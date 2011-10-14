@@ -26,7 +26,7 @@ class Agent:
     Recognizers must call these through their own helpers
     in the class Recognizer.
     """
-    policy = PolicyRuleset()
+    completion_policy = PolicyRuleset()
     def __init__(self,eventnames):
         "eventnames is a list of names that will become member events. finishAgent will allways be created."
         #TODO: newEvent when done
@@ -61,12 +61,16 @@ class Agent:
                 self.recognizer_complete.confirm(self)
         
     def _complete(self,Recognizer):
-        #print "Agent complete", Recognizer
-        if self.recognizer_complete:
-            #which one is preferable?
-            assert(Recognizer is not self.recognizer_complete)
+        assert(Recognizer is not self.recognizer_complete)
+        # According to the policy we choose the best Recognizer
+        if self.completion_policy.result(self.recognizer_complete,Recognizer) == False:
+            #Policy doesn't accept change
+            Recognizer.safe_fail()
+            return
+        elif self.recognizer_complete:
             self.recognizer_complete.safe_fail()
             self.recognizer_complete = None
+        
         self.recognizer_complete = Recognizer
         if Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
@@ -107,4 +111,12 @@ class Agent:
                 #print "fail_all_others :", r, "is not target"
                 pass
         
-        
+
+#default policies
+
+@Agent.completion_policy.rule(-100)
+def accept_if_none(recognizer1,recognizer2):
+    "Accept First"
+    if recognizer1 == None:
+        return True
+    

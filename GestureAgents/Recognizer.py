@@ -127,3 +127,20 @@ def newHypothesis(f):
         elif not self.is_pristine():
             self.safe_fail()
     return newHipothesisAndRun
+    
+    
+from Agent import Agent
+#policies for comparison between Recognizers
+
+@Agent.completion_policy.rule(100)
+def last_to_enter_wins(recognizer1,recognizer2):
+    "Last to enter wins"
+    return True
+
+@Agent.completion_policy.rule(-50)
+def completed_win(recognizer1,recognizer2):
+    "Completed win"
+    if recognizer1.executed and not recognizer2.executed:
+        return False
+    if not recognizer1.executed and recognizer2.executed:
+        return True

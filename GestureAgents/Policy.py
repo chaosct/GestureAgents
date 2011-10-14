@@ -46,7 +46,8 @@ class PolicyRuleset(object):
         print >>description, "PolicyRuleset:"
         for priority in sorted(self._policies):
             for policy in self._policies[priority]:
-                print >>description, "\t(%d)" % priority, policy
+                desc = policy.__doc__ or policy
+                print >>description, "\t(%d)" % priority, desc
         return description.getvalue()
     
     def rule(self,priority=0):
