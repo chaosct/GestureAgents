@@ -16,6 +16,8 @@ class Recognizer(EventClient):
         #TODO: replace self.failed with self.died and self.failed to indicate different things?
         self.failed = False
         self.agent = None
+        self.executed = False
+        self.parent = False
     
     def finish(self):
         self.failed=True
@@ -70,10 +72,11 @@ class Recognizer(EventClient):
         self.agentsConfirmed.append(agent)
         if not self.agentsAcquired:
             self.execute()
-
+            self.executed = True
+        
     def copy_to(self,d):
         if self.failed: print "WARNING: copying a failed Recognizer!"
-        if self.agentsConfirmed: print "WARNING: copying a Recognizer in confirmation!"
+        if self.agentsConfirmed and not self.executed: print "WARNING: copying a Recognizer in confirmation!"
         d.unregister_all()
         for a in self.agentsAcquired:
             d.acquire(a)
@@ -83,6 +86,8 @@ class Recognizer(EventClient):
         if self.agent:
             d.agent = self.agent
             self.agent.owners.append(d)
+        d.executed = self.executed
+        d.parent = self.parent
     
     def is_pristine(self):
         return ( len(self.agentsAcquired) + len(self.agentsConfirmed) ) == 0
@@ -117,6 +122,7 @@ def newHypothesis(f):
     def newHipothesisAndRun(self,*args,**kwargs):
         if self.is_someone_interested():
             d = self.duplicate()
+            self.parent = d
             f(self,*args,**kwargs)
         elif not self.is_pristine():
             self.safe_fail()
