@@ -51,15 +51,19 @@ def initializeDisplay():
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     texture = glGenTextures(1)
 
-def copyT(textureSurface):
+def copyT(textureSurface,mtexture=None,format="RGBA",width=width,height=height):
     width, height = Screen.size
+    if mtexture is None:
+        mtexture = texture
+    textureData = pygame.image.tostring(textureSurface, format, 1)
     
-    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    formats = {"RGBA": GL_RGBA, "RGB": GL_RGB}
     
-    glBindTexture(GL_TEXTURE_2D, texture)
+    
+    glBindTexture(GL_TEXTURE_2D, mtexture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+    glTexImage2D(GL_TEXTURE_2D, 0, formats[format], width, height, 0, formats[format],
         GL_UNSIGNED_BYTE, textureData)
 
 def drawT(textureSurface):
