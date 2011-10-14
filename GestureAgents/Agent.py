@@ -71,8 +71,7 @@ class Agent:
             self.recognizer_complete.confirm(self)
             
     def complete(self,Recognizer):
-        if Recognizer not in self.recognizers_acquired:
-            if not self.acquire(Recognizer): return
+        assert(Recognizer in self.recognizers_acquired)
         Reactor.run_after(lambda Recognizer=Recognizer, self=self: self._complete(Recognizer) )
     
     def is_someone_subscribed(self):
