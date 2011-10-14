@@ -34,6 +34,7 @@ class PolicyRuleset(object):
             for policy in self._policies[priority]:
                 result = policy(*args,**kwargs)
                 if result != None:
+                    print policy.__doc__ or policy, "said", result
                     return result
         return None
     

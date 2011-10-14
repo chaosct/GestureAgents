@@ -10,6 +10,7 @@ from Render import initializeDisplay,calibrate,ConfKey
 import Tuio
 import Gestures
 import pygame.display
+import Agent
 
 class MemSummary:
     def digest(self):
@@ -61,7 +62,10 @@ def run_apps(debugMem=False):
                         s.event(event)
                 ConfKey(event)
     running = True
-
+    
+    print "Policy rules:"
+    print Agent.Agent.completion_policy
+    
     if debugMem:
         MemSummary().digest()
 

@@ -39,7 +39,6 @@ class Agent:
             setattr(self,ename,self.events[ename])
         
     def acquire(self,Recognizer):
-        #print "Agent acquire", Recognizer
         if self.recognizer_complete and not self.recognizers_acquired:
             return False
         else:
@@ -53,6 +52,9 @@ class Agent:
     def discard(self,Recognizer):
         #print "Agent discard", Recognizer
         if Recognizer == self.recognizer_complete:
+            print "DISCARD"
+            import traceback
+            traceback.print_stack()
             self.recognizer_complete = None
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
         elif Recognizer in self.recognizers_acquired:
@@ -63,12 +65,14 @@ class Agent:
     def _complete(self,Recognizer):
         assert(Recognizer is not self.recognizer_complete)
         # According to the policy we choose the best Recognizer
+        print "CCC", self, type(Recognizer), type(self.recognizer_complete)
         if self.completion_policy.result(self.recognizer_complete,Recognizer) == False:
             #Policy doesn't accept change
             Recognizer.safe_fail()
             return
         elif self.recognizer_complete:
             self.recognizer_complete.safe_fail()
+            print "COMPLETED BY SOMEONE"
             self.recognizer_complete = None
         
         self.recognizer_complete = Recognizer
