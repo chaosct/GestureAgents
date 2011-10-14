@@ -3,7 +3,9 @@
 
 import Reactor
 from Events import Event
-from Recognizer import Recognizer
+from Policy import PolicyRuleset
+
+
 
 class Agent:
     """This class represents something that generates Events.
@@ -24,6 +26,7 @@ class Agent:
     Recognizers must call these through their own helpers
     in the class Recognizer.
     """
+    policy = PolicyRuleset()
     def __init__(self,eventnames):
         "eventnames is a list of names that will become member events. finishAgent will allways be created."
         #TODO: newEvent when done
@@ -82,6 +85,7 @@ class Agent:
     
     def fail(self):
         "The Recognizer owner of this agent fails before really existing, so All the recognizers based on it must fail"
+        from Recognizer import Recognizer
         l = set([r[1] for ename,event in self.events.iteritems() for r in event.registered])
         #print "Agent failed, killing %d things:" % len(l)
         for r in l:
