@@ -72,3 +72,13 @@ class AppRecognizer(Recognizer):
         d.newAgent = self.newAgent
         Recognizer.copy_to(self,d)
             
+
+#policy
+@Agent.completion_policy.rule(-60)
+def AppRecognizer_loses(recognizer1,recognizer2):
+    "AppRecognizer always looses"
+    if type(recognizer1) == AppRecognizer:
+        return True
+    if type(recognizer2) == AppRecognizer:
+        return False
+
