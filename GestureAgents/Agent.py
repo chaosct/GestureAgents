@@ -26,7 +26,12 @@ class Agent:
     Recognizers must call these through their own helpers
     in the class Recognizer.
     """
+    #Policy on whenever a confirmed recognizer can be failed by a new recognizer confirming
     completion_policy = PolicyRuleset()
+    #Policy on whenever one gesture can be confirmed while another can be aquired (for instance when a continuous gesture can
+    #finish another gesture to complete.
+    compatibility_policy = PolicyRuleset()
+    
     def __init__(self,eventnames):
         "eventnames is a list of names that will become member events. finishAgent will allways be created."
         #TODO: newEvent when done
@@ -34,12 +39,16 @@ class Agent:
         self.recognizer_complete = None
         self.events = {}
         self.owners = []
+        #is this agent having a confirmed recognizer?
+        self.completed = False
         for ename in list(eventnames)+["finishAgent"]:
             self.events[ename]=Event()
             setattr(self,ename,self.events[ename])
         
     def acquire(self,Recognizer):
-        if self.recognizer_complete and not self.recognizers_acquired:
+        "The recognizer is interested on this agent"
+        #can we acquire even if there is someone confirmed?
+        if self.completed and compatibility_policy.result(self.recognizer_complete,Recognizer) != True:
             return False
         else:
             self.recognizers_acquired.append(Recognizer)
@@ -50,7 +59,9 @@ class Agent:
         self.finishAgent(self)
             
     def discard(self,Recognizer):
-        #print "Agent discard", Recognizer
+        """The recognizer is no longer interested in this agent.
+        This should occur after acquiring the agent but not after
+        completing it."""
         if Recognizer == self.recognizer_complete:
             print "DISCARD"
             import traceback
@@ -59,8 +70,18 @@ class Agent:
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
         elif Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
-            if not self.recognizers_acquired and self.recognizer_complete:
+            if self._can_confirm():
                 self.recognizer_complete.confirm(self)
+                self.completed = True
+    
+    def _can_confirm(self):
+        "Decides if self.recognizer_complete can be confirmed"
+        if not self.recognizer_complete: return False
+        if not self.recognizers_acquired: return True
+        for r in self.recognizers_acquired:
+            if self.compatibility_policy.result(self.recognizer_complete,r) != True:
+                return False
+        return True
         
     def _complete(self,Recognizer):
         assert(Recognizer is not self.recognizer_complete)
@@ -78,8 +99,9 @@ class Agent:
         self.recognizer_complete = Recognizer
         if Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
-        if not self.recognizers_acquired:
+        if self._can_confirm():
             self.recognizer_complete.confirm(self)
+            self.completed = True
             
     def complete(self,Recognizer):
         assert(Recognizer in self.recognizers_acquired)
@@ -119,8 +141,18 @@ class Agent:
 #default policies
 
 @Agent.completion_policy.rule(-100)
-def accept_if_none(recognizer1,recognizer2):
+def _accept_if_none(recognizer1,recognizer2):
     "Accept First"
     if recognizer1 == None:
         return True
+
+@Agent.completion_policy.rule(-99)
+def _accept_if_compatible(recognizer1,recognizer2):
+    "Use compatibility_policy to accept completion one over another"
+    if Agent.compatibility_policy.result(recognizer1,recognizer2) == True:
+        return True
     
+@Agent.compatibility_policy.rule(100)
+def _never_accept(recognizer_confirmed,recognizer_acquiring):
+    "Never accept acquire when confirmed"
+    return False
