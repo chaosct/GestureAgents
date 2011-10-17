@@ -48,7 +48,7 @@ class Agent:
     def acquire(self,Recognizer):
         "The recognizer is interested on this agent"
         #can we acquire even if there is someone confirmed?
-        if self.completed and compatibility_policy.result(self.recognizer_complete,Recognizer) != True:
+        if self.completed and self.compatibility_policy.result(self.recognizer_complete,Recognizer) != True:
             return False
         else:
             self.recognizers_acquired.append(Recognizer)
@@ -65,8 +65,9 @@ class Agent:
         if Recognizer == self.recognizer_complete:
             print "DISCARD"
             import traceback
-            traceback.print_stack()
+            #traceback.print_stack()
             self.recognizer_complete = None
+            self.completed = False
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
         elif Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
@@ -77,6 +78,7 @@ class Agent:
     def _can_confirm(self):
         "Decides if self.recognizer_complete can be confirmed"
         if not self.recognizer_complete: return False
+        if self.completed: return False
         if not self.recognizers_acquired: return True
         for r in self.recognizers_acquired:
             if self.compatibility_policy.result(self.recognizer_complete,r) != True:
@@ -93,8 +95,8 @@ class Agent:
             return
         elif self.recognizer_complete:
             self.recognizer_complete.safe_fail()
-            print "COMPLETED BY SOMEONE"
             self.recognizer_complete = None
+            self.completed = False
         
         self.recognizer_complete = Recognizer
         if Recognizer in self.recognizers_acquired:

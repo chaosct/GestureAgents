@@ -8,7 +8,8 @@ sys.path.append('../..')
 import GestureAgents.Screen as Screen
 #from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
-from RecognizerMoveZoom import RecognizerMoveZoom
+from RecognizerMove import RecognizerMove
+from RecognizerZoomRotate import RecognizerZoomRotate
 import GestureAgents.Render
 import numpy as np
 import transformations as tr
@@ -35,20 +36,12 @@ def loadImage(image):
 class MapApp:
     def __init__(self):
         Screen.ScreenDraw.register(MapApp.draw,self)
-        #self.surface = pygame.Surface(GestureAgents.Screen.size,flags=pygame.locals.SRCALPHA)
-        #pygame.draw.line(self.surface, (255,255,255) , (50,50), (100,100), 5)
-        #AppRecognizer(RecognizerStick).newAgent.register(MapApp.newAgentStick,self)
-        #AppRecognizer(RecognizerPaint).newAgent.register(MapApp.newAgentPaint,self)
-        #AppRecognizer(RecognizerDoubleTap).newAgent.register(MapApp.newAgentDoubleTap,self)
-        #AppRecognizer(RecognizerTap).newAgent.register(MapApp.newAgentTap,self)
-        #AppRecognizer(TuioCursorEvents).newAgent.register(MapApp.newAgentCursor,self)
-        AppRecognizer(RecognizerMoveZoom).newAgent.register(MapApp.newAgentMoveZoom,self)
-        #self.button = (400,400)
-        #self.buttoncolor = (0,100,255)
+        AppRecognizer(RecognizerMove).newAgent.register(MapApp.newAgentMove,self)
+        AppRecognizer(RecognizerZoomRotate).newAgent.register(MapApp.newAgentZoomRotate,self)
         self.texname = "earth-map-big.jpg"
         self.texture = None
         self.tmatrix = tr.identity_matrix()
-        self.movezoom = None
+        self.Move = None
     
     def load_texture(self):
         self.texture, self.texturew, self.textureh = loadImage(self.texname)
@@ -79,30 +72,44 @@ class MapApp:
         GL.glPopMatrix()
 
     
-    def newAgentMoveZoom(self,MZoom):
-        #if not self.movezoom:
-        print 'eee'
-        MZoom.newMoveZoom.register(MapApp.newMoveZoom,self)
+    def newAgentMove(self,Move):
+        #if not self.Move:
+        Move.newMove.register(MapApp.newMove,self)
     
-    def newMoveZoom(self,MZoom):
-        self.movezoom = MZoom
-        MZoom.newTranslation.register(MapApp.newTranslation,self)
-        MZoom.endMoveZoom.register(MapApp.endMoveZoom,self)
-        print 'aaa'
+    def newAgentZoomRotate(self,ZRotate):
+        ZRotate.newZoomRotate.register(MapApp.newZoomRotate,self)
     
-    def endMoveZoom(self,MZoom):
-        #if MZoom == self.movezoom:
-        print 'bbb'
-        self.movezoom = None
+    def newMove(self,Move):
+        self.Move = Move
+        Move.newTranslation.register(MapApp.newTranslation,self)
+        Move.endMove.register(MapApp.endMove,self)
+    
+    def newZoomRotate(self,ZRotate):
+        ZRotate.newScale.register(MapApp.newScale,self)
+        #ZRotate.newRotation.register(MapApp.newRotation,self)
+        #ZRotate.endZoom.register(MapApp.newRotation,self)
+    
+    def endMove(self,MZoom):
+        #if MZoom == self.Move:
+        self.Move = None
     
     def newTranslation(self,MZoom):
         #print MZoom.translation
         #self.tmatrix = tr.concatenate_matrices(tr.translation_matrix(list(MZoom.translation)+[0]),self.tmatrix)
         self.tmatrix = tr.translation_matrix(list(MZoom.translation)+[0]).transpose().dot(self.tmatrix)
-        
-        
+    
+    def newScale(self,MZoom):
+        print "rotate"
+
+from GestureAgents.Agent import Agent        
+@Agent.compatibility_policy.rule(0)
+def zoom_over_move(r1,r2):
+    if type(r1) == RecognizerMove and type(r2) == RecognizerZoomRotate:
+        return True
+
 if __name__ == "__main__":
     import GestureAgents
-    RecognizerMoveZoom()
+    RecognizerMove()
+    RecognizerZoomRotate()
     app = MapApp()
     GestureAgents.run_apps()
