@@ -27,6 +27,7 @@ class TuioAgentGenerator:
                 del self.cursors[c]
                 a = self.agents[c]
                 a.removeCursor.call(a)
+                a.finish()
                 del self.agents[c]
         #send new info
         for c,content in cursors.iteritems():
