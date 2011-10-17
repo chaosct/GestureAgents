@@ -9,17 +9,17 @@ import sys
 sys.path.append('../..')
 
 import GestureAgents.Screen
-from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
+from GestureAgents.Gestures import RecognizerStick, RecognizerDoubleTap, RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 import GestureAgents.Render
+from GestureAgents.Tuio import TuioCursorEvents
 
 class PaintingApp:
     def __init__(self):
         GestureAgents.Screen.ScreenDraw.register(PaintingApp.draw,self)
         self.surface = pygame.Surface(GestureAgents.Screen.size,flags=pygame.locals.SRCALPHA)
-        #pygame.draw.line(self.surface, (255,255,255) , (50,50), (100,100), 5)
         AppRecognizer(RecognizerStick).newAgent.register(PaintingApp.newAgentStick,self)
-        AppRecognizer(RecognizerPaint).newAgent.register(PaintingApp.newAgentPaint,self)
+        AppRecognizer(TuioCursorEvents).newAgent.register(PaintingApp.newAgentPaint,self)
         AppRecognizer(RecognizerDoubleTap).newAgent.register(PaintingApp.newAgentDoubleTap,self)
         AppRecognizer(RecognizerTap).newAgent.register(PaintingApp.newAgentTap,self)
         self.button = (400,400)
@@ -35,8 +35,7 @@ class PaintingApp:
         
     def newAgentPaint(self,agent):
         #context here
-        agent.newPaint.register(PaintingApp.event_new_paint,self)
-        agent.updatePaint.register(PaintingApp.event_painting,self)
+        agent.updateCursor.register(PaintingApp.event_painting,self)
     
     def newAgentStick(self,agent):
         #context here
@@ -52,10 +51,6 @@ class PaintingApp:
     
     def event_painting(self,Point):
         pygame.draw.circle(self.surface, (255,100,100) , map(int,Point.pos), 10, 0)
-    
-    def event_new_paint(self,Paint):
-        for p in Paint.previousPoints:
-            pygame.draw.circle(self.surface, (255,100,100) , map(int,p), 10, 0)
     
     def event_new_dtap(self,Tap):
         #pygame.draw.circle(self.surface, (0,255,100) , map(int,Tap.pos), 10, 0)
