@@ -40,6 +40,7 @@ class PolicyRuleset(object):
     
     def add_rule(self,rule, priority=0):
         self._policies.setdefault(priority,[]).append(rule)
+        return rule
     
     def __repr__(self):
         from StringIO import StringIO
