@@ -52,6 +52,7 @@ class RecognizerZoomRotate(Recognizer):
         self.acquire(self.cursor2)
         self.register_event(self.cursor2.removeCursor,RecognizerZoomRotate.EventRemoveCursorpre)
         self.complete()
+        self.fail_all_others()
         
     def execute(self):
         self.unregister_all()
