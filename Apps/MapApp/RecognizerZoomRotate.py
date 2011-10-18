@@ -76,14 +76,17 @@ class RecognizerZoomRotate(Recognizer):
         cursor2npos = self.cursor2pos
         if Cursor == self.cursor1:
             cursor1npos = Cursor.pos
+            self.agent.pivot = cursor2npos
         elif Cursor == self.cursor2:
             cursor2npos = Cursor.pos
+            self.agent.pivot = cursor1npos
         dx,dy = [self.cursor2pos[n] - self.cursor1pos[n] for n in (0,1)]
         ndx,ndy = [cursor2npos[n] - cursor1npos[n] for n in (0,1)]
         a = math.atan2(dy,dx)
         na = math.atan2(ndy,ndx)
         dist = math.sqrt(dx*dx+dy*dy)
         ndist = math.sqrt(ndx*ndx+ndy*ndy)
+        
         
         self.agent.rotation = (na-a)
         self.agent.scale = (ndist/dist)
