@@ -115,7 +115,7 @@ def zoom_over_move(r1,r2):
 
 if __name__ == "__main__":
     import GestureAgents
-    RecognizerMove()
-    RecognizerZoomRotate()
+    load_recognizer(RecognizerMove)
+    load_recognizer(RecognizerZoomRotate)
     app = MapApp()
     GestureAgents.run_apps()
