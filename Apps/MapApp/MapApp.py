@@ -14,6 +14,7 @@ import numpy as np
 import transformations as tr
 import pygame.image
 import OpenGL.GL as GL
+from GestureAgents.Gestures import load_recognizer
 
 def loadImage(image):
     textureSurface = pygame.image.load(image)
@@ -103,6 +104,6 @@ class MapApp:
         
 if __name__ == "__main__":
     import GestureAgents
-    RecognizerMoveZoom()
+    load_recognizer(RecognizerMoveZoom)
     app = MapApp()
     GestureAgents.run_apps()
