@@ -14,6 +14,7 @@ _current_module = sys.modules[__name__]
 
 _modules = [__name__+'.'+os.path.splitext(f)[0] for f in os.listdir(_DIR) if f.endswith('.py') and os.path.splitext(f)[0] != os.path.splitext(_FNAME)[0]]
 recognizers = []
+recognizers_loaded = {}
 
 for mm in _modules:
     __import__(mm)
@@ -25,5 +26,10 @@ for mm in _modules:
 
 def load_all():
     for c in recognizers:
-        c()
+        load_recognizer(c)
 
+
+def load_recognizer(r):
+    if r not in recognizers_loaded:
+        recognizers_loaded[r]=r()
+    return recognizers_loaded[r]
