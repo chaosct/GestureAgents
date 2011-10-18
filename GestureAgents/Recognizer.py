@@ -24,8 +24,6 @@ class Recognizer(EventClient):
         #we die but not fail
         assert(not self.agentsAcquired)
         for a in self.agentsConfirmed:
-            #TODO: that shouldn't do discard, it should recover the agent for further use bu another Recognizer
-            #using newAgent
             a.discard(self)
         self.unregister_all()
         self.agent.owners.remove(self) #removing a complex reference cycle preventing gc
@@ -55,6 +53,7 @@ class Recognizer(EventClient):
         raise AgentFailedException()
     
     def acquire(self,agent):
+        #TODO: define a way to release agents also
         if self.failed: return 
         if agent.acquire(self):
             self.agentsAcquired.append(agent)
