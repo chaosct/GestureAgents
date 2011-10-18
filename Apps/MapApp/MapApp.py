@@ -86,7 +86,7 @@ class MapApp:
     
     def newZoomRotate(self,ZRotate):
         ZRotate.newScale.register(MapApp.newScale,self)
-        #ZRotate.newRotation.register(MapApp.newRotation,self)
+        ZRotate.newRotation.register(MapApp.newRotation,self)
         #ZRotate.endZoom.register(MapApp.newRotation,self)
     
     def endMove(self,MZoom):
@@ -96,10 +96,15 @@ class MapApp:
     def newTranslation(self,MZoom):
         #print MZoom.translation
         #self.tmatrix = tr.concatenate_matrices(tr.translation_matrix(list(MZoom.translation)+[0]),self.tmatrix)
-        self.tmatrix = tr.translation_matrix(list(MZoom.translation)+[0]).transpose().dot(self.tmatrix)
+        self.tmatrix = self.tmatrix.dot(tr.translation_matrix(list(MZoom.translation)+[0]).transpose())
+    
+    def newRotation(self,MZoom):
+        pivot = list(MZoom.pivot)+[0]
+        self.tmatrix = self.tmatrix.dot(tr.rotation_matrix(MZoom.rotation,[0, 0, 1],pivot).transpose())
     
     def newScale(self,MZoom):
-        print "rotate"
+        pivot = list(MZoom.pivot)+[0]
+        self.tmatrix = self.tmatrix.dot(tr.scale_matrix(MZoom.scale,pivot).transpose())
 
 from GestureAgents.Agent import Agent        
 @Agent.compatibility_policy.rule(0)
