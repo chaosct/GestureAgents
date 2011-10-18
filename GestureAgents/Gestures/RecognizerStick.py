@@ -87,7 +87,7 @@ class RecognizerStick (Recognizer):
         self.finish()
     
     def make_StickAgent(self):
-        a = Agent(("newStick",))
+        a = Agent(("newStick",),self)
         a.owners.append(self)
         return a
     

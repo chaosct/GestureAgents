@@ -32,15 +32,18 @@ class Agent:
     #finish another gesture to complete.
     compatibility_policy = PolicyRuleset()
     
-    def __init__(self,eventnames):
-        "eventnames is a list of names that will become member events. finishAgent will allways be created."
-        #TODO: newEvent when done
+    def __init__(self,eventnames,creator):
+        """eventnames is a list of names that will become member events. finishAgent will allways be created.
+        creator is a class or instance with newAgent event to be called when recycling this agent."""
         self.recognizers_acquired = []
         self.recognizer_complete = None
         self.events = {}
         self.owners = []
+        self.newAgent = creator.newAgent
         #is this agent having a confirmed recognizer?
         self.completed = False
+        #is this agent recycled?
+        self.recycled = False
         for ename in list(eventnames)+["finishAgent"]:
             self.events[ename]=Event()
             setattr(self,ename,self.events[ename])
@@ -60,20 +63,25 @@ class Agent:
             
     def discard(self,Recognizer):
         """The recognizer is no longer interested in this agent.
-        This should occur after acquiring the agent but not after
-        completing it."""
+        This should occur after acquiring the agent. If it happens
+        after confirming, the agent will be recycled."""
         if Recognizer == self.recognizer_complete:
             print "DISCARD"
             import traceback
             #traceback.print_stack()
             self.recognizer_complete = None
-            self.completed = False
+            if self.completed:
+                self.completed = False
+                self.recycled = True
+                self.newAgent(self)
+                
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
         elif Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
             if self._can_confirm():
                 self.recognizer_complete.confirm(self)
                 self.completed = True
+        
     
     def _can_confirm(self):
         "Decides if self.recognizer_complete can be confirmed"

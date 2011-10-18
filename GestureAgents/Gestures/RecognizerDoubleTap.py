@@ -87,7 +87,7 @@ class RecognizerDoubleTap(Recognizer):
         return math.sqrt(dx**2 + dy**2)
     
     def make_DoubleTapAgent(self):
-        a =  Agent(("newDoubleTap",))
+        a =  Agent(("newDoubleTap",),self)
         a.owners.append(self)
         return a
         

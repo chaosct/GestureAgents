@@ -7,9 +7,9 @@ from Agent import Agent
 from Events import Event
 
 class FakeAgent(Agent):
-    def __init__(self,original):
+    def __init__(self,original,creator):
         self.original_agent = original
-        Agent.__init__(self,list(original.events))
+        Agent.__init__(self,list(original.events),creator)
         
     def __getattr__(self,attrname):
         return getattr(self.original_agent,attrname)
@@ -63,7 +63,7 @@ class AppRecognizer(Recognizer):
                 self.agent.events[event_name](self.agent)
     
     def _makeAgentAgent(self,agent):
-        a =  FakeAgent(agent)
+        a =  FakeAgent(agent,self)
         a.owners.append(self)
         return a
     

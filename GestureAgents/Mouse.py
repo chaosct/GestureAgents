@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
+#DEPRECATED!!
+
 from Events import Event
 from Agent import Agent
 from pygame.locals import *

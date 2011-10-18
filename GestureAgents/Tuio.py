@@ -69,4 +69,4 @@ class TuioAgentGenerator:
     @staticmethod
     def makeCursorAgent():
         evts = ('newCursor','updateCursor','removeCursor')
-        return Agent(evts)
+        return Agent(evts,TuioCursorEvents)
