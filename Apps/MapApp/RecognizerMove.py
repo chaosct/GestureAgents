@@ -24,7 +24,10 @@ class RecognizerMove(Recognizer):
         if not self.agent.is_someone_subscribed():
             self.fail()
         self.unregister_all()
-        self.register_event(Cursor.newCursor,RecognizerMove.EventNewCursor)
+        if Cursor.recycled:
+            self.EventNewCursor(Cursor)
+        else:
+            self.register_event(Cursor.newCursor,RecognizerMove.EventNewCursor)
     
     def EventNewCursor(self,Cursor):
         self.cursor = Cursor
