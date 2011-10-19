@@ -17,7 +17,7 @@ class Recognizer(EventClient):
         self.failed = False
         self.agent = None
         self.executed = False
-        self.parent = False
+        #self.parent = False
     
     def finish(self):
         self.failed=True
@@ -86,7 +86,7 @@ class Recognizer(EventClient):
             d.agent = self.agent
             self.agent.owners.append(d)
         d.executed = self.executed
-        d.parent = self.parent
+        #d.parent = self.parent
     
     def is_pristine(self):
         return ( len(self.agentsAcquired) + len(self.agentsConfirmed) ) == 0
@@ -121,7 +121,7 @@ def newHypothesis(f):
     def newHipothesisAndRun(self,*args,**kwargs):
         if self.is_someone_interested():
             d = self.duplicate()
-            self.parent = d
+            #self.parent = d
             f(self,*args,**kwargs)
         elif not self.is_pristine():
             self.safe_fail()
