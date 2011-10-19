@@ -15,6 +15,7 @@ import Agent
 class MemSummary:
     def digest(self):
         import gc
+        gc.collect()
         from Recognizer import Recognizer
         from collections import Counter
         counter = Counter(type(obj) for obj in gc.get_objects() if isinstance(obj, Recognizer))
@@ -24,10 +25,13 @@ class MemSummary:
             if c > 100: import pdb; pdb.set_trace()
         
         print
-          
-        print "%d Failed" % len([obj for obj in gc.get_objects() if isinstance(obj, Recognizer) and obj.failed])
+        lfailed = [obj for obj in gc.get_objects() if isinstance(obj, Recognizer) and obj.failed]
+        print "%d Failed" % len(lfailed)
         print "="*30
+        #import objgraph
+        #objgraph.show_backrefs(lfailed, filename='failed.png')
         Reactor.schedule_after(2,self,MemSummary.digest)
+        
 
 running = False
 
