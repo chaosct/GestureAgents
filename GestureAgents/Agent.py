@@ -112,6 +112,7 @@ class Agent:
         self.recognizer_complete = Recognizer
         if Recognizer in self.recognizers_acquired:
             self.recognizers_acquired.remove(Recognizer)
+        #According to the policy we remove acquisitions
         if self._can_confirm():
             self.recognizer_complete.confirm(self)
             self.completed = True

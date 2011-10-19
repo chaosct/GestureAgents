@@ -121,8 +121,6 @@ class MapApp:
         self.Move = None
     
     def newTranslation(self,MZoom):
-        #print MZoom.translation
-        #self.tmatrix = tr.concatenate_matrices(tr.translation_matrix(list(MZoom.translation)+[0]),self.tmatrix)
         self.tmatrix = self.tmatrix.dot(tr.translation_matrix(list(MZoom.translation)+[0]).transpose())
     
     def newRotation(self,MZoom):
