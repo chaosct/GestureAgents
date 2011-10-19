@@ -7,7 +7,7 @@ sys.path.append('../..')
 
 import GestureAgents.Screen as Screen
 #from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
-from GestureAgents.Gestures import RecognizerStick
+from GestureAgents.Gestures import RecognizerStick, RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
@@ -41,10 +41,12 @@ class MapApp:
         AppRecognizer(RecognizerMove).newAgent.register(MapApp.newAgentMove,self)
         AppRecognizer(RecognizerZoomRotate).newAgent.register(MapApp.newAgentZoomRotate,self)
         AppRecognizer(RecognizerStick).newAgent.register(MapApp.newAgentStick,self)
+        AppRecognizer(RecognizerTap).newAgent.register(MapApp.newAgentTap,self)
         self.texname = "earth-map-big.jpg"
         self.texture = None
         self.tmatrix = tr.identity_matrix()
         self.Move = None
+        self.points_of_interest = []
     
     def load_texture(self):
         self.texture, self.texturew, self.textureh = loadImage(self.texname)
@@ -72,6 +74,13 @@ class MapApp:
         GL.glTexCoord2f(1, 1); GL.glVertex2f(self.texturew, 0)
         GL.glEnd()
         GL.glDisable(GL.GL_TEXTURE_2D)
+        
+        for x,y in self.points_of_interest:
+            GL.glBegin(GL.GL_QUADS)
+            for xx, yy in [(x+dx,y+dy) for dx,dy in ((10,10),(10,-10),(-10,-10),(-10,10))]:
+                GL.glVertex2f(xx,yy)
+            GL.glEnd()
+        
         GL.glPopMatrix()
 
     
@@ -84,6 +93,15 @@ class MapApp:
     
     def newAgentStick(self,Stick):
         Stick.newStick.register(MapApp.newStick,self)
+        
+    def newAgentTap(self,Tap):
+        posinmap = tr.inverse_matrix(self.tmatrix).transpose().dot(Tap.pos+(0,1))
+        if 0 < posinmap[0] < self.texturew and 0 < posinmap[1] < self.textureh:
+            Tap.newTap.register(MapApp.newTap,self)
+    
+    def newTap(self,Tap):
+        posinmap = tr.inverse_matrix(self.tmatrix).transpose().dot(Tap.pos+(0,1))
+        self.points_of_interest.append(posinmap[0:2])
     
     def newStick(self,Stick):
         self.tmatrix = tr.identity_matrix()
@@ -119,6 +137,11 @@ from GestureAgents.Agent import Agent
 @Agent.compatibility_policy.rule(0)
 def zoom_over_move(r1,r2):
     if type(r1) == RecognizerMove and type(r2) == RecognizerZoomRotate:
+        return True
+      
+@Agent.compatibility_policy.rule(0)
+def zoom_over_stick(r1,r2):
+    if type(r1) == RecognizerStick and type(r2) == RecognizerZoomRotate:
         return True
 
 if __name__ == "__main__":
