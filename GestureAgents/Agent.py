@@ -99,7 +99,7 @@ class Agent:
     def _complete(self,Recognizer):
         assert(Recognizer is not self.recognizer_complete)
         # According to the policy we choose the best Recognizer
-        print "CCC", self, type(Recognizer), type(self.recognizer_complete)
+        #print "CCC", self, type(Recognizer), type(self.recognizer_complete)
         if self.completion_policy.result(self.recognizer_complete,Recognizer) == False:
             #Policy doesn't accept change
             Recognizer.safe_fail()
