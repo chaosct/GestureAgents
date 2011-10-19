@@ -102,7 +102,7 @@ class Agent:
             Recognizer.safe_fail()
             return
         elif self.recognizer_complete:
-            self.recognizer_complete.safe_fail()
+            self.recognizer_complete.safe_fail("Displaced by another recognizer: "+str(Recognizer))
             self.recognizer_complete = None
             self.completed = False
         
