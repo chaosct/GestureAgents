@@ -91,7 +91,8 @@ class Agent:
         if self.completed: return False
         if not self.recognizers_acquired: return True
         for r in self.recognizers_acquired:
-            if self.compatibility_policy.result(self.recognizer_complete,r) != True:
+            if self.compatibility_policy.result(self.recognizer_complete,r) != True \
+            and self.compatibility_policy.result(r, self.recognizer_complete) != True:
                 return False
         return True
         
