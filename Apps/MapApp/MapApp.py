@@ -7,6 +7,7 @@ sys.path.append('../..')
 
 import GestureAgents.Screen as Screen
 #from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
+from GestureAgents.Gestures import RecognizerStick
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
@@ -39,6 +40,7 @@ class MapApp:
         Screen.ScreenDraw.register(MapApp.draw,self)
         AppRecognizer(RecognizerMove).newAgent.register(MapApp.newAgentMove,self)
         AppRecognizer(RecognizerZoomRotate).newAgent.register(MapApp.newAgentZoomRotate,self)
+        AppRecognizer(RecognizerStick).newAgent.register(MapApp.newAgentStick,self)
         self.texname = "earth-map-big.jpg"
         self.texture = None
         self.tmatrix = tr.identity_matrix()
@@ -79,6 +81,12 @@ class MapApp:
     
     def newAgentZoomRotate(self,ZRotate):
         ZRotate.newZoomRotate.register(MapApp.newZoomRotate,self)
+    
+    def newAgentStick(self,Stick):
+        Stick.newStick.register(MapApp.newStick,self)
+    
+    def newStick(self,Stick):
+        self.tmatrix = tr.identity_matrix()
     
     def newMove(self,Move):
         self.Move = Move
