@@ -143,3 +143,16 @@ def completed_win(recognizer1,recognizer2):
         return False
     if not recognizer1.executed and recognizer2.executed:
         return True
+
+@Agent.completion_policy.rule(-49)
+def completed_win(recognizer1,recognizer2):
+    "Wins the recognizer with more agents"
+    la1 = len(recognizer1.agentsAcquired)
+    lr1 = len(recognizer1.agentsConfirmed)
+    la2 = len(recognizer2.agentsAcquired)
+    lr2 = len(recognizer2.agentsConfirmed)
+    if la1+lr1 > la2+lr2:
+        return False
+    elif la1+lr1 < la2+lr2:
+        return True
+
