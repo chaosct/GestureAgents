@@ -21,12 +21,12 @@ class RecognizerStick (Recognizer):
         
     @newHypothesis
     def EventNewAgent(self,Cursor):
-        if Cursor.ontable:
-            self.fail()
+        if Cursor.recycled:
+            self.fail(cause="Agent is recycled")
         self.agent = self.make_StickAgent()
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail(cause="Noone interested")
         else:
             self.unregister_all()
             self.register_event(Cursor.newCursor,RecognizerStick.EventNewCursor)
@@ -44,7 +44,7 @@ class RecognizerStick (Recognizer):
     def EventMoveCursor(self,Cursor):
         self.positions.append(Cursor.pos)
         if not self.is_line():
-            self.fail()
+            self.fail(cause="Is not line")
             
     def is_line(self):
         first = self.positions[0]
@@ -56,7 +56,6 @@ class RecognizerStick (Recognizer):
         for p in self.positions:
             d = self.pdis(first,last,p)
             if abs(d) > maxdist:
-                print abs(d), "massa distancia"
                 return False
         return True
             
@@ -69,7 +68,7 @@ class RecognizerStick (Recognizer):
         if self.is_line() and dist > 30:
             self.complete()
         else:
-            self.fail()
+            self.fail(cause="Is not line")
     
     def duplicate(self):
         d = RecognizerStick()

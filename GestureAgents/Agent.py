@@ -33,7 +33,7 @@ class Agent:
     compatibility_policy = PolicyRuleset()
     
     def __init__(self,eventnames,creator):
-        """eventnames is a list of names that will become member events. finishAgent will allways be created.
+        """eventnames is a list of names that will become member events.
         creator is a class or instance with newAgent event to be called when recycling this agent."""
         self.recognizers_acquired = []
         self.recognizer_complete = None
@@ -44,6 +44,7 @@ class Agent:
         self.completed = False
         #is this agent recycled?
         self.recycled = False
+        self.finished = False
         for ename in list(eventnames)+["finishAgent"]:
             self.events[ename]=Event()
             setattr(self,ename,self.events[ename])
@@ -70,9 +71,10 @@ class Agent:
             import traceback
             #traceback.print_stack()
             self.recognizer_complete = None
-            if self.completed:
+            if self.completed and not self.finished:
                 self.completed = False
                 self.recycled = True
+                print "Recycling!:",type(Recognizer)
                 self.newAgent(self)
                 
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
@@ -125,12 +127,13 @@ class Agent:
     
     def fail(self):
         "The Recognizer owner of this agent fails before really existing, so All the recognizers based on it must fail"
+        if self.finished: return
+        for r in self._get_recognizers_subscribed():
+            r.safe_fail()
+    
+    def _get_recognizers_subscribed(self):
         from Recognizer import Recognizer
-        l = set([r[1] for ename,event in self.events.iteritems() for r in event.registered])
-        #print "Agent failed, killing %d things:" % len(l)
-        for r in l:
-            if isinstance(r,Recognizer):
-                r.safe_fail()
+        return [r for r in set([r[1] for ename,event in self.events.iteritems() for r in event.registered]) if isinstance(r,Recognizer)]
     
     def fail_all_others(self,winner):
         Reactor.run_after(lambda winner=winner,self=self: self._fail_all_others(winner))
