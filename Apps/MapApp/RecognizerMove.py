@@ -61,6 +61,6 @@ class RecognizerMove(Recognizer):
     def duplicate(self):
         d = RecognizerMove()
         Recognizer.copy_to(self,d)
-        d.cursor1 = self.cursor
-        d.cursor1pos = self.cursorpos
+        d.cursor = self.cursor
+        d.cursorpos = self.cursorpos
         return d
