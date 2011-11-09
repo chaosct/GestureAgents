@@ -77,6 +77,7 @@ class Agent:
                 self.completed = False
                 self.recycled = True
                 print "Recycling!:",type(Recognizer)
+                #we have to fail all remaining subscribbed recognizers
                 for r in self._get_recognizers_subscribed():
                     r.safe_fail(cause="registered to an Agent being recycled")
                 self.newAgent(self)
