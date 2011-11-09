@@ -60,6 +60,7 @@ class Agent:
     
     def finish(self):
         "The owner of the event will not generate more events"
+        self.finished = True
         self.finishAgent(self)
             
     def discard(self,Recognizer):
