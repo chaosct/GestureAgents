@@ -39,6 +39,7 @@ class Agent:
         self.recognizer_complete = None
         self.events = {}
         self.owners = []
+        self.name = str(creator)+" Agent"
         self.newAgent = creator.newAgent
         #is this agent having a confirmed recognizer?
         self.completed = False
@@ -154,7 +155,9 @@ class Agent:
             else:
                 #print "fail_all_others :", r, "is not target"
                 pass
-        
+                
+    def __repr__(self):
+        return self.name
 
 #default policies
 
