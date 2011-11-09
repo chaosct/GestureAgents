@@ -20,6 +20,7 @@ class Recognizer(EventClient):
         #self.parent = False
     
     def finish(self):
+        assert(self.failed==False)
         self.failed=True
         self.unregister_all()
         #we die but not fail
@@ -38,6 +39,7 @@ class Recognizer(EventClient):
     #    Reactor.run_after(lambda self=self: self._fail())
         
     def fail(self,cause="Unknown"):
+        assert(self.failed==False)
         self.failed=True
         for a in self.agentsAcquired+self.agentsConfirmed:
             a.discard(self)
