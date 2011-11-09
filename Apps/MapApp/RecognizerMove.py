@@ -25,9 +25,13 @@ class RecognizerMove(Recognizer):
             self.fail()
         self.unregister_all()
         if Cursor.recycled:
+            self.register_event(Cursor.finishAgent,RecognizerMove.EventRecycledFail)
             self.EventNewCursor(Cursor)
         else:
             self.register_event(Cursor.newCursor,RecognizerMove.EventNewCursor)
+    
+    def EventRecycledFail(self,Cursor):
+        self.fail("Zombie event")
     
     def EventNewCursor(self,Cursor):
         self.cursor = Cursor

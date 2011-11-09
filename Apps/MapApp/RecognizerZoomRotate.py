@@ -29,9 +29,13 @@ class RecognizerZoomRotate(Recognizer):
             self.fail()
         self.unregister_all()
         if Cursor.recycled:
+            self.register_event(Cursor.finishAgent,RecognizerZoomRotate.EventRecycledFail)
             self.EventNewCursor1(Cursor)
         else:
             self.register_event(Cursor.newCursor,RecognizerZoomRotate.EventNewCursor1)
+    
+    def EventRecycledFail(self,Cursor):
+        self.fail("Zombie event")
     
     def EventNewCursor1(self,Cursor):
         self.cursor1 = Cursor
