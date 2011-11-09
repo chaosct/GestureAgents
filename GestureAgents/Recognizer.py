@@ -58,7 +58,7 @@ class Recognizer(EventClient):
         if agent.acquire(self):
             self.agentsAcquired.append(agent)
         else:
-            self.fail()
+            self.fail("Acquire failed")
             
     def complete(self):
         if self.failed: return
@@ -124,7 +124,7 @@ def newHypothesis(f):
             #self.parent = d
             f(self,*args,**kwargs)
         elif not self.is_pristine():
-            self.safe_fail()
+            self.safe_fail("Noone interested")
     return newHipothesisAndRun
     
     

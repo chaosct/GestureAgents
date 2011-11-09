@@ -78,7 +78,7 @@ class Agent:
                 self.recycled = True
                 print "Recycling!:",type(Recognizer)
                 for r in self._get_recognizers_subscribed():
-                    r.safe_fail()
+                    r.safe_fail(cause="registered to an Agent being recycled")
                 self.newAgent(self)
                 
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
@@ -106,7 +106,7 @@ class Agent:
         #print "CCC", self, type(Recognizer), type(self.recognizer_complete)
         if self.completion_policy.result(self.recognizer_complete,Recognizer) == False:
             #Policy doesn't accept change
-            Recognizer.safe_fail()
+            Recognizer.safe_fail("Policy doesn't accept change on complete")
             return
         elif self.recognizer_complete:
             self.recognizer_complete.safe_fail("Displaced by another recognizer: "+str(Recognizer))
@@ -135,7 +135,7 @@ class Agent:
         "The Recognizer owner of this agent fails before really existing, so All the recognizers based on it must fail"
         if self.finished: return
         for r in self._get_recognizers_subscribed():
-            r.safe_fail()
+            r.safe_fail("Agent failed: "+repr(self))
     
     def _get_recognizers_subscribed(self):
         from Recognizer import Recognizer

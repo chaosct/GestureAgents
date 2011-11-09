@@ -32,7 +32,7 @@ class AppRecognizer(Recognizer):
         self.newAgent(self.agent)
         self.otheragent = agent
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail("Noone interested")
         else:
             for ename,event in agent.events.iteritems():
                 ffff = lambda self,a,eventname=ename: self.enqueueEvent(a,eventname)

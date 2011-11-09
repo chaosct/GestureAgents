@@ -24,14 +24,14 @@ class RecognizerTap(Recognizer):
     def EventNewAgent(self,Cursor):
         # Am I interested on this Agent?
         # We don't want recycled Agents
-        if Cursor.ontable:
-            self.fail()
+        if Cursor.recycled:
+            self.fail("Cursor is recycled")
         # Let's ask our subscribbers
         self.agent = self.make_TapAgent()
         self.agent.pos = Cursor.pos
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail("Noone interested")
         else:
             self.unregister_event(self.cursorEvents.newAgent)
             self.register_event(Cursor.newCursor,RecognizerTap.EventNewCursor)
@@ -48,7 +48,7 @@ class RecognizerTap(Recognizer):
     
     def EventMoveCursor(self,Cursor):
         if self.dist(Cursor.pos,self.origin) > self.maxd:
-            self.fail()
+            self.fail("Cursor moved")
     
     def EventRemoveCursor(self,Cursor):
         self.cancel_expire()

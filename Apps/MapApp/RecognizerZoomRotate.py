@@ -26,7 +26,7 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.pos = self.agent.pos1
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail("Noone interested")
         self.unregister_all()
         if Cursor.recycled:
             self.EventNewCursor1(Cursor)
@@ -46,7 +46,7 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.pos = self.agent.pos2
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail("Noone interested")
         self.unregister_all()
         self.register_event(Cursor.newCursor,RecognizerZoomRotate.EventNewCursor2) 
         
@@ -72,7 +72,7 @@ class RecognizerZoomRotate(Recognizer):
     def EventRemoveCursorpre(self,Cursor):
         self.cursor1 = None
         self.cursor2 = None
-        self.fail()
+        self.fail(cause="Cursor removed")
     
     def EventUpdateCursor(self,Cursor):
         cursor1npos = self.cursor1pos

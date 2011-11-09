@@ -22,7 +22,7 @@ class RecognizerMove(Recognizer):
         self.agent.pos = Cursor.pos
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
-            self.fail()
+            self.fail("Noone interested")
         self.unregister_all()
         if Cursor.recycled:
             self.register_event(Cursor.finishAgent,RecognizerMove.EventRecycledFail)
