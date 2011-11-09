@@ -4,7 +4,7 @@
 from Events import Event, EventClient
 import Reactor
 
-class AgentFailedException(Exception):
+class RecognizerFailedException(Exception):
     pass
 
 class Recognizer(EventClient):
@@ -50,7 +50,7 @@ class Recognizer(EventClient):
             if not self.agent.owners:
                 self.agent.fail()
             self.agent = None
-        raise AgentFailedException()
+        raise RecognizerFailedException()
     
     def acquire(self,agent):
         #TODO: define a way to release agents also
@@ -106,7 +106,7 @@ class Recognizer(EventClient):
     def safe_fail(self,cause="Unknown"):
         try:
             self.fail(cause=cause)
-        except AgentFailedException:
+        except RecognizerFailedException:
             pass
     
     def expire_in(self,s):

@@ -19,11 +19,11 @@ class Event(object):
         self.registered.remove((f,i))
         
     def call(self,*args,**kwargs):
-        from Recognizer import AgentFailedException
+        from Recognizer import RecognizerFailedException
         for f,i in list(self.registered):
             try:
                 f(i,*args,**kwargs)
-            except AgentFailedException:
+            except RecognizerFailedException:
                 pass
     
     __call__ = call
