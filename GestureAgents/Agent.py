@@ -75,6 +75,8 @@ class Agent:
                 self.completed = False
                 self.recycled = True
                 print "Recycling!:",type(Recognizer)
+                for r in self._get_recognizers_subscribed():
+                    r.safe_fail()
                 self.newAgent(self)
                 
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"

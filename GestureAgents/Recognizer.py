@@ -21,11 +21,11 @@ class Recognizer(EventClient):
     
     def finish(self):
         self.failed=True
+        self.unregister_all()
         #we die but not fail
         assert(not self.agentsAcquired)
         for a in self.agentsConfirmed:
             a.discard(self)
-        self.unregister_all()
         self.agent.owners.remove(self) #removing a complex reference cycle preventing gc
         self.agent.finish()
         
