@@ -28,8 +28,13 @@ class MemSummary:
         lfailed = [obj for obj in gc.get_objects() if isinstance(obj, Recognizer) and obj.failed]
         print "%d Failed" % len(lfailed)
         print "="*30
+        #lfailed = None
+        #l = [obj for obj in gc.get_objects() if isinstance(obj, Recognizer)]
         #import objgraph
-        #objgraph.show_backrefs(lfailed, filename='failed.png')
+        #objgraph.show_backrefs(l, filename='failed.png',max_depth=5)
+        #for obj in l:
+        #    print obj
+        #    print obj.__dict__
         Reactor.schedule_after(2,self,MemSummary.digest)
         
 
