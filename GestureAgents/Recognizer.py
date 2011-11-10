@@ -8,7 +8,37 @@ class RecognizerFailedException(Exception):
     pass
 
 class Recognizer(EventClient):
+    """Class to be derived to make a Gesture Recognizer
     
+    Most of the methods of Recognizer are meant to be called
+    from a derived class on itself. There are, however some
+    methods that can be called from otside.
+    
+    Methods:
+        
+        General info:
+            is_pristine
+            is_someone_interested
+            
+        Reserved to be called by Agent:
+            safe_fail
+            confirm 
+    
+        Reserved to be called by a subclass:
+            finish
+            unregister_all
+            fail
+            acquire
+            complete
+            copy_to
+            fail_all_others
+            expire_in
+            cancel_expire
+    
+    Attributes:
+        agent: To be filled with the agent representing the gesture
+        
+    """
     def __init__(self):
         EventClient.__init__(self)
         self.agentsAcquired = []
