@@ -41,8 +41,8 @@ class Recognizer(EventClient):
     """
     def __init__(self):
         EventClient.__init__(self)
-        self.agentsAcquired = []
-        self.agentsConfirmed = []
+        self._agentsAcquired = []
+        self._agentsConfirmed = []
         #TODO: replace self.failed with self.died and self.failed to indicate different things?
         self.failed = False
         self.agent = None
@@ -54,8 +54,8 @@ class Recognizer(EventClient):
         self.failed=True
         self.unregister_all()
         #we die but not fail
-        assert(not self.agentsAcquired)
-        for a in self.agentsConfirmed:
+        assert(not self._agentsAcquired)
+        for a in self._agentsConfirmed:
             a.discard(self)
         self.agent.owners.remove(self) #removing a complex reference cycle preventing gc
         self.agent.finish()
@@ -71,10 +71,10 @@ class Recognizer(EventClient):
     def fail(self,cause="Unknown"):
         assert(self.failed==False)
         self.failed=True
-        for a in self.agentsAcquired+self.agentsConfirmed:
+        for a in self._agentsAcquired+self._agentsConfirmed:
             a.discard(self)
-        self.agentsAcquired = []
-        self.agentsConfirmed = []
+        self._agentsAcquired = []
+        self._agentsConfirmed = []
         self.unregister_all()
         # we have to fail only if we are the solely owner of self.agent.
         if self.agent:
@@ -88,28 +88,28 @@ class Recognizer(EventClient):
         #TODO: define a way to release agents also
         if self.failed: return 
         if agent.acquire(self):
-            self.agentsAcquired.append(agent)
+            self._agentsAcquired.append(agent)
         else:
             self.fail("Acquire failed")
             
     def complete(self):
         if self.failed: return
-        for a in self.agentsAcquired:
+        for a in self._agentsAcquired:
             a.complete(self)
             
     def confirm(self,agent):
         if self.failed: return
-        self.agentsAcquired.remove(agent)
-        self.agentsConfirmed.append(agent)
-        if not self.agentsAcquired:
+        self._agentsAcquired.remove(agent)
+        self._agentsConfirmed.append(agent)
+        if not self._agentsAcquired:
             self.execute()
             self.executed = True
         
     def copy_to(self,d):
         if self.failed: print "WARNING: copying a failed Recognizer!"
-        if self.agentsConfirmed and not self.executed: print "WARNING: copying a Recognizer in confirmation!"
+        if self._agentsConfirmed and not self.executed: print "WARNING: copying a Recognizer in confirmation!"
         d.unregister_all()
-        for a in self.agentsAcquired:
+        for a in self._agentsAcquired:
             d.acquire(a)
         EventClient.copy_to(self,d)
         Reactor.duplicate_instance(self,d)
@@ -121,7 +121,7 @@ class Recognizer(EventClient):
         #d.parent = self.parent
     
     def is_pristine(self):
-        return ( len(self.agentsAcquired) + len(self.agentsConfirmed) ) == 0
+        return ( len(self._agentsAcquired) + len(self._agentsConfirmed) ) == 0
     
     def is_someone_interested(self):
         for f,i in self.newAgent.registered:
@@ -132,7 +132,7 @@ class Recognizer(EventClient):
         return False
     
     def fail_all_others(self):
-        for a in self.agentsAcquired+self.agentsConfirmed:
+        for a in self._agentsAcquired+self._agentsConfirmed:
             a.fail_all_others(self)
     
     def safe_fail(self,cause="Unknown"):
@@ -179,10 +179,10 @@ def completed_win(recognizer1,recognizer2):
 @Agent.completion_policy.rule(-49)
 def completed_win(recognizer1,recognizer2):
     "Wins the recognizer with more agents"
-    la1 = len(recognizer1.agentsAcquired)
-    lr1 = len(recognizer1.agentsConfirmed)
-    la2 = len(recognizer2.agentsAcquired)
-    lr2 = len(recognizer2.agentsConfirmed)
+    la1 = len(recognizer1._agentsAcquired)
+    lr1 = len(recognizer1._agentsConfirmed)
+    la2 = len(recognizer2._agentsAcquired)
+    lr2 = len(recognizer2._agentsConfirmed)
     if la1+lr1 > la2+lr2:
         return False
     elif la1+lr1 < la2+lr2:
