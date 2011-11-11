@@ -11,6 +11,7 @@ import Tuio
 import Gestures
 import pygame.display
 import Agent
+from pygame.time import Clock
 
 class MemSummary:
     def digest(self):
@@ -50,6 +51,8 @@ def run_apps(debugMem=False):
     #sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
     sensors = (Tuio.TuioAgentGenerator(),)
 
+    clock = Clock()
+
     if Gestures.recognizers:
         print "Found %d gesture recognizers:" % len(Gestures.recognizers)
         for r in Gestures.recognizers:
@@ -87,4 +90,5 @@ def run_apps(debugMem=False):
                 s.update()
         Screen.ScreenDraw.call()
         pygame.display.flip()
+        clock.tick_busy_loop(30)
 
