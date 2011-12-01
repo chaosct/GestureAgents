@@ -4,7 +4,7 @@
 
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 from GestureAgents.Events import Event
-from GestureAgents.Tuio import TuioCursorEvents
+from GestureAgentsTUIO.Tuio import TuioCursorEvents
 from GestureAgents.Agent import Agent
 
 
@@ -66,3 +66,6 @@ class RecognizerMove(Recognizer):
         d.cursor = self.cursor
         d.cursorpos = self.cursorpos
         return d
+
+import GestureAgents.Gestures as Gestures
+Gestures.load_recognizer(RecognizerMove)

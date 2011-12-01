@@ -3,7 +3,7 @@
 
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 from GestureAgents.Events import Event
-from GestureAgents.Gestures.RecognizerTap import RecognizerTap
+from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.Agent import Agent
 import math
 
@@ -91,3 +91,7 @@ class RecognizerDoubleTap(Recognizer):
         
     def __repr__(self):
         return self.name
+        
+import GestureAgents.Gestures as Gestures
+Gestures.load_recognizer(RecognizerDoubleTap)
+

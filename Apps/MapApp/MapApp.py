@@ -7,7 +7,7 @@ sys.path.append('../..')
 
 import GestureAgents.Screen as Screen
 #from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
-from GestureAgents.Gestures import RecognizerStick, RecognizerTap
+from GestureAgentsTUIO.Gestures2D import RecognizerStick, RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
@@ -144,7 +144,5 @@ def zoom_over_stick(r1,r2):
 
 if __name__ == "__main__":
     import GestureAgents
-    load_recognizer(RecognizerMove)
-    load_recognizer(RecognizerZoomRotate)
     app = MapApp()
     GestureAgents.run_apps()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import GestureAgents.Tuio as Tuio
+import GestureAgentsTUIO.Tuio as Tuio
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
@@ -76,3 +76,6 @@ class RecognizerTap(Recognizer):
     def make_TapAgent(self):
         a = Agent(("newTap",),self)
         return a
+
+import GestureAgents.Gestures as Gestures
+Gestures.load_recognizer(RecognizerTap)

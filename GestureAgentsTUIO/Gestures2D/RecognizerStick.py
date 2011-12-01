@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-import GestureAgents.Tuio as Tuio
+import GestureAgentsTUIO.Tuio as Tuio
 from math import sqrt, fabs
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 from GestureAgents.Events import Event
@@ -96,3 +96,7 @@ class RecognizerStick (Recognizer):
         n = -t[1], t[0]                    # normal unit vector to ab
         ac = c[0]-a[0], c[1]-a[1]          # vector ac
         return fabs(ac[0]*n[0]+ac[1]*n[1]) # Projection of ac to n (the minimum distance)
+
+import GestureAgents.Gestures as Gestures
+Gestures.load_recognizer(RecognizerStick)
+

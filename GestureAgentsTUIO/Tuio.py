@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import GestureAgents.tuio as tuio
+import GestureAgentsTUIO.tuio as tuio
 from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
 import GestureAgents.Screen as Screen

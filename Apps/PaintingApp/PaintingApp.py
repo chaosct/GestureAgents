@@ -9,10 +9,10 @@ import sys
 sys.path.append('../..')
 
 import GestureAgents.Screen
-from GestureAgents.Gestures import RecognizerStick, RecognizerDoubleTap, RecognizerTap
+from GestureAgentsTUIO.Gestures2D import RecognizerStick, RecognizerDoubleTap, RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 import GestureAgents.Render
-from GestureAgents.Tuio import TuioCursorEvents
+from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
 class PaintingApp:
     def __init__(self):

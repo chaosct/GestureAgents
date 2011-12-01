@@ -4,7 +4,7 @@
 
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 from GestureAgents.Events import Event
-from GestureAgents.Tuio import TuioCursorEvents
+from GestureAgentsTUIO.Tuio import TuioCursorEvents
 from GestureAgents.Agent import Agent
 import math
 
@@ -125,3 +125,6 @@ class RecognizerZoomRotate(Recognizer):
         d.cursor2 = self.cursor2
         d.cursor2pos = self.cursor2pos
         return d
+
+import GestureAgents.Gestures as Gestures
+Gestures.load_recognizer(RecognizerZoomRotate)

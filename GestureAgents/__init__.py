@@ -6,7 +6,7 @@ import pygame, sys,os
 from pygame.locals import *
 import GestureAgents.Reactor as Reactor
 from GestureAgents.Render import initializeDisplay,calibrate,ConfKey
-import GestureAgents.Tuio as Tuio
+import GestureAgentsTUIO.Tuio as Tuio
 import GestureAgents.Gestures as Gestures
 import pygame.display
 import GestureAgents.Agent as Agent
@@ -49,11 +49,10 @@ def run_apps(debugMem=False):
 
     clock = Clock()
 
-    if Gestures.recognizers:
-        print "Found %d gesture recognizers:" % len(Gestures.recognizers)
+    if Gestures.recognizers_loaded:
+        print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
         for r in Gestures.recognizers:
             print "\t%s" % str(r)
-    Gestures.load_all()
 
     def input(events): 
         global running
