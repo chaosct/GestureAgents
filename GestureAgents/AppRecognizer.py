@@ -67,9 +67,8 @@ class AppRecognizer(Recognizer):
         return a
     
     def duplicate(self):
-        d = AppRecognizer(self.recognizer)
+        d = self.get_copy(self.recognizer)
         d.newAgent = self.newAgent
-        Recognizer.copy_to(self,d)
             
 
 #policy

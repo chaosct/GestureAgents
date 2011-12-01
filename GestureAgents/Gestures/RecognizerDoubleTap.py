@@ -70,8 +70,7 @@ class RecognizerDoubleTap(Recognizer):
         self.finish()
     
     def duplicate(self):
-        d = RecognizerDoubleTap()
-        Recognizer.copy_to(self,d)
+        d = self.get_copy()
         d.firstap = self.firstap
         d.secondtap = self.secondtap
         return d

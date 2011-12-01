@@ -68,8 +68,7 @@ class RecognizerTap(Recognizer):
         return math.sqrt(dx**2 + dy**2)
     
     def duplicate(self):
-        d = RecognizerTap()
-        Recognizer.copy_to(self,d)
+        d = self.get_copy()
         d.finger = self.finger
         d.origin = self.origin
         return d

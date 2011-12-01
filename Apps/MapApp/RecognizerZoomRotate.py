@@ -119,8 +119,7 @@ class RecognizerZoomRotate(Recognizer):
         return a
     
     def duplicate(self):
-        d = RecognizerZoomRotate()
-        Recognizer.copy_to(self,d)
+        d = self.get_copy()
         d.cursor1 = self.cursor1
         d.cursor1pos = self.cursor1pos
         d.cursor2 = self.cursor2

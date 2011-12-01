@@ -101,9 +101,10 @@ class Recognizer(EventClient):
             self.execute()
             self.executed = True
         
-    def copy_to(self,d):
+    def get_copy(self,*iargs,**ikwargs):
         if self.failed: print "WARNING: copying a failed Recognizer!"
         if self._agentsConfirmed and not self.executed: print "WARNING: copying a Recognizer in confirmation!"
+        d = self.__class__(*iargs,**ikwargs)
         d.unregister_all()
         for a in self._agentsAcquired:
             d.acquire(a)
@@ -115,6 +116,7 @@ class Recognizer(EventClient):
             self.agent.owners.append(d)
         d.executed = self.executed
         #d.parent = self.parent
+        return d
     
     def is_pristine(self):
         return ( len(self._agentsAcquired) + len(self._agentsConfirmed) ) == 0

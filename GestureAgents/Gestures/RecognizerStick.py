@@ -71,8 +71,7 @@ class RecognizerStick (Recognizer):
             self.fail(cause="Is not line")
     
     def duplicate(self):
-        d = RecognizerStick()
-        Recognizer.copy_to(self,d)
+        d = self.get_copy()
         d.finger = self.finger
         d.positions = list(self.positions)
         return d
