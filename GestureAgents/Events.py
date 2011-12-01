@@ -19,7 +19,7 @@ class Event(object):
         self.registered.remove((f,i))
         
     def call(self,*args,**kwargs):
-        from Recognizer import RecognizerFailedException
+        from GestureAgents.Recognizer import RecognizerFailedException
         for f,i in list(self.registered):
             try:
                 f(i,*args,**kwargs)

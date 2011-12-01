@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Events import Event, EventClient
-import Reactor
+from GestureAgents.Events import Event, EventClient
+import GestureAgents.Reactor as Reactor
 
 class RecognizerFailedException(Exception):
     pass
@@ -158,7 +158,7 @@ def newHypothesis(f):
     return newHipothesisAndRun
     
     
-from Agent import Agent
+from GestureAgents.Agent import Agent
 #policies for comparison between Recognizers
 
 @Agent.completion_policy.rule(100)

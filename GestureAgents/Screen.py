@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Events import Event
+from GestureAgents.Events import Event
 
 ScreenDraw = Event()
 

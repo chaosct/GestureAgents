@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Reactor
-from Events import Event
-from Policy import PolicyRuleset
+import GestureAgents.Reactor as Reactor
+from GestureAgents.Events import Event
+from GestureAgents.Policy import PolicyRuleset
 
 class Agent:
     """This class represents something that generates Events.
@@ -137,7 +137,7 @@ class Agent:
             r.safe_fail("Agent failed: "+repr(self))
     
     def _get_recognizers_subscribed(self):
-        from Recognizer import Recognizer
+        from GestureAgents.Recognizer import Recognizer
         return [r for r in set([r[1] for ename,event in self.events.iteritems() for r in event.registered]) if isinstance(r,Recognizer)]
     
     def fail_all_others(self,winner):

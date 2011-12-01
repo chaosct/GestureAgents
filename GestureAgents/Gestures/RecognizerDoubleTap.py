@@ -3,7 +3,7 @@
 
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 from GestureAgents.Events import Event
-from RecognizerTap import RecognizerTap
+from GestureAgents.Gestures.RecognizerTap import RecognizerTap
 from GestureAgents.Agent import Agent
 import math
 

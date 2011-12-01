@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import tuio
-from Events import Event
-from Agent import Agent
-import Screen
+import GestureAgents.tuio as tuio
+from GestureAgents.Events import Event
+from GestureAgents.Agent import Agent
+import GestureAgents.Screen as Screen
 
 
 class TuioCursorEvents:

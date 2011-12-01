@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Recognizer import Recognizer, newHypothesis
+from GestureAgents.Recognizer import Recognizer, newHypothesis
 import copy
-from Agent import Agent
-from Events import Event
+from GestureAgents.Agent import Agent
+from GestureAgents.Events import Event
 
 class FakeAgent(Agent):
     def __init__(self,original,creator):

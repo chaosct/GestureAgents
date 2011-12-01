@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import Screen
+import GestureAgents.Screen as Screen
 import pygame, sys,os
 from pygame.locals import *
-import Mouse
-import Reactor
-from Render import initializeDisplay,calibrate,ConfKey
-import Tuio
-import Gestures
+import GestureAgents.Reactor as Reactor
+from GestureAgents.Render import initializeDisplay,calibrate,ConfKey
+import GestureAgents.Tuio as Tuio
+import GestureAgents.Gestures as Gestures
 import pygame.display
-import Agent
+import GestureAgents.Agent as Agent
 from pygame.time import Clock
 
 class MemSummary:
@@ -46,9 +45,6 @@ def run_apps(debugMem=False):
     pygame.init()
     initializeDisplay()
     tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
-    #app = PaintingApp.PaintingApp(tscreen)
-    #mouse = Mouse.MouseAgentGenerator()
-    #sensors = (Mouse.MouseAgentGenerator(),Tuio.TuioAgentGenerator())
     sensors = (Tuio.TuioAgentGenerator(),)
 
     clock = Clock()
