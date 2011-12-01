@@ -17,7 +17,6 @@ import numpy as np
 import transformations as tr
 import pygame.image
 import OpenGL.GL as GL
-from GestureAgents.Gestures import load_recognizer
 
 def loadImage(image):
     textureSurface = pygame.image.load(image)
