@@ -8,18 +8,18 @@ import random, math
 import sys
 sys.path.append('../..')
 
-import GestureAgents.Screen
+import GestureAgentsPygame.Screen as Screen
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerDoubleTap import RecognizerDoubleTap
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
-import GestureAgents.Render
+import GestureAgentsPygame.Render as Render
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
 class PaintingApp:
     def __init__(self):
-        GestureAgents.Screen.ScreenDraw.register(PaintingApp.draw,self)
-        self.surface = pygame.Surface(GestureAgents.Screen.size,flags=pygame.locals.SRCALPHA)
+        Screen.ScreenDraw.register(PaintingApp.draw,self)
+        self.surface = pygame.Surface(Screen.size,flags=pygame.locals.SRCALPHA)
         AppRecognizer(RecognizerStick).newAgent.register(PaintingApp.newAgentStick,self)
         AppRecognizer(TuioCursorEvents).newAgent.register(PaintingApp.newAgentPaint,self)
         AppRecognizer(RecognizerDoubleTap).newAgent.register(PaintingApp.newAgentDoubleTap,self)
@@ -45,7 +45,7 @@ class PaintingApp:
     
     def draw(self):
         pygame.draw.circle(self.surface, self.buttoncolor , self.button , 50, 3)
-        GestureAgents.Render.drawT(self.surface)
+        Render.drawT(self.surface)
         
         
     def event_finish_stick(self,Stick):
@@ -68,6 +68,6 @@ class PaintingApp:
         return math.sqrt(dx**2 + dy**2)
         
 if __name__ == "__main__":
-    import GestureAgents
+    import GestureAgentsPygame
     app = PaintingApp()
-    GestureAgents.run_apps()
+    GestureAgentsPygame.run_apps()

@@ -5,7 +5,7 @@ import json
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import GestureAgents.Screen as Screen
+import GestureAgentsPygame.Screen as Screen
 import pygame
 import atexit
 

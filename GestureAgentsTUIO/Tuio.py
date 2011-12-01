@@ -4,7 +4,6 @@
 import GestureAgentsTUIO.tuio as tuio
 from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
-import GestureAgents.Screen as Screen
 
 
 class TuioCursorEvents:
@@ -12,10 +11,11 @@ class TuioCursorEvents:
 
 
 class TuioAgentGenerator:
-    def __init__(self):
+    def __init__(self,screensize):
         self.tracking = tuio.Tracking()
         self.cursors = {}
         self.agents = {}
+        self.screensize = screensize
     def update(self):
         self.tracking.update()
         cursors = {}
@@ -59,12 +59,11 @@ class TuioAgentGenerator:
             d[member]=getattr(cur,member)
         return d
     
-    @staticmethod
-    def _updateAgent(agent,dcur):
+    def _updateAgent(self,agent,dcur):
         for member,value in dcur.iteritems():
             setattr(agent,member,value)
         #pos is legacy as Mouse emulator
-        agent.pos = (agent.xpos*Screen.size[0],agent.ypos*Screen.size[1])
+        agent.pos = (agent.xpos*self.screensize[0],agent.ypos*self.screensize[1])
     
     @staticmethod
     def makeCursorAgent():

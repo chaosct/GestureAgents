@@ -5,14 +5,13 @@ import random, math
 import sys
 sys.path.append('../..')
 
-import GestureAgents.Screen as Screen
+import GestureAgentsPygame.Screen as Screen
 #from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
-import GestureAgents.Render
 import numpy as np
 import transformations as tr
 import pygame.image
@@ -143,6 +142,6 @@ def zoom_over_stick(r1,r2):
         return True
 
 if __name__ == "__main__":
-    import GestureAgents
+    import GestureAgentsPygame
     app = MapApp()
-    GestureAgents.run_apps()
+    GestureAgentsPygame.run_apps()
