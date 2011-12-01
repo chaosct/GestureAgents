@@ -5,8 +5,6 @@ import Reactor
 from Events import Event
 from Policy import PolicyRuleset
 
-
-
 class Agent:
     """This class represents something that generates Events.
     
@@ -35,8 +33,8 @@ class Agent:
     def __init__(self,eventnames,creator):
         """eventnames is a list of names that will become member events.
         creator is a class or instance with newAgent event to be called when recycling this agent."""
-        self.recognizers_acquired = []
-        self.recognizer_complete = None
+        self._recognizers_acquired = []
+        self._recognizer_complete = None
         self.events = {}
         self.owners = []
         self.name = str(creator)+" Agent"
@@ -53,10 +51,10 @@ class Agent:
     def acquire(self,Recognizer):
         "The recognizer is interested on this agent"
         #can we acquire even if there is someone confirmed?
-        if self.completed and self.compatibility_policy.result(self.recognizer_complete,Recognizer) != True:
+        if self.completed and self.compatibility_policy.result(self._recognizer_complete,Recognizer) != True:
             return False
         else:
-            self.recognizers_acquired.append(Recognizer)
+            self._recognizers_acquired.append(Recognizer)
             return True
     
     def finish(self):
@@ -68,11 +66,11 @@ class Agent:
         """The recognizer is no longer interested in this agent.
         This should occur after acquiring the agent. If it happens
         after confirming, the agent will be recycled."""
-        if Recognizer == self.recognizer_complete:
+        if Recognizer == self._recognizer_complete:
             print "DISCARD"
             import traceback
             #traceback.print_stack()
-            self.recognizer_complete = None
+            self._recognizer_complete = None
             if self.completed and not self.finished:
                 self.completed = False
                 self.recycled = True
@@ -83,47 +81,47 @@ class Agent:
                 self.newAgent(self)
                 
             #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
-        elif Recognizer in self.recognizers_acquired:
-            self.recognizers_acquired.remove(Recognizer)
+        elif Recognizer in self._recognizers_acquired:
+            self._recognizers_acquired.remove(Recognizer)
             if self._can_confirm():
-                self.recognizer_complete.confirm(self)
+                self._recognizer_complete.confirm(self)
                 self.completed = True
         
     
     def _can_confirm(self):
-        "Decides if self.recognizer_complete can be confirmed"
-        if not self.recognizer_complete: return False
+        "Decides if self._recognizer_complete can be confirmed"
+        if not self._recognizer_complete: return False
         if self.completed: return False
-        if not self.recognizers_acquired: return True
-        for r in self.recognizers_acquired:
-            if self.compatibility_policy.result(self.recognizer_complete,r) != True \
-            and self.compatibility_policy.result(r, self.recognizer_complete) != True:
+        if not self._recognizers_acquired: return True
+        for r in self._recognizers_acquired:
+            if self.compatibility_policy.result(self._recognizer_complete,r) != True \
+            and self.compatibility_policy.result(r, self._recognizer_complete) != True:
                 return False
         return True
         
     def _complete(self,Recognizer):
-        assert(Recognizer is not self.recognizer_complete)
+        assert(Recognizer is not self._recognizer_complete)
         # According to the policy we choose the best Recognizer
-        #print "CCC", self, type(Recognizer), type(self.recognizer_complete)
-        if self.completion_policy.result(self.recognizer_complete,Recognizer) == False:
+        #print "CCC", self, type(Recognizer), type(self._recognizer_complete)
+        if self.completion_policy.result(self._recognizer_complete,Recognizer) == False:
             #Policy doesn't accept change
             Recognizer.safe_fail("Policy doesn't accept change on complete")
             return
-        elif self.recognizer_complete:
-            self.recognizer_complete.safe_fail("Displaced by another recognizer: "+str(Recognizer))
-            self.recognizer_complete = None
+        elif self._recognizer_complete:
+            self._recognizer_complete.safe_fail("Displaced by another recognizer: "+str(Recognizer))
+            self._recognizer_complete = None
             self.completed = False
         
-        self.recognizer_complete = Recognizer
-        if Recognizer in self.recognizers_acquired:
-            self.recognizers_acquired.remove(Recognizer)
+        self._recognizer_complete = Recognizer
+        if Recognizer in self._recognizers_acquired:
+            self._recognizers_acquired.remove(Recognizer)
         #According to the policy we remove acquisitions
         if self._can_confirm():
-            self.recognizer_complete.confirm(self)
+            self._recognizer_complete.confirm(self)
             self.completed = True
             
     def complete(self,Recognizer):
-        assert(Recognizer in self.recognizers_acquired)
+        assert(Recognizer in self._recognizers_acquired)
         Reactor.run_after(lambda Recognizer=Recognizer, self=self: self._complete(Recognizer) )
     
     def is_someone_subscribed(self):
@@ -146,10 +144,10 @@ class Agent:
         Reactor.run_after(lambda winner=winner,self=self: self._fail_all_others(winner))
                 
     def _fail_all_others(self,winner):
-        #assert(self.recognizer_complete is winner) we are all consenting adults here
+        #assert(self._recognizer_complete is winner) we are all consenting adults here
         target = type(winner)
         #print "fail_all_others :",winner,"wants to fail",target
-        for r in list(self.recognizers_acquired):
+        for r in list(self._recognizers_acquired):
             if type(r) == target and r is not winner:
                 #print "fail_all_others by",winner,":", r, "is target"
                 r.safe_fail(cause="Fail all others by %s"%str(winner))
