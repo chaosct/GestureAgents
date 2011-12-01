@@ -7,7 +7,8 @@ sys.path.append('../..')
 
 import GestureAgents.Screen as Screen
 #from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
-from GestureAgentsTUIO.Gestures2D import RecognizerStick, RecognizerTap
+from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
+from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate

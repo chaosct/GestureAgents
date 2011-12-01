@@ -9,7 +9,9 @@ import sys
 sys.path.append('../..')
 
 import GestureAgents.Screen
-from GestureAgentsTUIO.Gestures2D import RecognizerStick, RecognizerDoubleTap, RecognizerTap
+from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
+from GestureAgentsTUIO.Gestures2D.RecognizerDoubleTap import RecognizerDoubleTap
+from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 import GestureAgents.Render
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
