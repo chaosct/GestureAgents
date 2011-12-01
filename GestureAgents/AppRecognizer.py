@@ -64,7 +64,6 @@ class AppRecognizer(Recognizer):
     
     def _makeAgentAgent(self,agent):
         a =  FakeAgent(agent,self)
-        a.owners.append(self)
         return a
     
     def duplicate(self):

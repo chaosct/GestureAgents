@@ -116,7 +116,6 @@ class RecognizerZoomRotate(Recognizer):
     def makeAgentZoomRotate(self):
         events = ("newZoomRotate","newRotation","newScale","endZoomRotate")
         a = Agent(events,self)
-        a.owners.append(self)
         return a
     
     def duplicate(self):

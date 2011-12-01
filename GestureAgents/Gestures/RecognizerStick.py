@@ -87,7 +87,6 @@ class RecognizerStick (Recognizer):
     
     def make_StickAgent(self):
         a = Agent(("newStick",),self)
-        a.owners.append(self)
         return a
     
     @staticmethod        

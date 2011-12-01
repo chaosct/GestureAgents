@@ -36,7 +36,7 @@ class Agent:
         self._recognizers_acquired = []
         self._recognizer_complete = None
         self.events = {}
-        self.owners = []
+        self.owners = [creator]
         self.name = str(creator)+" Agent"
         self.newAgent = creator.newAgent
         #is this agent having a confirmed recognizer?

@@ -88,7 +88,6 @@ class RecognizerDoubleTap(Recognizer):
     
     def make_DoubleTapAgent(self):
         a =  Agent(("newDoubleTap",),self)
-        a.owners.append(self)
         return a
         
     def __repr__(self):

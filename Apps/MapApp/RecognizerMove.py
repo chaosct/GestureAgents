@@ -59,7 +59,6 @@ class RecognizerMove(Recognizer):
     def makeAgentMove(self):
         events = ("newMove","newTranslation","endMove")
         a = Agent(events,self)
-        a.owners.append(self)
         return a
     
     def duplicate(self):

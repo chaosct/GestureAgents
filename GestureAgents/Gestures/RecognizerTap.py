@@ -76,5 +76,4 @@ class RecognizerTap(Recognizer):
         
     def make_TapAgent(self):
         a = Agent(("newTap",),self)
-        a.owners.append(self)
         return a
