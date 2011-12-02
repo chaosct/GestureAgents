@@ -77,7 +77,6 @@ class RecognizerStick (Recognizer):
         return d
         
     def execute(self):
-        print "Stick!"
         self.agent.pos1 = self.positions[0]
         self.agent.pos2 = self.positions[-1]
         

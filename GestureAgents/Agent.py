@@ -67,20 +67,17 @@ class Agent:
         This should occur after acquiring the agent. If it happens
         after confirming, the agent will be recycled."""
         if Recognizer == self._recognizer_complete:
-            print "DISCARD"
             import traceback
             #traceback.print_stack()
             self._recognizer_complete = None
             if self.completed and not self.finished:
                 self.completed = False
                 self.recycled = True
-                print "Recycling!:",type(Recognizer)
                 #we have to fail all remaining subscribbed recognizers
                 for r in self._get_recognizers_subscribed():
                     r.safe_fail(cause="registered to an Agent being recycled")
                 self.newAgent(self)
                 
-            #print "WARNING: discarding a confirmed recognizer. That shouldn't happen"
         elif Recognizer in self._recognizers_acquired:
             self._recognizers_acquired.remove(Recognizer)
             if self._can_confirm():

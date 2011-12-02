@@ -59,7 +59,6 @@ class RecognizerTap(Recognizer):
     def execute(self):
         self.agent.pos = self.origin
         self.agent.newTap.call(self.agent)
-        print "Tap!"
         self.finish()
     
     @staticmethod
