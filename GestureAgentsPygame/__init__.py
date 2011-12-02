@@ -71,8 +71,10 @@ def run_apps(debugMem=False):
                 ConfKey(event)
     running = True
     
-    print "Policy rules:"
+    print "="*5 + " Agent.completion_policy Policy rules " + "="*5
     print Agent.Agent.completion_policy
+    print "="*5 + " Agent.compatibility_policy Policy rules " + "="*5
+    print Agent.Agent.compatibility_policy
     
     if debugMem:
         MemSummary().digest()
