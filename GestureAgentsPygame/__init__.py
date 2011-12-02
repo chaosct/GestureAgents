@@ -7,6 +7,7 @@ from pygame.locals import *
 import GestureAgents.Reactor as Reactor
 from GestureAgentsPygame.Render import initializeDisplay,calibrate,ConfKey
 import GestureAgentsTUIO.Tuio as Tuio
+from GestureAgentsPygame.Mouse import MouseAsTuioAgentGenerator
 import GestureAgents.Gestures as Gestures
 import pygame.display
 import GestureAgents.Agent as Agent
@@ -45,7 +46,7 @@ def run_apps(debugMem=False):
     pygame.init()
     initializeDisplay()
     tscreen = pygame.Surface(Screen.size,flags=SRCALPHA)
-    sensors = (Tuio.TuioAgentGenerator(Screen.size),)
+    sensors = (Tuio.TuioAgentGenerator(Screen.size),MouseAsTuioAgentGenerator())
 
     clock = Clock()
 
