@@ -12,7 +12,7 @@ class Recognizer(EventClient):
     
     Most of the methods of Recognizer are meant to be called
     from a derived class on itself. There are, however some
-    methods that can be called from otside.
+    methods that can be called from outside.
     
     Methods:
         
@@ -175,7 +175,7 @@ def completed_win(recognizer1,recognizer2):
         return True
 
 @Agent.completion_policy.rule(-49)
-def completed_win(recognizer1,recognizer2):
+def more_agents_win(recognizer1,recognizer2):
     "Wins the recognizer with more agents"
     la1 = len(recognizer1._agentsAcquired)
     lr1 = len(recognizer1._agentsConfirmed)

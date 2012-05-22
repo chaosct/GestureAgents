@@ -9,7 +9,6 @@ import math
 
 
 class RecognizerTap(Recognizer):
-    #for debugging porpuses we have a count of instances
     newAgent = Event()
     def __init__(self):
         self.finger = None
@@ -58,7 +57,7 @@ class RecognizerTap(Recognizer):
             
     def execute(self):
         self.agent.pos = self.origin
-        self.agent.newTap.call(self.agent)
+        self.agent.newTap(self.agent)
         self.finish()
     
     @staticmethod

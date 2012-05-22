@@ -17,7 +17,7 @@ class MemSummary:
     def digest(self):
         import gc
         gc.collect()
-        from Recognizer import Recognizer
+        from GestureAgents.Recognizer import Recognizer
         from collections import Counter
         counter = Counter(type(obj) for obj in gc.get_objects() if isinstance(obj, Recognizer))
         print "===========MEMORY=========="

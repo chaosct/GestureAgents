@@ -5,7 +5,7 @@ import GestureAgents.Reactor as Reactor
 from GestureAgents.Events import Event
 from GestureAgents.Policy import PolicyRuleset
 
-class Agent:
+class Agent(object):
     """This class represents something that generates Events.
     
     When receiving an event with an Agent associated,
@@ -58,7 +58,7 @@ class Agent:
             return True
     
     def finish(self):
-        "The owner of the event will not generate more events"
+        "The owner of the event will not generate events anymore"
         self.finished = True
         self.finishAgent(self)
             
@@ -67,7 +67,7 @@ class Agent:
         This should occur after acquiring the agent. If it happens
         after confirming, the agent will be recycled."""
         if Recognizer == self._recognizer_complete:
-            import traceback
+            #import traceback
             #traceback.print_stack()
             self._recognizer_complete = None
             if self.completed and not self.finished:
@@ -86,17 +86,18 @@ class Agent:
         
     
     def _can_confirm(self):
-        "Decides if self._recognizer_complete can be confirmed"
-        if not self._recognizer_complete: return False
-        if self.completed: return False
-        if not self._recognizers_acquired: return True
-        for r in self._recognizers_acquired:
+        "[internal] Decides if self._recognizer_complete can be confirmed"
+        if not self._recognizer_complete: return False  #if there is no recognizer completed it can't be confirmed
+        if self.completed: return False                 #if it's already confirmed it can't be confirmed
+        if not self._recognizers_acquired: return True  #if there are no competitors acquired it can be confirmed
+        for r in self._recognizers_acquired:            #if there is an incompatibility with any of the acquired competitors it can't be confirmed
             if self.compatibility_policy.result(self._recognizer_complete,r) != True \
             and self.compatibility_policy.result(r, self._recognizer_complete) != True:
                 return False
         return True
         
     def _complete(self,Recognizer):
+        "[internal] "
         assert(Recognizer is not self._recognizer_complete)
         # According to the policy we choose the best Recognizer
         #print "CCC", self, type(Recognizer), type(self._recognizer_complete)
@@ -122,7 +123,7 @@ class Agent:
         Reactor.run_after(lambda Recognizer=Recognizer, self=self: self._complete(Recognizer) )
     
     def is_someone_subscribed(self):
-        for ename,event in self.events.iteritems():
+        for event in self.events.itervalues():
             if event.registered:
                 return True
         return False
@@ -135,7 +136,7 @@ class Agent:
     
     def _get_recognizers_subscribed(self):
         from GestureAgents.Recognizer import Recognizer
-        return [r for r in set([r[1] for ename,event in self.events.iteritems() for r in event.registered]) if isinstance(r,Recognizer)]
+        return [r for r in set([rr[1] for event in self.events.itervalues() for rr in event.registered]) if isinstance(r,Recognizer)]
     
     def fail_all_others(self,winner):
         Reactor.run_after(lambda winner=winner,self=self: self._fail_all_others(winner))

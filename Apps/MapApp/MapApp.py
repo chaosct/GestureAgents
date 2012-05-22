@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import random, math
+
 import sys
 sys.path.append('../..')
 
 import GestureAgentsPygame.Screen as Screen
-#from GestureAgents.Gestures import RecognizerStick, RecognizerPaint, RecognizerDoubleTap, RecognizerTap
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
-import numpy as np
 import transformations as tr
 import pygame.image
 import OpenGL.GL as GL

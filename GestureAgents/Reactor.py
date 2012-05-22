@@ -17,7 +17,7 @@ def schedule_after(time,instance,f):
     heappush(scheduled_tasks,(datetime.datetime.now()+datetime.timedelta(seconds=time),(instance,f)))
 
 def duplicate_instance(original,new):
-    "Duplicates every entry in shcheduled tasks related to 'original' instance, substituting it with 'new'"
+    "Duplicates every entry in scheduled tasks related to 'original' instance, substituting it with 'new'"
     to_insert = [(t,(new,f)) for t,(i,f) in scheduled_tasks if i == original]
     for item in to_insert:
         heappush(scheduled_tasks,item)
