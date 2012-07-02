@@ -73,8 +73,8 @@ class Agent(object):
             if self.completed and not self.finished:
                 self.completed = False
                 self.recycled = True
-                #we have to fail all remaining subscribbed recognizers
-                for r in self._get_recognizers_subscribed():
+                #we have to fail all remaining subscribed recognizers
+                for r in self._get_recognizers_subscribed()+self._recognizers_acquired:
                     r.safe_fail(cause="registered to an Agent being recycled")
                 self.newAgent(self)
                 
