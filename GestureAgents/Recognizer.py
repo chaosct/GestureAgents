@@ -150,8 +150,7 @@ def newHypothesis(f):
     "Decorator to create a new hypothesis every time that is called"
     def newHipothesisAndRun(self,*args,**kwargs):
         if self.is_someone_interested():
-            d = self.duplicate()
-            #self.parent = d
+            self.duplicate()
             f(self,*args,**kwargs)
         elif not self.is_pristine():
             self.safe_fail("Noone interested")
