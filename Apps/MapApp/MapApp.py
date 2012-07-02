@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-import sys
-sys.path.append('../..')
-
 import GestureAgentsPygame.Screen as Screen
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap

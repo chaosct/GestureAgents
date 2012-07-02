@@ -5,8 +5,8 @@ import pygame
 import pygame.locals
 import pygame.draw
 import random, math
-import sys
-sys.path.append('../..')
+#import sys
+#sys.path.append('../..')
 
 import GestureAgentsPygame.Screen as Screen
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
