@@ -1,4 +1,8 @@
+=====================================
 Agent-Based Gesture Ecology Framework
+=====================================
+
+
 Author: Carles F. Julià <carles.fernandez@upf.edu>
 
 Testing:
