@@ -154,6 +154,7 @@ def newHypothesis(f):
             f(self,*args,**kwargs)
         elif not self.is_pristine():
             self.safe_fail("Noone interested")
+    newHipothesisAndRun.__name__ = "[new hypothesis] %s" % (f.__name__,)
     return newHipothesisAndRun
     
     
