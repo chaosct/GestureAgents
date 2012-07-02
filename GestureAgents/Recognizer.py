@@ -4,6 +4,11 @@
 from GestureAgents.Events import Event, EventClient
 import GestureAgents.Reactor as Reactor
 
+try:
+    from classlogger import ClassLogged
+except ImportError:
+    ClassLogged = type
+
 class RecognizerFailedException(Exception):
     pass
 
@@ -39,6 +44,9 @@ class Recognizer(EventClient):
         agent: To be filled with the agent representing the gesture
         
     """
+    
+    __metaclass__ = ClassLogged
+    
     def __init__(self):
         EventClient.__init__(self)
         self._agentsAcquired = []
