@@ -24,6 +24,7 @@ class RecognizerStick (Recognizer):
         if Cursor.recycled:
             self.fail(cause="Agent is recycled")
         self.agent = self.make_StickAgent()
+        self.agent.pos = Cursor.pos
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
             self.fail(cause="Noone interested")
