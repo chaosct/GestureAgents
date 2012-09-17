@@ -14,7 +14,22 @@ class RecognizerFailedException(Exception):
     pass
 
 
-class Recognizer(EventClient):
+class Autonamed(object):
+    __numclasses = {}
+
+    def __repr__(self):
+        try:
+            name = self.__name
+        except AttributeError:
+            name = self.__class__.__name__
+            num = Autonamed.__numclasses.get(name, 0)
+            Autonamed.__numclasses[name] = num + 1
+            name = "%s %d" % (name, num)
+            self.__name = name
+        return name
+
+
+class Recognizer(EventClient, Autonamed):
     """Class to be derived to make a Gesture Recognizer
 
     Most of the methods of Recognizer are meant to be called

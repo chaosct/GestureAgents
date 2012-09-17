@@ -25,6 +25,7 @@ class AppRecognizer(Recognizer):
         self.eventqueue = []
         self.register_event(recognizer.newAgent, AppRecognizer._eventNewAgent)
         self.willenqueue = True
+        self.name = "AppRecognizer(%s)" % str(recognizer.__name__)
 
     @newHypothesis
     def _eventNewAgent(self, agent):
@@ -71,6 +72,9 @@ class AppRecognizer(Recognizer):
     def duplicate(self):
         d = self.get_copy(self.recognizer)
         d.newAgent = self.newAgent
+
+    def __repr__(self):
+        return self.name
 
 
 #policy
