@@ -1,0 +1,23 @@
+{
+	"folders":
+	[
+		{
+			"path": "/home/carles/Projectes/gesture-agents"
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "Python-project",
+			"cmd": ["python", "-u", "$file"],
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"selector": "source.python",
+			"working_dir": "$file_path",
+			"env": 
+			{
+				"PYTHONPATH": "../../" //$project_path not working here
+			}
+
+		}
+	]
+}
