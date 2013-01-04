@@ -15,7 +15,7 @@
 			"working_dir": "$file_path",
 			"env": 
 			{
-				"PYTHONPATH": "../../" //$project_path not working here
+				"PYTHONPATH": "../../:../" //$project_path not working here
 			}
 
 		}
