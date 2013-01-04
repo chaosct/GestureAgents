@@ -12,7 +12,7 @@ class TuioCursorEvents:
 
 class TuioAgentGenerator:
     def __init__(self,screensize):
-        self.tracking = tuio.Tracking()
+        self.tracking = tuio.Tracking(host='0.0.0.0')
         self.cursors = {}
         self.agents = {}
         self.screensize = screensize
