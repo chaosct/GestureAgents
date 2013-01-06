@@ -1,7 +1,7 @@
 #!/usr/bin/env 
 
-from pyglet.graphics import Batch, Group
+from pyglet.graphics import Batch
 from GestureAgents.Events import Event
 
 drawBatch = Batch()
-update = Event()
+Update = Event()
