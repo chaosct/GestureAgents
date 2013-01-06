@@ -5,4 +5,4 @@ from GestureAgents.Events import Event
 
 ScreenDraw = Event()
 
-size = (1024,768)
+size = (1024, 768)
