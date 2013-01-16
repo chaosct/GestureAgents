@@ -44,9 +44,12 @@ class Figure(object):
             self.vertexlist.vertices = self.transformed_vertices
 
     def clear(self):
-        self.vertexlist.delete()
+        if self.vertexlist:
+            self.vertexlist.delete()
         self.vertexlist = None
 
+    def __del__(self):
+        self.clear()
 
 class Circle(Figure):
     def __init__(self, radius, nodes, **kw):
