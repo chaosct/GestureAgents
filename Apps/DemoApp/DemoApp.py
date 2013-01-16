@@ -109,6 +109,8 @@ class DemoApp(object):
 
 if __name__ == '__main__':
     import GestureAgentsDemo
+    from apps.Map import DemoMapApp
     shell = ShellApp()
-    shell.launch(DemoApp)
+    shell.launch(DemoMapApp)
+    #shell.launch(DemoApp)
     GestureAgentsDemo.run_apps()
