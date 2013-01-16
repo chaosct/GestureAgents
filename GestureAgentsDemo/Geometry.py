@@ -6,6 +6,20 @@ from GestureAgentsDemo.Render import drawBatch
 from pyglet.gl import GL_TRIANGLES
 
 
+def MovingWindowIterator(it, group, loop=True):
+    seq = list(it)
+    if loop:
+        seq = seq + seq[:group - 1:]
+    chunk = []
+    while len(chunk) < group:
+        chunk.append(seq.pop(0))
+    yield chunk
+    while seq:
+        chunk.pop(0)
+        chunk.append(seq.pop(0))
+        yield chunk
+
+
 class Figure(object):
     """docstring for Figure"""
     def __init__(self, vertices=(), geometry_type=GL_TRIANGLES,
@@ -51,13 +65,13 @@ class Figure(object):
     def __del__(self):
         self.clear()
 
+
 class Circle(Figure):
     def __init__(self, radius, nodes, **kw):
         self.radius = radius
         angles = [2.0 * pi * n / nodes for n in range(0, nodes)]
-        vertices = [(radius * cos(
-            a), radius * sin(a)) for a in angles for f in (cos, sin)]
-        vtriangles = [c for (v1, v2) in zip(vertices, [vertices[-1]] + vertices[:-1])
+        vertices = [(radius * cos(a), radius * sin(a)) for a in angles]
+        vtriangles = [c for (v1, v2) in MovingWindowIterator(vertices, 2, True)
                       for xy in (v1, (0, 0), v2) for c in xy]
         super(Circle, self).__init__(vtriangles, **kw)
 
