@@ -30,6 +30,12 @@ class Event(object):
 
     __call__ = call
 
+    def empty(self):
+        for t in self.registered:
+            if not hasattr(t, 'DebugApp'):
+                return False
+        return True
+
 
 class EventClient(object):
     "A class that unregisters itself from events"

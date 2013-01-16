@@ -139,7 +139,7 @@ class Recognizer(EventClient):
 
     def is_someone_interested(self):
         for f, i in self.newAgent.registered:
-            if not isinstance(i, Recognizer):
+            if not isinstance(i, Recognizer) and not hasattr(i, "DebugApp"):
                 return True
             elif i.is_someone_interested():
                 return True

@@ -129,7 +129,7 @@ class Agent(object):
 
     def is_someone_subscribed(self):
         for event in self.events.itervalues():
-            if event.registered:
+            if not event.empty():
                 return True
         return False
 
