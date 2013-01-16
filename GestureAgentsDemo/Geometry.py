@@ -57,3 +57,19 @@ class Circle(Figure):
         vtriangles = [c for (v1, v2) in zip(vertices, [vertices[-1]] + vertices[:-1])
                       for xy in (v1, (0, 0), v2) for c in xy]
         super(Circle, self).__init__(vtriangles, **kw)
+
+
+class Rectangle(Figure):
+    def __init__(self, w, h, texture=False, **kw):
+        self.w = w
+        self.h = h
+        vertices = [(0, 0), (w, 0), (w, h), (0, h)]
+        indices = (0, 1, 2, 2, 3, 0)
+        vtriangles = [c for i in indices for c in vertices[i]]
+        vtexture = None
+        if texture:
+            tvertices = texture.tex_coords
+            print tvertices
+            vtexture = [c for i in indices
+                        for c in (tvertices[i * 3], tvertices[i * 3 + 1])]
+        super(Rectangle, self).__init__(vtriangles, texturevertices=vtexture, **kw)
