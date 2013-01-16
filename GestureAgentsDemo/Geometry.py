@@ -90,3 +90,17 @@ class Rectangle(Figure):
             vtexture = [c for i in indices
                         for c in (tvertices[i * 3], tvertices[i * 3 + 1])]
         super(Rectangle, self).__init__(vtriangles, texturevertices=vtexture, **kw)
+
+
+class Ring(Figure):
+    def __init__(self, radius, width, nodes, **kw):
+        self.radius = radius
+        self.width = width
+        angles = [2.0 * pi * n / nodes for n in range(0, nodes)]
+        vertices = [(r * cos(a), r * sin(a)) for a in angles
+                    for r in (radius + width / 2, radius - width / 2)]
+        vtriangles = [c for v3 in MovingWindowIterator(vertices, 3, True)
+                      for xy in v3 for c in xy]
+        super(Ring, self).__init__(vtriangles, **kw)
+
+
