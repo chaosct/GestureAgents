@@ -1,35 +1,6 @@
-
-from GestureAgentsDemo.Render import Update
-
-
-class DynamicValue(object):
-    """docstring for DynamicValue"""
-    def __init__(self, value=0):
-        self.value = value
-        self.target = value
-        self.time = 0
-
-    def to(self, target, time):
-        self.time = time
-        self.target = target
-        Update.register(DynamicValue._update_cb, self)
-
-    def _update_cb(self, dt):
-        step = dt * (self.target - self.value) / self.time
-        self.time -= dt
-        if self.time <= 0:
-            Update.unregister(self)
-            self.value = self.target
-        else:
-            self.value += step
-
-    @property
-    def v(self):
-        return self.value
-
-
 from pyglet.graphics import OrderedGroup
 from pyglet.gl import glPushMatrix, glPopMatrix, glScalef
+from GestureAgentsDemo.Utils import DynamicValue
 
 
 class ShellAppGroup(OrderedGroup):
@@ -40,7 +11,7 @@ class ShellAppGroup(OrderedGroup):
 
     def set_state(self):
         glPushMatrix()
-        glScalef(self.scale.v, self.scale.v, 1)
+        glScalef(self.scale(), self.scale(), 1)
 
     def unset_state(self):
         glPopMatrix()
@@ -74,7 +45,7 @@ class ShellApp(object):
         self.minimized = not self.minimized
         s = .5 if self.minimized else 1
         for app in self.running.itervalues():
-            app["group"].scale.to(s, 1)
+            app["group"].scale(s, 1)
 
 
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
