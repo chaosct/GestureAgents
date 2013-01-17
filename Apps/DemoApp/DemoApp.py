@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pyglet.graphics import OrderedGroup
 from pyglet.gl import glPushMatrix, glPopMatrix, glScalef
 from GestureAgentsDemo.Utils import DynamicValue
@@ -82,8 +83,10 @@ if __name__ == '__main__':
     import GestureAgentsDemo
     from apps.Map import DemoMapApp
     from apps.Shadows import FingerShadow
+    from apps.DebugRecognizers import DebugRecognizer
     shell = ShellApp()
     shell.launch(DemoMapApp)
     shell.launch(FingerShadow)
+    shell.launch(DebugRecognizer)
     # shell.launch(DemoApp)
     GestureAgentsDemo.run_apps()
