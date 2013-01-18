@@ -76,7 +76,9 @@ class Recognizer(EventClient):
         Reactor.cancel_schedule(self)
 
     def fail(self, cause="Unknown"):
-        assert(not self.failed)
+        # assert (not self.failed),"%s already failed!" % repr(self)
+        if self.failed:
+            print "%s already failed!" % repr(self)
         self.failed = True
         for a in self._agentsAcquired + self._agentsConfirmed:
             a.discard(self)
