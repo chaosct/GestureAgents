@@ -2,12 +2,13 @@
 
 from ..Map.RecognizerMove import RecognizerMove
 from ..Map.RecognizerZoomRotate import RecognizerZoomRotate
-from GestureAgentsDemo.Render import Update
+from GestureAgentsDemo.Render import Update, drawBatch
 from pyglet.clock import schedule_interval, schedule_once
 import gc
 import weakref
 from GestureAgentsDemo.Geometry import Circle, Ring, Rectangle
 from GestureAgentsDemo.Utils import DynamicValue
+from pyglet.text import Label
 
 
 class GraphicAlert(object):
@@ -21,8 +22,22 @@ class GraphicAlert(object):
         self.figure = None
 
 
+class TextAlert(object):
+    def __init__(self, pos, text, group):
+        x, y = pos
+        self.text = Label(text=text, x=x, y=y, font_size=8,
+                            group=group, batch=drawBatch,
+                            color=(255, 100, 100, 255))
+        schedule_once(self.kill, 15)
+
+    def kill(self, dt=0):
+        self.text.delete()
+        self.text = None
+
+
 class RecognizerParticle(object):
-    positions = [(x * 20 + 10, y * 20 + 10)
+    spacing = 30
+    positions = [(x * spacing + 10, y * spacing + 10)
                 for x in range(10) for y in range(10)]
 
     def __init__(self, recognizer, group=None, color=(200, 0, 0)):
@@ -35,14 +50,20 @@ class RecognizerParticle(object):
         self.x(x, 0.1)
         self.y(y, 0.1)
         self.ring = None
+        self.nrfail = 0
         Update.register(RecognizerParticle.update, self)
         f = self.recognizer().fail
         self.recognizer().fail = lambda *l, **kw: (self.rfail(*l, **kw), f(*l, **kw))
 
-    def rfail(self, cause=None):
+    def rfail(self, cause="Cause unknown"):
         x, y = self.pos
-        x, y = (x + randrange(-5, 5), y + randrange(-5, 5))
-        GraphicAlert((x, y), self.group)
+        y = y - 8 * self.nrfail
+        self.nrfail += 1
+        # x, y = (x + randrange(-5, 5), y + randrange(-5, 5))
+        # GraphicAlert((x, y), self.group)
+        # if cause:
+        TextAlert((x, y), text=cause, group=self.group)
+        print self.recognizer(), cause
 
     def update(self, dt=0):
         if self.isdead():
