@@ -167,12 +167,10 @@ class Recognizer(EventClient, Autonamed):
             a.fail_all_others(self)
 
     def safe_fail(self, cause="Unknown"):
-        def _safe_fail(self, cause="Unknown"):
-            try:
-                self.fail(cause=cause)
-            except RecognizerFailedException:
-                pass
-        Reactor.run_after(lambda self=self, cause=cause: _safe_fail(self, cause))
+        try:
+            self.fail(cause=cause)
+        except RecognizerFailedException:
+            pass
 
     def expire_in(self, s):
         l = lambda self: self.safe_fail(cause="Timeout")

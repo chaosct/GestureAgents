@@ -109,10 +109,11 @@ class Agent(object):
             Recognizer.safe_fail("Policy doesn't accept change on complete")
             return
         elif self._recognizer_complete:
-            self._recognizer_complete.safe_fail(
-                "Displaced by another recognizer: " + str(Recognizer))
+            tofail = self._recognizer_complete
             self._recognizer_complete = None
             self.completed = False
+            tofail.safe_fail(
+                "Displaced by another recognizer: " + str(Recognizer))
 
         self._recognizer_complete = Recognizer
         if Recognizer in self._recognizers_acquired:
