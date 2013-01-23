@@ -28,7 +28,7 @@ class TextAlert(object):
         self.text = Label(text=text, x=x, y=y, font_size=8,
                             group=group, batch=drawBatch,
                             color=(255, 100, 100, 255))
-        schedule_once(self.kill, 15)
+        schedule_once(self.kill, 5)
 
     def kill(self, dt=0):
         self.text.delete()
