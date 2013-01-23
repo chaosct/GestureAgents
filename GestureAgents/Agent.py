@@ -26,10 +26,10 @@ class Agent(object):
     in the class Recognizer.
     """
     #Policy on whenever a confirmed recognizer can be failed by a new recognizer confirming
-    completion_policy = PolicyRuleset()
+    completion_policy = PolicyRuleset(debugname="completion_policy", debug=False)
     #Policy on whenever one gesture can be confirmed while another can be aquired (for instance when a continuous gesture can
     #finish another gesture to complete.
-    compatibility_policy = PolicyRuleset()
+    compatibility_policy = PolicyRuleset(debugname="compatibility_policy", debug=False)
 
     def __init__(self, eventnames, creator):
         """eventnames is a list of names that will become member events.

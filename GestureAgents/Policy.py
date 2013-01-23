@@ -25,16 +25,23 @@ for convenience -100 is the first rule and 100 the last one.
 
 
 class PolicyRuleset(object):
-    def __init__(self):
+    def __init__(self, debugname="Policy", debug=False):
         self._policies = dict()
+        self.debugname = debugname
+        self.debug = debug
 
     def result(self, *args, **kwargs):
         for priority in sorted(self._policies):
             for policy in self._policies[priority]:
                 result = policy(*args, **kwargs)
                 if result is not None:
-                    #print policy.__doc__ or policy, "said", result
+                    if self.debug:
+                        print "%s(%s,%s):" % (self.debugname, args[0], args[1]),
+                        print policy.__doc__ or policy, " = ", result
                     return result
+        if self.debug:
+            print "%s(%s,%s):" % (self.debugname, args[0], args[1]),
+            print "default to None"
         return None
 
     def add_rule(self, rule, priority=0):
