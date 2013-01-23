@@ -17,6 +17,8 @@ class FakeAgent(Agent):
 
 
 class AppRecognizer(Recognizer):
+    ninstances = 0
+
     def __init__(self, recognizer):
         Recognizer.__init__(self)
 
@@ -25,7 +27,8 @@ class AppRecognizer(Recognizer):
         self.eventqueue = []
         self.register_event(recognizer.newAgent, AppRecognizer._eventNewAgent)
         self.willenqueue = True
-        self.name = "AppRecognizer(%s)" % str(recognizer.__name__)
+        self.name = "AppRecognizer(%s) %d" % (str(recognizer.__name__), AppRecognizer.ninstances)
+        AppRecognizer.ninstances += 1
 
     @newHypothesis
     def _eventNewAgent(self, agent):
