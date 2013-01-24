@@ -38,7 +38,8 @@ class DemoWindow(Window):
                 s.update()
 
     def initdisplay(self):
-        self.set_size(800, 600)
+        w, h = Render.windowsize
+        self.set_size(w, h)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
