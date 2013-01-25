@@ -3,6 +3,8 @@
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
 from GestureAgentsDemo.Geometry import Ring, Circle
 from GestureAgentsDemo.Render import Update
+from GestureAgents.Recognizer import Recognizer
+import pyglet.clock
 from GestureAgents.AppRecognizer import AppRecognizer
 from weakref import WeakKeyDictionary
 from math import sin, cos, pi
@@ -79,7 +81,8 @@ class FingerShadow(object):
         self.group = group
         TuioCursorEvents.newAgent.register(FingerShadow.newAgentCursor, self)
         self.curshadows = WeakKeyDictionary()
-        Update.register(FingerShadow.update, self)
+        # Update.register(FingerShadow.update, self)
+        pyglet.clock.schedule_interval(self.update, .1)
         # self.apprecognizerlist = WeakSet()
         # AppRecognizer.acquire = notifier(self.NewAppRecognizer, AppRecognizer.acquire)
 
@@ -111,14 +114,18 @@ def apprecognizers_subscribed(agent, a_process=None):
     if a_process is None:
         a_process = set()
     for r in recognizers_subscribed(agent):
+        if not isinstance(r, Recognizer):
+            continue
+        if r.failed:
+            continue
         if type(r) is AppRecognizer:
             yield r
         else:
             agent = r.agent
             if agent not in a_process:
                 a_process.add(agent)
-                for r in apprecognizers_subscribed(agent, a_process):
-                    yield r
+                for rr in apprecognizers_subscribed(agent, a_process):
+                    yield rr
 
 
 def getSourceAgents(recog):
