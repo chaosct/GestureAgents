@@ -48,7 +48,7 @@ class DemoWindow(Window):
         elif symbol == key.F:
             self.set_fullscreen(not self.fullscreen)
         else:
-            print "key", symbol, "!"
+            Render.basegroup.on_key_press(symbol, modifiers)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.tuiomouse.on_mouse_press(x, y, button, modifiers)

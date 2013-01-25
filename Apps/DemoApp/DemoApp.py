@@ -2,6 +2,7 @@
 from pyglet.graphics import OrderedGroup
 from pyglet.gl import glPushMatrix, glPopMatrix, glScalef
 from GestureAgentsDemo.Utils import DynamicValue
+from GestureAgentsDemo.Render import basegroup
 
 
 class ShellAppGroup(OrderedGroup):
@@ -34,7 +35,7 @@ class ShellApp(object):
 
     def launch(self, App):
         id = self.maxid
-        group = ShellAppGroup(id)
+        group = ShellAppGroup(id, parent=basegroup)
         self.maxid += 1
         app = App(group=group)
         self.running[app] = dict(id=id, group=group, program=App, instance=app)
