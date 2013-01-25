@@ -85,11 +85,13 @@ if __name__ == '__main__':
     from apps.Map import DemoMapApp
     from apps.Shadows import FingerShadow
     from apps.Pictures import AppPictureBrowser
+    from apps.Calibrator import CalibratorApp
     # from apps.DebugRecognizers import DebugRecognizer
     shell = ShellApp()
     shell.launch(DemoMapApp)
     shell.launch(AppPictureBrowser)
     shell.launch(FingerShadow)
+    shell.launch(CalibratorApp)
     # shell.launch(DebugRecognizer)
     # shell.launch(DemoApp)
     GestureAgentsDemo.run_apps()
