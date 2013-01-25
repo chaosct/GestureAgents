@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from GestureAgentsDemo.Render import Update
+from GestureAgentsDemo.Render import Update, drawBatch
+from pyglet.text import Label
+from pyglet.clock import schedule_once
 
 
 class DynamicValue(object):
@@ -28,3 +30,17 @@ class DynamicValue(object):
             self.value = self.target
         else:
             self.value += step
+
+
+class TextAlert(object):
+    def __init__(self, pos, text, group=None, timeout=5,
+                color=(255, 100, 100, 255), font_size=8, **kwargs):
+        x, y = pos
+        self.text = Label(text=text, x=x, y=y, font_size=font_size,
+                            group=group, batch=drawBatch,
+                            color=color, **kwargs)
+        schedule_once(self.kill, timeout)
+
+    def kill(self, dt=0):
+        self.text.delete()
+        self.text = None

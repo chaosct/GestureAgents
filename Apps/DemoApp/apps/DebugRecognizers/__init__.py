@@ -2,13 +2,12 @@
 
 from ..Map.RecognizerMove import RecognizerMove
 from ..Map.RecognizerZoomRotate import RecognizerZoomRotate
-from GestureAgentsDemo.Render import Update, drawBatch
+from GestureAgentsDemo.Render import Update
 from pyglet.clock import schedule_interval, schedule_once
 import gc
 import weakref
 from GestureAgentsDemo.Geometry import Circle, Ring, Rectangle
-from GestureAgentsDemo.Utils import DynamicValue
-from pyglet.text import Label
+from GestureAgentsDemo.Utils import DynamicValue, TextAlert
 
 
 class GraphicAlert(object):
@@ -20,19 +19,6 @@ class GraphicAlert(object):
 
     def kill(self, dt=0):
         self.figure = None
-
-
-class TextAlert(object):
-    def __init__(self, pos, text, group):
-        x, y = pos
-        self.text = Label(text=text, x=x, y=y, font_size=8,
-                            group=group, batch=drawBatch,
-                            color=(255, 100, 100, 255))
-        schedule_once(self.kill, 5)
-
-    def kill(self, dt=0):
-        self.text.delete()
-        self.text = None
 
 
 class RecognizerParticle(object):
