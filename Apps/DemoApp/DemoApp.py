@@ -45,9 +45,9 @@ class ShellApp(object):
 
     def newDoubleTap(self, DTap):
         self.minimized = not self.minimized
-        s = .5 if self.minimized else 1
+        s = 0 if self.minimized else 1
         for app in self.running.itervalues():
-            app["group"].scale(s, 1)
+            app["group"].scale(s, .5)
 
 
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
