@@ -20,11 +20,12 @@ class DemoWindow(Window):
         except NoSuchConfigException:
             # Fall back to no multisampling for old hardware
             super(DemoWindow, self).__init__(resizable=True)
+        self.initdisplay()
         self.tuiomouse = MouseAsTuioAgentGenerator()
         self.sensors = (
-            Tuio.TuioAgentGenerator(self.get_size()), self.tuiomouse)
+            Tuio.TuioAgentGenerator(self.get_size(), inverse_y=True),
+            self.tuiomouse)
         pyglet.clock.schedule(self.update)
-        self.initdisplay()
 
     def on_draw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)

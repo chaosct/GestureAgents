@@ -11,11 +11,13 @@ class TuioCursorEvents:
 
 
 class TuioAgentGenerator:
-    def __init__(self, screensize):
+    def __init__(self, screensize, inverse_x=False, inverse_y=False):
         self.tracking = tuio.Tracking(host='0.0.0.0')
         self.cursors = {}
         self.agents = {}
         self.screensize = screensize
+        self.inverse_x = inverse_x
+        self.inverse_y = inverse_y
 
     def update(self):
         self.tracking.update()
@@ -63,6 +65,10 @@ class TuioAgentGenerator:
         for member, value in dcur.iteritems():
             setattr(agent, member, value)
         #pos is legacy as Mouse emulator
+        if self.inverse_x:
+            agent.xpos = 1 - agent.xpos
+        if self.inverse_y:
+            agent.ypos = 1 - agent.ypos
         agent.pos = (
             agent.xpos * self.screensize[0], agent.ypos * self.screensize[1])
 
