@@ -68,10 +68,13 @@ class FingerFollower(object):
     def update(self, dt=0):
         actuals = set(apprecognizers_subscribed(self.agent))
         anteriors = set(self.recognizersymbols)
-        for r in actuals - anteriors:
+        pending = actuals - anteriors
+        for r in pending:
             name = r.recognizer.__name__
             color = rcolors.get(name, (255, 255, 255))
             self.recognizersymbols[r] = Circle(5, 20, group=self.group, color=color)
+        if pending:
+            self.updateCursor(None)
 
 
 class FingerShadow(object):
