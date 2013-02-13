@@ -1,6 +1,6 @@
-=====================================
-Agent-Based Gesture Ecology Framework
-=====================================
+=============
+GestureAgents
+=============
 
 
 Author: Carles F. Julià <carles.fernandez@upf.edu>
