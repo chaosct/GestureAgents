@@ -10,3 +10,5 @@ Testing:
     TIP: you should add this main folder to your PYHONPATH:
     $ cd Apps/DemoApp
     $ PYTHONPATH=../.. python DemoApp.py
+
+    Use TUIO events to interact with the demos (reacTIVision, TUIOSimulator, etc)
