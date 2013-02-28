@@ -2,12 +2,15 @@
 
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
 from GestureAgentsDemo.Geometry import Ring, Circle
-from GestureAgentsDemo.Render import Update
+from GestureAgentsDemo.Render import drawBatch
 from GestureAgents.Recognizer import Recognizer
 import pyglet.clock
+from pyglet.sprite import Sprite
+from pyglet.resource import Loader
 from GestureAgents.AppRecognizer import AppRecognizer
 from weakref import WeakKeyDictionary
 from math import sin, cos, pi
+from unipath import Path
 
 
 def notifier(fnotified, function):
@@ -22,13 +25,39 @@ rcolors = {
     'RecognizerMove' : (0, 0, 255)
 }
 
+ICONPATH = Path(Path(__file__).parent, "icons")
+loader = Loader([ICONPATH])
+
+
+class customSprite(object):
+    def __init__(self, image):
+        self.image = image
+
+    def getCentered(self, pos):
+        self.image.x, self.image.y = pos
+
+    def updateDisplay(self):
+        pass
+
+
+def create_recognizer_icon(r, group):
+    print Path(ICONPATH, r + ".png")
+    if Path(ICONPATH, r + ".png").exists():
+        t = loader.image(r + ".png")
+        sprite = Sprite(t, batch=drawBatch, group=group)
+        sprite.scale = 0.25
+        return customSprite(sprite)
+    else:
+        color = rcolors.get(r, (255, 255, 255))
+        return Circle(5, 20, group=group, color=color)
+
 
 class FingerFollower(object):
     DebugApp = True
 
     def __init__(self, agent, group=None):
         self.agent = agent
-        self.circle = None
+        self.ring = None
         self.dead = False
         self.group = group
         self.agent.newCursor.register(FingerFollower.newCursor, self)
@@ -44,10 +73,10 @@ class FingerFollower(object):
         self.updateCursor(a)
 
     def updateCursor(self, a):
-        if not self.circle:
-            self.circle = Ring(10, 4, 20, group=self.group, color=(255, 0, 0))
-        self.circle.getCentered(self.pos())
-        self.circle.updateDisplay()
+        if not self.ring:
+            self.ring = Ring(10, 4, 20, group=self.group, color=(255, 0, 0))
+        self.ring.getCentered(self.pos())
+        self.ring.updateDisplay()
         cx, cy = self.pos()
         for n, c in enumerate(self.recognizersymbols.itervalues()):
             x = cx + 20 * cos(n * pi / 5)
@@ -56,7 +85,7 @@ class FingerFollower(object):
             c.updateDisplay()
 
     def removeCursor(self, a):
-        self.circle = None
+        self.ring = None
 
     def finishAgent(self, a):
         self.dead = True
@@ -71,8 +100,7 @@ class FingerFollower(object):
         pending = actuals - anteriors
         for r in pending:
             name = r.recognizer.__name__
-            color = rcolors.get(name, (255, 255, 255))
-            self.recognizersymbols[r] = Circle(5, 20, group=self.group, color=color)
+            self.recognizersymbols[r] = create_recognizer_icon(name, self.group)
         if pending:
             self.updateCursor(None)
 
