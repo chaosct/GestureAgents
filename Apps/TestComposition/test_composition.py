@@ -7,6 +7,7 @@ from RecognizerTT_Test import build_and_register_TT
 from RecognizerT_Test import RecognizerT_Test
 from recognizer_testing import run_apps
 from recognizer_testing import test_events
+from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 
 
 events_3tap = [
@@ -49,11 +50,6 @@ RecognizerDT2 = build_and_register_DT(RecognizerT_Test)
 RecognizerTT2 = build_and_register_TT(RecognizerT_Test)
 
 
-def AppTestTap():
-    from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
-    return AppTestGeneric(RecognizerTap, ("newTap",))
-
-
 def AppTestDT():
     return AppTestGeneric(RecognizerDT1, ("newDoubleTap",))
 
@@ -74,16 +70,20 @@ def AppTestTT2():
     return AppTestGeneric(RecognizerTT2, ("newTripleTap",))
 
 
-class TapTestCase(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestTap()
+def test_regognizer(recognizer_class, events2listen, fake_events, events_expected):
+    class GenericRecognizerTestCase(unittest.TestCase):
+        def setUp(self):
+            self.appt1 = AppTestGeneric(recognizer_class, events2listen)
 
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 3)
+        def runTest(self):
+            run_apps(test_events(fake_events))
+            self.assertEqual(self.appt1.received, events_expected)
 
-    def tearDown(self):
-        self.appt1.unregister()
+        def tearDown(self):
+            self.appt1.unregister()
+    return GenericRecognizerTestCase
+
+TapTestCase = test_regognizer(RecognizerTap, ("newTap",), events_3tap, 3)
 
 
 class DoubleTapTestCase(unittest.TestCase):
