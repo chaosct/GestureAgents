@@ -20,6 +20,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
             self.agent = None
             self.firstap = None
             self.secondtap = None
+            self.thirdtap = None
             self.register_event(
                 self.RTKlass.newAgent, RecognizerDT_Test.EventNewAgent)
             self.time = 0.3
@@ -53,12 +54,16 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.register_event(Tap.newTap, RecognizerDT_Test.SecondTap)
 
         def SecondTap(self, Tap):
-            self.secondtap = Tap
-            self.unregister_event(Tap.newTap)
-            self.register_event(
-                self.RTKlass.newAgent, RecognizerDT_Test.EventNewAgent3)
-            self.expire_in(self.time)
-            self.acquire(Tap)
+            if self.dist(Tap.pos, self.firstap.pos) > self.maxd:
+                self.fail(cause="Max distance")
+            else:
+                self.secondtap = Tap
+                self.unregister_event(Tap.newTap)
+                self.cancel_expire()
+                self.register_event(
+                    self.RTKlass.newAgent, RecognizerDT_Test.EventNewAgent3)
+                self.expire_in(self.time)
+                self.acquire(Tap)
 
         @newHypothesis
         def EventNewAgent3(self, Tap):
@@ -66,7 +71,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.fail(cause="Max distance")
             else:
                 self.unregister_event(self.RTKlass.newAgent)
-                self.register_event(Tap.newTap, RecognizerDT_Test.SecondTap)
+                self.register_event(Tap.newTap, RecognizerDT_Test.ThirdTap)
 
         def ThirdTap(self, Tap):
             if self.dist(Tap.pos, self.firstap.pos) > self.maxd:
@@ -86,7 +91,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
             #print "I execute",self
             self.agent.pos = self.thirdtap.pos
             #print self.agent.newDoubleTap.registered
-            self.agent.newDoubleTap(self.agent)
+            self.agent.newTripleTap(self.agent)
             self.finish()
 
         def duplicate(self):
@@ -102,11 +107,13 @@ def build_and_register_TT(RTKlass=RecognizerTap):
             return math.sqrt(dx ** 2 + dy ** 2)
 
         def make_DoubleTapAgent(self):
-            a = Agent(("newDoubleTap",), self)
+            a = Agent(("newTripleTap",), self)
             return a
 
-        def __repr__(self):
-            return self.name
+        # def fail(self, cause="Unknown"):
+        #     print self, "fail, cause=" + cause
+        #     #raise Exception("RecognizerDT_Test fail")
+        #     Recognizer.fail(self)
 
     import GestureAgents.Gestures as Gestures
     Gestures.load_recognizer(RecognizerDT_Test)
