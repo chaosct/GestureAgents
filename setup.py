@@ -18,10 +18,11 @@ setup(
               'GestureAgentsTUIO.tuio',
               'GestureAgentsTUIO.Gestures2D',
               'GestureAgentsPygame',
+              'GestureAgentsDemo',
               ],
     #url='http://pypi.python.org/pypi/TowelStuff/',
     license='LICENSE.txt',
-    description='Agent-Exclusivity-based Gesture Ecology Framework',
+    description='Agent-Exclusivity-based Gesture Disambiguation Framework',
     long_description=open('README.txt').read(),
     install_requires=[
         "pygame",
