@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 import unittest
 from GestureAgents.AppRecognizer import AppRecognizer
-import GestureAgents.Gestures as Gestures
 from RecognizerDT_Test import build_and_register_DT
-from GestureAgents.Agent import Agent
-import GestureAgents.Reactor as Reactor
 from RecognizerTT_Test import build_and_register_TT
 from RecognizerT_Test import RecognizerT_Test
+from recognizer_testing import run_apps
+from recognizer_testing import test_events
 
 
 events_3tap = [
@@ -21,58 +20,6 @@ events_3tap = [
      (0.4, 'in'),
      (0.5, 'out'))),
 ]
-
-
-def enter_debug():
-    return
-    import pdb
-    pdb.set_trace()
-
-
-def test_events(evlist):
-    from GestureAgentsTUIO.Tuio import TuioAgentGenerator
-    maxtime = 0
-    for entry in evlist:
-        t = entry[0]
-        if t == 'f':
-            sid, pos, events = entry[1:]
-            a = TuioAgentGenerator.makeCursorAgent()
-            a.pos = pos
-            a.posx = pos[0]
-            a.posy = pos[1]
-            a.sessionid = sid
-            a.xmot = 0
-            a.ymot = 0
-            a.mot_accel = 0
-            for e in events:
-                time, ev_type = e[:2]
-                maxtime = max(maxtime, time)
-                if ev_type == 'in':
-                    f = lambda s, a=a: (a.newAgent(a), a.newCursor(a))
-                elif ev_type == 'out':
-                    f = lambda s, a=a: (enter_debug(), a.removeCursor(a), a.finish())
-                else:
-                    raise NotImplementedError
-                Reactor.schedule_after(time, None, f)
-    return maxtime+1
-
-
-def run_apps(maxtime, debug=False):
-    if debug:
-        if Gestures.recognizers_loaded:
-            print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
-            for r in Gestures.recognizers:
-                print "\t%s" % str(r)
-
-        print "=" * 5 + "Agent.completion_policy Policy rules:" + "=" * 5
-        print Agent.completion_policy
-    running = [True]
-
-    def stop(a):
-        running[0] = False
-    Reactor.schedule_after(maxtime, None, stop)
-    while running[0]:
-        Reactor.run_all_now()
 
 
 class AppTestGeneric(object):
@@ -133,7 +80,7 @@ class TapTestCase(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 3
+        self.assertEqual(self.appt1.received, 3)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -145,7 +92,7 @@ class DoubleTapTestCase(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 1
+        self.assertEqual(self.appt1.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -157,7 +104,7 @@ class TripleTapTestCase(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 1
+        self.assertEqual(self.appt1.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -169,7 +116,7 @@ class TapTestCase2(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 3
+        self.assertEqual(self.appt1.received, 3)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -181,7 +128,7 @@ class DoubleTapTestCase2(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 1
+        self.assertEqual(self.appt1.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -193,7 +140,7 @@ class TripleTapTestCase2(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 1
+        self.assertEqual(self.appt1.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -206,8 +153,8 @@ class TripleTapWinsOverDoubleTapTestCase(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 0
-        assert self.appt2.received == 1
+        self.assertEqual(self.appt1.received, 0)
+        self.assertEqual(self.appt2.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -221,8 +168,8 @@ class TripleTapWinsOverDoubleTapTestCase2(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 0
-        assert self.appt2.received == 1
+        self.assertEqual(self.appt1.received, 0)
+        self.assertEqual(self.appt2.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -236,8 +183,8 @@ class TripleTapWinsOverDoubleTapTestCaseMixed1(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 0
-        assert self.appt2.received == 1
+        self.assertEqual(self.appt1.received, 0)
+        self.assertEqual(self.appt2.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
@@ -251,8 +198,8 @@ class TripleTapWinsOverDoubleTapTestCaseMixed2(unittest.TestCase):
 
     def runTest(self):
         run_apps(test_events(events_3tap))
-        assert self.appt1.received == 0
-        assert self.appt2.received == 1
+        self.assertEqual(self.appt1.received, 0)
+        self.assertEqual(self.appt2.received, 1)
 
     def tearDown(self):
         self.appt1.unregister()
