@@ -162,6 +162,7 @@ class TripleTapTestCase(unittest.TestCase):
     def tearDown(self):
         self.appt1.unregister()
 
+
 class TapTestCase2(unittest.TestCase):
     def setUp(self):
         self.appt1 = AppTestTap2()
@@ -196,6 +197,67 @@ class TripleTapTestCase2(unittest.TestCase):
 
     def tearDown(self):
         self.appt1.unregister()
+
+
+class TripleTapWinsOverDoubleTapTestCase(unittest.TestCase):
+    def setUp(self):
+        self.appt1 = AppTestDT()
+        self.appt2 = AppTestTT()
+
+    def runTest(self):
+        run_apps(test_events(events_3tap))
+        assert self.appt1.received == 0
+        assert self.appt2.received == 1
+
+    def tearDown(self):
+        self.appt1.unregister()
+        self.appt2.unregister()
+
+
+class TripleTapWinsOverDoubleTapTestCase2(unittest.TestCase):
+    def setUp(self):
+        self.appt1 = AppTestDT2()
+        self.appt2 = AppTestTT2()
+
+    def runTest(self):
+        run_apps(test_events(events_3tap))
+        assert self.appt1.received == 0
+        assert self.appt2.received == 1
+
+    def tearDown(self):
+        self.appt1.unregister()
+        self.appt2.unregister()
+
+
+class TripleTapWinsOverDoubleTapTestCaseMixed1(unittest.TestCase):
+    def setUp(self):
+        self.appt1 = AppTestDT()
+        self.appt2 = AppTestTT2()
+
+    def runTest(self):
+        run_apps(test_events(events_3tap))
+        assert self.appt1.received == 0
+        assert self.appt2.received == 1
+
+    def tearDown(self):
+        self.appt1.unregister()
+        self.appt2.unregister()
+
+
+class TripleTapWinsOverDoubleTapTestCaseMixed2(unittest.TestCase):
+    def setUp(self):
+        self.appt1 = AppTestDT2()
+        self.appt2 = AppTestTT()
+
+    def runTest(self):
+        run_apps(test_events(events_3tap))
+        assert self.appt1.received == 0
+        assert self.appt2.received == 1
+
+    def tearDown(self):
+        self.appt1.unregister()
+        self.appt2.unregister()
+
 
 if __name__ == '__main__':
     unittest.main()
