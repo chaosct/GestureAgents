@@ -1,42 +1,70 @@
 # coding: utf-8
-from GestureAgents import Recognizer
-from GestureAgentsTUIO import Tuio
+from GestureAgents.Recognizer import Recognizer
 from GestureAgents.Recognizer import newHypothesis
 from GestureAgents.Events import Event
-from GestureAgents.Agent import Agent
-import math
+from copy import deepcopy
 
 
-class FeatureGesture(Recognizer):
-    def __init__(self, feature):
-        self.feature = feature
-        feature.gesture = self
-        self.sourceevents = {}
-        self.__failed = False
+def class_FeatureGesture(feature):
+    class FeatureGesture(Recognizer):
+        newAgent = Event()
 
-    @newHypothesis
-    def EventnewAgent(self, agent):
-        event = self.sourceevents[agent.newAgent]
-        if event.empty():
-            self.fail("Noone interested")
-        event(agent)
+        def __init__(self):
+            super(FeatureGesture, self).__init__()
+            self.sourceevents = {}  # dict of fake NewAgent events
+            self.__failed = False   # flag preventing double failing
+            self.feature = feature(self)  # the gesture definition
+            # feature.gesture = self  # we assign the parent
+            self.register_event(self.feature.newAgent,
+                                FeatureGesture.EventNewFeatureAgent)
 
-    def getNewAgent(self, na):
-        if na not in self.sourceevents:
-            self.sourceevents[na] = Event()
-            self.register_event(na, self.EventnewAgent)
-        return self.sourceevents[na]
+        @newHypothesis
+        def EventnewAgent(self, agent):
+            "Handle newAgent events"
+            event = self.sourceevents[agent.newAgent]
+            # if event.empty():
+            #     self.fail("Noone interested")
+            event(agent)
 
-    def fail(self, cause):
-        if self.__failed:
-            return
-        self.__failed = True
-        self.feature.safe_fail(cause)
-        super(FeatureGesture, self).fail(cause)
+        def EventNewFeatureAgent(self, agent):
+            self.newAgent(agent)
+
+        def getNewAgent(self, na):
+            if na not in self.sourceevents:
+                self.sourceevents[na] = Event()
+                self.register_event(na, FeatureGesture.EventnewAgent)
+            return self.sourceevents[na]
+
+        def fail(self, cause):
+            print "FeatureGesture.fail({})".format(cause)
+            if self.__failed:
+                return
+            self.__failed = True
+            self.feature.safe_fail(cause)
+            super(FeatureGesture, self).fail(cause)
+
+        def execute(self):
+            self.feature.execute()
+
+        def duplicate(self):
+            d = self.get_copy()
+            for se in self.sourceevents:
+                d.getNewAgent(se)
+            d.__failed = self.__failed
+            d.feature = deepcopy(self.feature)
+            d.register_event(d.feature.newAgent,
+                             FeatureGesture.EventNewFeatureAgent)
+            return d
+
+    import GestureAgents.Gestures as Gestures
+    Gestures.load_recognizer(FeatureGesture)
+    return FeatureGesture
 
 
 class Feature(Recognizer):
-    def __init__(self):
+    def __init__(self, parent):
+        super(Feature, self).__init__()
+        self.gesture = parent
         self.__failed = False
 
     def getNewAgent(self, na):
@@ -46,7 +74,7 @@ class Feature(Recognizer):
         if self.__failed:
             return
         self.__failed = True
-        self.gesture.fail()
+        self.gesture.fail(cause)
         super(Feature, self).fail(cause)
 
     def acquire(self, agent):
@@ -63,70 +91,8 @@ class Feature(Recognizer):
         #and making agent envelops simply faking the recycled flag
         pass
 
-
-class FeatureTap(Feature):
-    newAgent = Event()
-
-    def __init__(self):
-        self.finger = None
-        super(FeatureTap, self).__init__()
-        self.cursorEvents = Tuio.TuioCursorEvents
-        self.register_event(self.getNewAgent(self.cursorEvents.newAgent), FeatureTap.EventNewAgent)
-        self.maxd = 10
-        self.time = 0.5
-        self.origin = None
-
-    def EventNewAgent(self, Cursor):
-        # Am I interested on this Agent?
-        # We don't want recycled Agents
-        if Cursor.recycled:
-            self.fail("Cursor is recycled")
-        # Let's ask our subscribbers
-        self.agent = self.make_TapAgent()
-        self.agent.pos = Cursor.pos
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
-        else:
-            self.unregister_event(self.getNewAgent(self.cursorEvents.newAgent))
-            self.register_event(Cursor.newCursor, FeatureTap.EventNewCursor)
-
-    def EventNewCursor(self, Cursor):
-        self.finger = Cursor
-        self.unregister_event(Cursor.newCursor)
-        self.register_event(Cursor.updateCursor, FeatureTap.EventMoveCursor)
-        self.register_event(
-            Cursor.removeCursor, FeatureTap.EventRemoveCursor)
-        self.expire_in(self.time)
-        self.origin = Cursor.pos
-        self.acquire(Cursor)
-
-    def EventMoveCursor(self, Cursor):
-        if self.dist(Cursor.pos, self.origin) > self.maxd:
-            self.fail("Cursor moved")
-
-    def EventRemoveCursor(self, Cursor):
-        self.cancel_expire()
-        self.unregister_event(Cursor.updateCursor)
-        self.unregister_event(Cursor.removeCursor)
-        self.complete(self)
-
-    def execute(self):
-        self.agent.pos = self.origin
-        self.agent.newTap(self.agent)
-        self.finish()
-
-    @staticmethod
-    def dist(a, b):
-        dx, dy = (a[0] - b[0], a[1] - b[1])
-        return math.sqrt(dx ** 2 + dy ** 2)
-
-    def duplicate(self):
-        d = self.get_copy()
-        d.finger = self.finger
-        d.origin = self.origin
-        return d
-
-    def make_TapAgent(self):
-        a = Agent(("newTap",), self)
-        return a
+    # def copy_to(self, d):
+    #     # avoid being 
+    #     for event, f in self.registers.iteritems():
+    #         d.register_event(event, f)
+    
