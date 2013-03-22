@@ -31,12 +31,6 @@ RecognizerDT2 = build_and_register_DT(RecognizerT_Test)
 RecognizerTT2 = build_and_register_TT(RecognizerT_Test)
 
 
-# class TripleTapWinsOverDoubleTapTestCaseMixed2(t_rs(events_3tap,
-#                                                [(RecognizerDT2, ("newDoubleTap",), 0),
-#                                                 (RecognizerTT1, ("newTripleTap",), 1)])):
-#     pass
-
-
 class TapTestCase(t_r(events_3tap, RecognizerTap, ("newTap",), 3)):
     pass
 
@@ -46,10 +40,6 @@ class DoubleTapTestCase(t_r(events_3tap, RecognizerDT1, ("newDoubleTap",), 1)):
 
 
 class TripleTapTestCase(t_r(events_3tap, RecognizerTT1, ("newTripleTap",), 1)):
-    pass
-
-
-class TapTestCase2(t_r(events_3tap, RecognizerT_Test, ("newTap",), 3)):
     pass
 
 
@@ -79,8 +69,12 @@ class TripleTapWinsOverDoubleTapTestCaseMixed1(t_rs(events_3tap,
     pass
 
 
-
+class TripleTapWinsOverDoubleTapTestCaseMixed2(t_rs(events_3tap,
+                                               [(RecognizerDT2, ("newDoubleTap",), 0),
+                                                (RecognizerTT1, ("newTripleTap",), 1)])):
+    pass
 
 
 if __name__ == '__main__':
+    import unittest
     unittest.main()

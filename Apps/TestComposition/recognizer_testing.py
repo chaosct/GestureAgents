@@ -79,7 +79,8 @@ class AppTestGeneric(object):
 
 def test_regognizer(fake_events, recognizer_class, events2listen, events_expected):
     "Create a unit test for a recognizer using a series of events"
-    return test_regognizers(fake_events,[(recognizer_class, events2listen, events_expected)])
+    return test_regognizers(fake_events, [(recognizer_class, events2listen, events_expected)])
+
 
 def test_regognizers(fake_events, testing_entries):
     "Create a unit test for several recognizers using a series of events"
@@ -88,8 +89,8 @@ def test_regognizers(fake_events, testing_entries):
             self.apps = []
             for entry in testing_entries:
                 recognizer_class, events2listen, events_expected = entry
-                d = { "app" : AppTestGeneric(recognizer_class, events2listen),
-                      "expected" : events_expected}
+                d = {"app": AppTestGeneric(recognizer_class, events2listen),
+                     "expected": events_expected}
                 self.apps.append(d)
 
         def runTest(self):
