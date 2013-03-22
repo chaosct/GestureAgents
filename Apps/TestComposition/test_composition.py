@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import unittest
-from GestureAgents.AppRecognizer import AppRecognizer
+
 from RecognizerDT_Test import build_and_register_DT
 from RecognizerTT_Test import build_and_register_TT
 from RecognizerT_Test import RecognizerT_Test
-from recognizer_testing import run_apps
-from recognizer_testing import test_events
+from recognizer_testing import t_r, t_rs
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 
 
@@ -23,23 +21,6 @@ events_3tap = [
 ]
 
 
-class AppTestGeneric(object):
-    def __init__(self, recognizer, events):
-        self.ar = AppRecognizer(recognizer)
-        self.ar.newAgent.register(AppTestGeneric.newAgentTap, self)
-        self.received = 0
-        self.events = events
-
-    def newAgentTap(self, agent):
-        for event in self.events:
-            getattr(agent, event).register(AppTestGeneric.cb, self)
-
-    def cb(self, agent):
-        self.received += 1
-
-    def unregister(self):
-        self.ar.newAgent.unregister(self)
-
 # Test Composition sharing sub-gestures
 #Test 1: 2 recognizers share a sub recognzer (Tap)
 
@@ -50,162 +31,56 @@ RecognizerDT2 = build_and_register_DT(RecognizerT_Test)
 RecognizerTT2 = build_and_register_TT(RecognizerT_Test)
 
 
-def AppTestDT():
-    return AppTestGeneric(RecognizerDT1, ("newDoubleTap",))
+# class TripleTapWinsOverDoubleTapTestCaseMixed2(t_rs(events_3tap,
+#                                                [(RecognizerDT2, ("newDoubleTap",), 0),
+#                                                 (RecognizerTT1, ("newTripleTap",), 1)])):
+#     pass
 
 
-def AppTestTT():
-    return AppTestGeneric(RecognizerTT1, ("newTripleTap",))
+class TapTestCase(t_r(events_3tap, RecognizerTap, ("newTap",), 3)):
+    pass
 
 
-def AppTestTap2():
-    return AppTestGeneric(RecognizerT_Test, ("newTap",))
+class DoubleTapTestCase(t_r(events_3tap, RecognizerDT1, ("newDoubleTap",), 1)):
+    pass
 
 
-def AppTestDT2():
-    return AppTestGeneric(RecognizerDT2, ("newDoubleTap",))
+class TripleTapTestCase(t_r(events_3tap, RecognizerTT1, ("newTripleTap",), 1)):
+    pass
 
 
-def AppTestTT2():
-    return AppTestGeneric(RecognizerTT2, ("newTripleTap",))
+class TapTestCase2(t_r(events_3tap, RecognizerT_Test, ("newTap",), 3)):
+    pass
 
 
-def test_regognizer(recognizer_class, events2listen, fake_events, events_expected):
-    class GenericRecognizerTestCase(unittest.TestCase):
-        def setUp(self):
-            self.appt1 = AppTestGeneric(recognizer_class, events2listen)
-
-        def runTest(self):
-            run_apps(test_events(fake_events))
-            self.assertEqual(self.appt1.received, events_expected)
-
-        def tearDown(self):
-            self.appt1.unregister()
-    return GenericRecognizerTestCase
-
-TapTestCase = test_regognizer(RecognizerTap, ("newTap",), events_3tap, 3)
+class DoubleTapTestCase2(t_r(events_3tap, RecognizerDT2, ("newDoubleTap",), 1)):
+    pass
 
 
-class DoubleTapTestCase(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestDT()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
+class TripleTapTestCase2(t_r(events_3tap, RecognizerTT2, ("newTripleTap",), 1)):
+    pass
 
 
-class TripleTapTestCase(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestTT()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
+class TripleTapWinsOverDoubleTapTestCase(t_rs(events_3tap,
+                                         [(RecognizerDT1, ("newDoubleTap",), 0),
+                                          (RecognizerTT1, ("newTripleTap",), 1)])):
+    pass
 
 
-class TapTestCase2(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestTap2()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 3)
-
-    def tearDown(self):
-        self.appt1.unregister()
+class TripleTapWinsOverDoubleTapTestCase2(t_rs(events_3tap,
+                                          [(RecognizerDT2, ("newDoubleTap",), 0),
+                                           (RecognizerTT2, ("newTripleTap",), 1)])):
+    pass
 
 
-class DoubleTapTestCase2(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestDT2()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
+class TripleTapWinsOverDoubleTapTestCaseMixed1(t_rs(events_3tap,
+                                               [(RecognizerDT1, ("newDoubleTap",), 0),
+                                                (RecognizerTT2, ("newTripleTap",), 1)])):
+    pass
 
 
-class TripleTapTestCase2(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestTT2()
 
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
-
-
-class TripleTapWinsOverDoubleTapTestCase(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestDT()
-        self.appt2 = AppTestTT()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 0)
-        self.assertEqual(self.appt2.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
-        self.appt2.unregister()
-
-
-class TripleTapWinsOverDoubleTapTestCase2(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestDT2()
-        self.appt2 = AppTestTT2()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 0)
-        self.assertEqual(self.appt2.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
-        self.appt2.unregister()
-
-
-class TripleTapWinsOverDoubleTapTestCaseMixed1(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestDT()
-        self.appt2 = AppTestTT2()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 0)
-        self.assertEqual(self.appt2.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
-        self.appt2.unregister()
-
-
-class TripleTapWinsOverDoubleTapTestCaseMixed2(unittest.TestCase):
-    def setUp(self):
-        self.appt1 = AppTestDT2()
-        self.appt2 = AppTestTT()
-
-    def runTest(self):
-        run_apps(test_events(events_3tap))
-        self.assertEqual(self.appt1.received, 0)
-        self.assertEqual(self.appt2.received, 1)
-
-    def tearDown(self):
-        self.appt1.unregister()
-        self.appt2.unregister()
 
 
 if __name__ == '__main__':
     unittest.main()
-
