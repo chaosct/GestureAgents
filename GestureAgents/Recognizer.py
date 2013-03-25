@@ -145,7 +145,7 @@ class Recognizer(EventClient, Autonamed):
         d.unregister_all()
         for a in self._agentsAcquired:
             d.acquire(a)
-        EventClient.copy_to(self, d)
+        self.copy_to(d)
         Reactor.duplicate_instance(self, d)
         #we duplicate agents
         if self.agent:
