@@ -51,7 +51,9 @@ def class_FeatureGesture(feature):
             for se in self.sourceevents:
                 d.getNewAgent(se)
             d.__failed = self.__failed
-            d.feature = deepcopy(self.feature)
+            # import ipdb
+            # ipdb.set_trace()
+            d.feature = self.feature.duplicate(d)
             d.register_event(d.feature.newAgent,
                              FeatureGesture.EventNewFeatureAgent)
             return d
@@ -91,8 +93,10 @@ class Feature(Recognizer):
         #and making agent envelops simply faking the recycled flag
         pass
 
-    # def copy_to(self, d):
-    #     # avoid being 
-    #     for event, f in self.registers.iteritems():
-    #         d.register_event(event, f)
+    def copy_to(self, d):
+        for event, f in self.registers.iteritems():
+            if event in self.gesture.sourceevents.itervalues():
+                d.register_event(d.getNewAgent(event), f)
+            else:
+                d.register_event(event, f)
     

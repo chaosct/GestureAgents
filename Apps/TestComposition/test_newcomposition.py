@@ -19,3 +19,6 @@ class TapTestCase3(t_r(
         class_FeatureGesture(class_FeatureTap()),
         ("newTap",), 1)):
     pass
+
+if __name__ == '__main__':
+    TapTestCase3().debug()

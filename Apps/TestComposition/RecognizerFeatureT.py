@@ -34,6 +34,8 @@ def class_FeatureTap():
             if not self.agent.is_someone_subscribed():
                 self.fail("Noone interested")
             else:
+                # import ipdb
+                # ipdb.set_trace()
                 self.unregister_event(
                     self.getNewAgent(self.cursorEvents.newAgent))
                 self.register_event(Cursor.newCursor,
@@ -74,8 +76,8 @@ def class_FeatureTap():
             dx, dy = (a[0] - b[0], a[1] - b[1])
             return math.sqrt(dx ** 2 + dy ** 2)
 
-        def duplicate(self):
-            d = self.get_copy()
+        def duplicate(self, newparent):
+            d = self.get_copy(newparent)
             d.finger = self.finger
             d.origin = self.origin
             return d
