@@ -2,6 +2,7 @@
 from GestureAgents.Recognizer import Recognizer
 from GestureAgents.Recognizer import newHypothesis
 from GestureAgents.Events import Event
+from GestureAgents.Agent import Agent
 from copy import deepcopy
 
 
@@ -17,6 +18,7 @@ def class_FeatureGesture(feature):
             # feature.gesture = self  # we assign the parent
             self.register_event(self.feature.newAgent,
                                 FeatureGesture.EventNewFeatureAgent)
+            self.agent = Agent([], self) #legacy, for finishing
 
         @newHypothesis
         def EventnewAgent(self, agent):
@@ -92,6 +94,9 @@ class Feature(Recognizer):
         #for every agent acquired fake recycling
         #that means tracking acquired agents per feature
         #and making agent envelops simply faking the recycled flag
+
+        #For now we assume that self.gesture *is* the featuregestue
+        self.gesture.finish()
         pass
 
     def copy_to(self, d):
