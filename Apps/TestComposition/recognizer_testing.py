@@ -101,6 +101,7 @@ def test_regognizers(fake_events, testing_entries):
         def tearDown(self):
             for app in self.apps:
                 app['app'].unregister()
+            Reactor.cancel_all_tasks()
     return GenericRecognizerTestCase
 
 

@@ -55,3 +55,9 @@ def run_all_now():
         all_tasks = []
         for t in l:
             t()
+
+
+def cancel_all_tasks():
+    global all_tasks, scheduled_tasks
+    all_tasks = []
+    scheduled_tasks = []
