@@ -53,6 +53,7 @@ def class_FeatureGesture(feature):
             d.__failed = self.__failed
             # import ipdb
             # ipdb.set_trace()
+            d.feature.unregister_all()
             d.feature = self.feature.duplicate(d)
             d.register_event(d.feature.newAgent,
                              FeatureGesture.EventNewFeatureAgent)
@@ -96,7 +97,8 @@ class Feature(Recognizer):
     def copy_to(self, d):
         for event, f in self.registers.iteritems():
             if event in self.gesture.sourceevents.itervalues():
-                d.register_event(d.getNewAgent(event), f)
+                oevent = [o for o, f in self.gesture.sourceevents.iteritems() if f is event][0]
+                d.register_event(d.getNewAgent(oevent), f)
             else:
                 d.register_event(event, f)
     
