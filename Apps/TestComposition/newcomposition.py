@@ -102,7 +102,7 @@ class Feature(Recognizer):
     def copy_to(self, d):
         for event, f in self.registers.iteritems():
             if event in self.gesture.sourceevents.itervalues():
-                oevent = [o for o, f in self.gesture.sourceevents.iteritems() if f is event][0]
+                oevent = [o for o, ff in self.gesture.sourceevents.iteritems() if ff is event][0]
                 d.register_event(d.getNewAgent(oevent), f)
             else:
                 d.register_event(event, f)
