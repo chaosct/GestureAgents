@@ -97,6 +97,7 @@ class Feature(Recognizer):
 
         #For now we assume that self.gesture *is* the featuregestue
         self.gesture.finish()
+        super(Feature, self).finish()
         pass
 
     def copy_to(self, d):

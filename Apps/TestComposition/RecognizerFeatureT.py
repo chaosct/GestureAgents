@@ -8,10 +8,10 @@ from GestureAgents.Agent import Agent
 
 def class_FeatureTap():
     class FeatureTap(Feature):
-        newAgent = Event()
 
         def __init__(self, parent):
             print "FeatureTap.__init__"
+            self.newAgent = Event()
             self.finger = None
             super(FeatureTap, self).__init__(parent)
             self.cursorEvents = Tuio.TuioCursorEvents

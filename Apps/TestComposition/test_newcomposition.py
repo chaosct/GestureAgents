@@ -22,17 +22,16 @@ events_2tap = [
      (0.4, 'out'))),
 ]
 
+
 class FeatureTapTestCase1(t_r(
         events_tap,
         class_FeatureGesture(class_FeatureTap()),
         ("newTap",), 1)):
     pass
 
+
 class FeatureTapTestCase2(t_r(
         events_2tap,
         class_FeatureGesture(class_FeatureTap()),
         ("newTap",), 2)):
     pass
-
-if __name__ == '__main__':
-    TapTestCase3().debug()
