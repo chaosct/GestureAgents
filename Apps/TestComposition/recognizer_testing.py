@@ -70,7 +70,7 @@ def run_apps(maxtime, debug=False, faketime=True):
     while running[0]:
         Reactor.run_all_now()
         if faketime and Reactor.scheduled_tasks:
-            nextfaketime = Reactor.scheduled_tasks[0][0] + datetime.timedelta(seconds=0.0001)
+            nextfaketime = Reactor.scheduled_tasks[0][0]
             datetime.datetime.faketime = nextfaketime
 
     if faketime:
