@@ -37,24 +37,24 @@ def cancel_schedule(instance):
             heappush(scheduled_tasks, (t, (i, f)))
 
 
+def scheduled_tasks_pending():
+    if not scheduled_tasks:
+        return False
+    now = datetime.datetime.now()
+    return scheduled_tasks[0][0] <= now
+
+
 def run_all_now():
     'Executes all pending tasks and all pertinent scheduled tasks.'
     global all_tasks
-    while all_tasks:
-        l = all_tasks
-        all_tasks = []
+    while all_tasks or scheduled_tasks_pending():
+        l, all_tasks = all_tasks, []
         for t in l:
             t()
-    if scheduled_tasks:
-        now = datetime.datetime.now()
-        while scheduled_tasks and scheduled_tasks[0][0] < now:
-            t, (i, f) = heappop(scheduled_tasks)
-            f(i)
-    while all_tasks:
-        l = all_tasks
-        all_tasks = []
-        for t in l:
-            t()
+        if scheduled_tasks:
+            while scheduled_tasks_pending():
+                t, (i, f) = heappop(scheduled_tasks)
+                f(i)
 
 
 def cancel_all_tasks():
