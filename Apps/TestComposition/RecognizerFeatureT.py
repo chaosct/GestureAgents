@@ -10,7 +10,6 @@ def class_FeatureTap():
     class FeatureTap(Feature):
 
         def __init__(self, parent):
-            print "FeatureTap.__init__"
             self.newAgent = Event()
             self.finger = None
             super(FeatureTap, self).__init__(parent)
@@ -22,7 +21,6 @@ def class_FeatureTap():
             self.origin = None
 
         def EventNewAgent(self, Cursor):
-            print "FeatureTap.EventNewAgent"
             # Am I interested on this Agent?
             # We don't want recycled Agents
             if Cursor.recycled:
@@ -42,7 +40,6 @@ def class_FeatureTap():
                                     FeatureTap.EventNewCursor)
 
         def EventNewCursor(self, Cursor):
-            print "FeatureTap.EventMoveCursor"
             self.finger = Cursor
             self.unregister_event(Cursor.newCursor)
             self.register_event(Cursor.updateCursor,
@@ -54,19 +51,16 @@ def class_FeatureTap():
             self.acquire(Cursor)
 
         def EventMoveCursor(self, Cursor):
-            print "FeatureTap.EventMoveCursor"
             if self.dist(Cursor.pos, self.origin) > self.maxd:
                 self.fail("Cursor moved")
 
         def EventRemoveCursor(self, Cursor):
-            print "FeatureTap.EventRemoveCursor"
             self.cancel_expire()
             self.unregister_event(Cursor.updateCursor)
             self.unregister_event(Cursor.removeCursor)
             self.complete(self)
 
         def execute(self):
-            print "FeatureTap.execute"
             self.agent.pos = self.origin
             self.agent.newTap(self.agent)
             self.finish()
