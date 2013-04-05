@@ -3,23 +3,22 @@
 
 import GestureAgentsTUIO.Tuio as Tuio
 from GestureAgents.Recognizer import Recognizer, newHypothesis
-from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
 import math
 
 
 class RecognizerT_Test(Recognizer):
-    newAgent = Event()
 
-    def __init__(self):
+    def __init__(self, system):
         self.finger = None
-        Recognizer.__init__(self)
+        Recognizer.__init__(self, system)
         self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(
-            self.cursorEvents.newAgent, RecognizerT_Test.EventNewAgent)
+            self.system.newAgent(self.cursorEvents), RecognizerT_Test.EventNewAgent)
         self.maxd = 10
         self.time = 0.5
         self.origin = None
+        self.newAgent = self.system.newAgent(RecognizerT_Test)
 
     @newHypothesis
     def EventNewAgent(self, Cursor):
@@ -34,7 +33,7 @@ class RecognizerT_Test(Recognizer):
         if not self.agent.is_someone_subscribed():
             self.fail("Noone interested")
         else:
-            self.unregister_event(self.cursorEvents.newAgent)
+            self.unregister_event(self.system.newAgent(self.cursorEvents))
             self.register_event(Cursor.newCursor, RecognizerT_Test.EventNewCursor)
 
     def EventNewCursor(self, Cursor):
@@ -68,7 +67,7 @@ class RecognizerT_Test(Recognizer):
         return math.sqrt(dx ** 2 + dy ** 2)
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.finger = self.finger
         d.origin = self.origin
         return d
@@ -76,6 +75,3 @@ class RecognizerT_Test(Recognizer):
     def make_TapAgent(self):
         a = Agent(("newTap",), self)
         return a
-
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerT_Test)

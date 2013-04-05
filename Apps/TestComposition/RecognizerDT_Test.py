@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from GestureAgents.Recognizer import Recognizer, newHypothesis
-from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
 import math
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
@@ -11,19 +10,19 @@ from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 def build_and_register_DT(RTKlass=RecognizerTap):
 
     class RecognizerDT_Test(Recognizer):
-        newAgent = Event()
         rtotal = 0
 
-        def __init__(self):
-            Recognizer.__init__(self)
+        def __init__(self, system):
+            Recognizer.__init__(self, system)
             self.RTKlass = RTKlass
             self.agent = None
             self.firstap = None
             self.secondtap = None
             self.register_event(
-                self.RTKlass.newAgent, RecognizerDT_Test.EventNewAgent)
+                self.system.newAgent(RTKlass), RecognizerDT_Test.EventNewAgent)
             self.time = 0.3
             self.maxd = 10
+            self.newAgent = self.system.newAgent(RecognizerDT_Test)
 
         @newHypothesis
         def EventNewAgent(self, Tap):
@@ -33,14 +32,14 @@ def build_and_register_DT(RTKlass=RecognizerTap):
             if not self.agent.is_someone_subscribed():
                 self.fail(cause="Noone Interested")
             else:
-                self.unregister_event(self.RTKlass.newAgent)
+                self.unregister_event(self.system.newAgent(RTKlass))
                 self.register_event(Tap.newTap, RecognizerDT_Test.FirstTap)
 
         def FirstTap(self, Tap):
             self.firstap = Tap
             self.unregister_event(Tap.newTap)
             self.register_event(
-                self.RTKlass.newAgent, RecognizerDT_Test.EventNewAgent2)
+                self.system.newAgent(RTKlass), RecognizerDT_Test.EventNewAgent2)
             self.expire_in(self.time)
             self.acquire(Tap)
 
@@ -49,7 +48,7 @@ def build_and_register_DT(RTKlass=RecognizerTap):
             if self.dist(Tap.pos, self.firstap.pos) > self.maxd:
                 self.fail(cause="Max distance")
             else:
-                self.unregister_event(self.RTKlass.newAgent)
+                self.unregister_event(self.system.newAgent(RTKlass))
                 self.register_event(Tap.newTap, RecognizerDT_Test.SecondTap)
 
         def SecondTap(self, Tap):
@@ -74,7 +73,7 @@ def build_and_register_DT(RTKlass=RecognizerTap):
             self.finish()
 
         def duplicate(self):
-            d = self.get_copy()
+            d = self.get_copy(self.system)
             d.firstap = self.firstap
             d.secondtap = self.secondtap
             return d
@@ -93,6 +92,4 @@ def build_and_register_DT(RTKlass=RecognizerTap):
             a = Agent(("newDoubleTap",), self)
             return a
 
-    import GestureAgents.Gestures as Gestures
-    Gestures.load_recognizer(RecognizerDT_Test)
     return RecognizerDT_Test
