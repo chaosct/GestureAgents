@@ -3,23 +3,21 @@
 
 import GestureAgentsTUIO.Tuio as Tuio
 from GestureAgents.Recognizer import Recognizer, newHypothesis
-from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
 import math
 
 
 class RecognizerTap(Recognizer):
-    newAgent = Event()
 
-    def __init__(self):
+    def __init__(self, system):
         self.finger = None
-        Recognizer.__init__(self)
+        Recognizer.__init__(self, system)
         self.cursorEvents = Tuio.TuioCursorEvents
-        self.register_event(
-            self.cursorEvents.newAgent, RecognizerTap.EventNewAgent)
+        self.register_event(self.system.newAgent(self.cursorEvents), RecognizerTap.EventNewAgent)
         self.maxd = 10
         self.time = 0.5
         self.origin = None
+        self.newAgent = self.system.newAgent(RecognizerTap)
 
     @newHypothesis
     def EventNewAgent(self, Cursor):
@@ -68,7 +66,7 @@ class RecognizerTap(Recognizer):
         return math.sqrt(dx ** 2 + dy ** 2)
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.finger = self.finger
         d.origin = self.origin
         return d
@@ -77,5 +75,5 @@ class RecognizerTap(Recognizer):
         a = Agent(("newTap",), self)
         return a
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerTap)
+# import GestureAgents.Gestures as Gestures
+# Gestures.load_recognizer(RecognizerTap)

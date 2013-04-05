@@ -2,27 +2,23 @@
 # -*- coding: utf-8 -*-
 
 from GestureAgents.Recognizer import Recognizer, newHypothesis
-from GestureAgents.Events import Event
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 from GestureAgents.Agent import Agent
 import math
 
 
 class RecognizerDoubleTap(Recognizer):
-    newAgent = Event()
-    rtotal = 0
 
-    def __init__(self):
-        Recognizer.__init__(self)
+    def __init__(self, system):
+        Recognizer.__init__(self, system)
         self.agent = None
         self.firstap = None
         self.secondtap = None
         self.register_event(
-            RecognizerTap.newAgent, RecognizerDoubleTap.EventNewAgent)
+            self.system.newAgent(RecognizerTap), RecognizerDoubleTap.EventNewAgent)
         self.time = 0.3
         self.maxd = 10
-        self.name = "RecognizerDoubleTap %d" % RecognizerDoubleTap.rtotal
-        RecognizerDoubleTap.rtotal += 1
+        self.newAgent = self.system.newAgent(RecognizerDoubleTap)
 
     @newHypothesis
     def EventNewAgent(self, Tap):
@@ -32,14 +28,14 @@ class RecognizerDoubleTap(Recognizer):
         if not self.agent.is_someone_subscribed():
             self.fail(cause="Noone Interested")
         else:
-            self.unregister_event(RecognizerTap.newAgent)
+            self.unregister_event(self.system.newAgent(RecognizerTap))
             self.register_event(Tap.newTap, RecognizerDoubleTap.FirstTap)
 
     def FirstTap(self, Tap):
         self.firstap = Tap
         self.unregister_event(Tap.newTap)
         self.register_event(
-            RecognizerTap.newAgent, RecognizerDoubleTap.EventNewAgent2)
+            self.system.newAgent(RecognizerTap), RecognizerDoubleTap.EventNewAgent2)
         self.expire_in(self.time)
         self.acquire(Tap)
 
@@ -48,7 +44,7 @@ class RecognizerDoubleTap(Recognizer):
         if self.dist(Tap.pos, self.firstap.pos) > self.maxd:
             self.fail(cause="Max distance")
         else:
-            self.unregister_event(RecognizerTap.newAgent)
+            self.unregister_event(self.system.newAgent(RecognizerTap))
             self.register_event(Tap.newTap, RecognizerDoubleTap.SecondTap)
 
     def SecondTap(self, Tap):
@@ -73,7 +69,7 @@ class RecognizerDoubleTap(Recognizer):
         self.finish()
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.firstap = self.firstap
         d.secondtap = self.secondtap
         return d
@@ -92,8 +88,6 @@ class RecognizerDoubleTap(Recognizer):
         a = Agent(("newDoubleTap",), self)
         return a
 
-    def __repr__(self):
-        return self.name
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerDoubleTap)
+# import GestureAgents.Gestures as Gestures
+# Gestures.load_recognizer(RecognizerDoubleTap)

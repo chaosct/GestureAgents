@@ -5,6 +5,8 @@ import GestureAgents.Gestures as Gestures
 from GestureAgents.Agent import Agent
 from GestureAgents.AppRecognizer import AppRecognizer
 import unittest
+from GestureAgents.Events import Event
+from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
 
 def test_events(evlist):
@@ -39,48 +41,10 @@ def test_events(evlist):
     return maxtime+1
 
 
-def run_apps(maxtime, debug=False, faketime=True):
-    "Minimal reactor loop for the event system to work"
-    import datetime
-    olddatetime = datetime.datetime
-
-    class newdatetime(olddatetime):
-        faketime = olddatetime.now()
-
-        @classmethod
-        def now(cls):
-            return cls.faketime
-
-    if faketime:
-        datetime.datetime = newdatetime
-
-    if debug:
-        if Gestures.recognizers_loaded:
-            print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
-            for r in Gestures.recognizers:
-                print "\t%s" % str(r)
-
-        print "=" * 5 + "Agent.completion_policy Policy rules:" + "=" * 5
-        print Agent.completion_policy
-    running = [True]
-
-    def stop(a):
-        running[0] = False
-    Reactor.schedule_after(maxtime, None, stop)
-    while running[0]:
-        Reactor.run_all_now()
-        if faketime and Reactor.scheduled_tasks:
-            nextfaketime = Reactor.scheduled_tasks[0][0]
-            datetime.datetime.faketime = nextfaketime
-
-    if faketime:
-        datetime.datetime = olddatetime
-
-
 class AppTestGeneric(object):
     "Generic application to test recognizers"
-    def __init__(self, recognizer, events):
-        self.ar = AppRecognizer(recognizer)
+    def __init__(self, recognizer, events, system):
+        self.ar = AppRecognizer(system, recognizer)
         self.ar.newAgent.register(AppTestGeneric.newAgentTap, self)
         self.received = 0
         self.events = events
@@ -101,19 +65,72 @@ def test_regognizer(fake_events, recognizer_class, events2listen, events_expecte
     return test_regognizers(fake_events, [(recognizer_class, events2listen, events_expected)])
 
 
+class TestSystem(object):
+    def __init__(self):
+        self.new_agents = {}
+        self.recognizers = []
+
+    def newAgent(self, recognizer):
+        if recognizer not in self.new_agents:
+            if recognizer is TuioCursorEvents:
+                self.new_agents[recognizer] = TuioCursorEvents.newAgent
+            else:
+                self.new_agents[recognizer] = Event()
+                self.recognizers.append(recognizer(self))
+        return self.new_agents[recognizer]
+
+    def run_apps(self, maxtime, debug=False, faketime=True):
+        "Minimal reactor loop for the event system to work"
+        import datetime
+        olddatetime = datetime.datetime
+
+        class newdatetime(olddatetime):
+            faketime = olddatetime.now()
+
+            @classmethod
+            def now(cls):
+                return cls.faketime
+
+        if faketime:
+            datetime.datetime = newdatetime
+
+        if debug:
+            if Gestures.recognizers_loaded:
+                print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
+                for r in Gestures.recognizers:
+                    print "\t%s" % str(r)
+
+            print "=" * 5 + "Agent.completion_policy Policy rules:" + "=" * 5
+            print Agent.completion_policy
+        running = [True]
+
+        def stop(a):
+            running[0] = False
+        Reactor.schedule_after(maxtime, None, stop)
+        while running[0]:
+            Reactor.run_all_now()
+            if faketime and Reactor.scheduled_tasks:
+                nextfaketime = Reactor.scheduled_tasks[0][0]
+                datetime.datetime.faketime = nextfaketime
+
+        if faketime:
+            datetime.datetime = olddatetime
+
+
 def test_regognizers(fake_events, testing_entries):
     "Create a unit test for several recognizers using a series of events"
     class GenericRecognizerTestCase(unittest.TestCase):
         def setUp(self):
             self.apps = []
+            self.system = TestSystem()
             for entry in testing_entries:
                 recognizer_class, events2listen, events_expected = entry
-                d = {"app": AppTestGeneric(recognizer_class, events2listen),
+                d = {"app": AppTestGeneric(recognizer_class, events2listen, self.system),
                      "expected": events_expected}
                 self.apps.append(d)
 
         def runTest(self):
-            run_apps(test_events(fake_events))
+            self.system.run_apps(test_events(fake_events))
             for app in self.apps:
                 self.assertEqual(app['app'].received, app['expected'])
 

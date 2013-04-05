@@ -19,20 +19,20 @@ class FakeAgent(Agent):
 class AppRecognizer(Recognizer):
     ninstances = 0
 
-    def __init__(self, recognizer):
-        Recognizer.__init__(self)
+    def __init__(self, system, recognizer):
+        Recognizer.__init__(self, system)
 
         self.recognizer = recognizer
         self.newAgent = Event()
         self.eventqueue = []
-        self.register_event(recognizer.newAgent, AppRecognizer._eventNewAgent)
+        self.register_event(self.system.newAgent(recognizer), AppRecognizer._eventNewAgent)
         self.willenqueue = True
         self.name = "AppRecognizer(%s) %d" % (str(recognizer.__name__), AppRecognizer.ninstances)
         AppRecognizer.ninstances += 1
 
     @newHypothesis
     def _eventNewAgent(self, agent):
-        self.unregister_event(self.recognizer.newAgent)
+        self.unregister_event(self.system.newAgent(self.recognizer))
         self.agent = self._makeAgentAgent(agent)
         self.newAgent(self.agent)
         self.otheragent = agent
@@ -73,7 +73,7 @@ class AppRecognizer(Recognizer):
         return a
 
     def duplicate(self):
-        d = self.get_copy(self.recognizer)
+        d = self.get_copy(self.system, self.recognizer)
         d.newAgent = self.newAgent
 
     def __repr__(self):

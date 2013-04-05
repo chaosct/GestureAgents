@@ -64,7 +64,7 @@ class Recognizer(EventClient, Autonamed):
 
     __metaclass__ = ClassLogged
 
-    def __init__(self):
+    def __init__(self, system):
         EventClient.__init__(self)
         self._agentsAcquired = []
         self._agentsConfirmed = []
@@ -73,6 +73,7 @@ class Recognizer(EventClient, Autonamed):
         self.agent = None
         self.executed = False
         #self.parent = False
+        self.system = system
 
     def finish(self):
         assert(not self.failed)
