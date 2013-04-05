@@ -39,8 +39,21 @@ def test_events(evlist):
     return maxtime+1
 
 
-def run_apps(maxtime, debug=False):
+def run_apps(maxtime, debug=False, faketime=True):
     "Minimal reactor loop for the event system to work"
+    import datetime
+    olddatetime = datetime.datetime
+
+    class newdatetime(olddatetime):
+        faketime = olddatetime.now()
+
+        @classmethod
+        def now(cls):
+            return cls.faketime
+
+    if faketime:
+        datetime.datetime = newdatetime
+
     if debug:
         if Gestures.recognizers_loaded:
             print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
@@ -56,6 +69,12 @@ def run_apps(maxtime, debug=False):
     Reactor.schedule_after(maxtime, None, stop)
     while running[0]:
         Reactor.run_all_now()
+        if faketime and Reactor.scheduled_tasks:
+            nextfaketime = Reactor.scheduled_tasks[0][0] + datetime.timedelta(seconds=0.0001)
+            datetime.datetime.faketime = nextfaketime
+
+    if faketime:
+        datetime.datetime = olddatetime
 
 
 class AppTestGeneric(object):
