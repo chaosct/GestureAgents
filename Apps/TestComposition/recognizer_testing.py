@@ -43,8 +43,8 @@ def test_events(evlist):
 
 class AppTestGeneric(object):
     "Generic application to test recognizers"
-    def __init__(self, recognizer, events, system):
-        self.ar = AppRecognizer(system, recognizer)
+    def __init__(self, recognizer, events, system, AppRecognizerClass=AppRecognizer):
+        self.ar = AppRecognizerClass(system, recognizer)
         self.ar.newAgent.register(AppTestGeneric.newAgentTap, self)
         self.received = 0
         self.events = events
@@ -60,9 +60,9 @@ class AppTestGeneric(object):
         self.ar.newAgent.unregister(self)
 
 
-def test_regognizer(fake_events, recognizer_class, events2listen, events_expected):
+def test_recognizer(fake_events, recognizer_class, events2listen, events_expected, **kwargs):
     "Create a unit test for a recognizer using a series of events"
-    return test_regognizers(fake_events, [(recognizer_class, events2listen, events_expected)])
+    return test_recognizers(fake_events, [(recognizer_class, events2listen, events_expected)], **kwargs)
 
 
 class TestSystem(object):
@@ -117,7 +117,7 @@ class TestSystem(object):
             datetime.datetime = olddatetime
 
 
-def test_regognizers(fake_events, testing_entries):
+def test_recognizers(fake_events, testing_entries, AppRecognizerClass=AppRecognizer):
     "Create a unit test for several recognizers using a series of events"
     class GenericRecognizerTestCase(unittest.TestCase):
         def setUp(self):
@@ -125,7 +125,7 @@ def test_regognizers(fake_events, testing_entries):
             self.system = TestSystem()
             for entry in testing_entries:
                 recognizer_class, events2listen, events_expected = entry
-                d = {"app": AppTestGeneric(recognizer_class, events2listen, self.system),
+                d = {"app": AppTestGeneric(recognizer_class, events2listen, self.system, AppRecognizerClass),
                      "expected": events_expected}
                 self.apps.append(d)
 
@@ -142,8 +142,8 @@ def test_regognizers(fake_events, testing_entries):
 
 
 def t_r(*args, **kargs):
-    return test_regognizer(*args, **kargs)
+    return test_recognizer(*args, **kargs)
 
 
 def t_rs(*args, **kargs):
-    return test_regognizers(*args, **kargs)
+    return test_recognizers(*args, **kargs)

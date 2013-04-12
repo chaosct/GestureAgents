@@ -3,22 +3,33 @@ from GestureAgents.Recognizer import Recognizer
 from GestureAgents.Recognizer import newHypothesis
 from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
+from GestureAgents.AppRecognizer import FakeAgent
 from copy import deepcopy
 
+
+class FakeRecognizer(Recognizer):
+    def init(self, system, original_recognizer):
+        super(FakeRecognizer, self).__init__(system)
+        self.original_recognizer = original_recognizer
+        self.register_event(self.system.newAgent(original_recognizer), FakeRecognizer.newAgent)
+
+    @newHypothesis
+    def newAgent(self, agent):
+        self.agent = FakeAgent(agent)
 
 def class_FeatureGesture(feature):
     class FeatureGesture(Recognizer):
         newAgent = Event()
 
-        def __init__(self):
-            super(FeatureGesture, self).__init__()
-            self.sourceevents = {}  # dict of fake NewAgent events
+        def __init__(self, system):
+            super(FeatureGesture, self).__init__(system)
+            self.new_agents = {}  # dict of fake NewAgent events
             self.__failed = False   # flag preventing double failing
             self.feature = feature(self)  # the gesture definition
             # feature.gesture = self  # we assign the parent
             self.register_event(self.feature.newAgent,
                                 FeatureGesture.EventNewFeatureAgent)
-            self.agent = Agent([], self) #legacy, for finishing
+            self.agent = Agent([], self)  #legacy, for finishing
 
         @newHypothesis
         def EventnewAgent(self, agent):
@@ -31,11 +42,14 @@ def class_FeatureGesture(feature):
         def EventNewFeatureAgent(self, agent):
             self.newAgent(agent)
 
-        def getNewAgent(self, na):
-            if na not in self.sourceevents:
-                self.sourceevents[na] = Event()
-                self.register_event(na, FeatureGesture.EventnewAgent)
-            return self.sourceevents[na]
+        def newAgent(self, recognizer):
+        if recognizer not in self.new_agents:
+            if recognizer is TuioCursorEvents:
+                self.new_agents[recognizer] = TuioCursorEvents.newAgent
+            else:
+                self.new_agents[recognizer] = Event()
+                self.recognizers.append(recognizer(self))
+        return self.new_agents[recognizer]
 
         def fail(self, cause):
             print "FeatureGesture.fail({})".format(cause)
@@ -61,8 +75,8 @@ def class_FeatureGesture(feature):
                              FeatureGesture.EventNewFeatureAgent)
             return d
 
-    import GestureAgents.Gestures as Gestures
-    Gestures.load_recognizer(FeatureGesture)
+    # import GestureAgents.Gestures as Gestures
+    # Gestures.load_recognizer(FeatureGesture)
     return FeatureGesture
 
 
