@@ -19,17 +19,17 @@ from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
 
 class PaintingApp:
-    def __init__(self):
+    def __init__(self, system):
         Screen.ScreenDraw.register(PaintingApp.draw, self)
         self.surface = pygame.Surface(
             Screen.size, flags=pygame.locals.SRCALPHA)
-        AppRecognizer(RecognizerStick).newAgent.register(
+        AppRecognizer(system, RecognizerStick).newAgent.register(
             PaintingApp.newAgentStick, self)
-        AppRecognizer(TuioCursorEvents).newAgent.register(
+        AppRecognizer(system, TuioCursorEvents).newAgent.register(
             PaintingApp.newAgentPaint, self)
-        AppRecognizer(RecognizerDoubleTap).newAgent.register(
+        AppRecognizer(system, RecognizerDoubleTap).newAgent.register(
             PaintingApp.newAgentDoubleTap, self)
-        AppRecognizer(
+        AppRecognizer(system,
             RecognizerTap).newAgent.register(PaintingApp.newAgentTap, self)
         self.button = (400, 400)
         self.buttoncolor = (0, 100, 255)
@@ -78,6 +78,7 @@ class PaintingApp:
         return math.sqrt(dx ** 2 + dy ** 2)
 
 if __name__ == "__main__":
-    import GestureAgentsPygame
-    app = PaintingApp()
-    GestureAgentsPygame.run_apps()
+    from GestureAgentsPygame import System
+    s = System()
+    app = PaintingApp(s)
+    s.run_apps()
