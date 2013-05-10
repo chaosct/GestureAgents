@@ -10,15 +10,15 @@ from GestureAgents.Agent import Agent
 
 
 class RecognizerStick (Recognizer):
-    newAgent = Event()
 
-    def __init__(self):
-        Recognizer.__init__(self)
+    def __init__(self, system):
+        Recognizer.__init__(self, system)
         self.finger = None
         self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(
-            self.cursorEvents.newAgent, RecognizerStick.EventNewAgent)
+            system.newAgent(self.cursorEvents), RecognizerStick.EventNewAgent)
         self.positions = []
+        self.newAgent = system.newAgent(RecognizerStick)
 
     @newHypothesis
     def EventNewAgent(self, Cursor):
@@ -76,7 +76,7 @@ class RecognizerStick (Recognizer):
             self.fail(cause="Is not line")
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.finger = self.finger
         d.positions = list(self.positions)
         return d
@@ -101,5 +101,4 @@ class RecognizerStick (Recognizer):
         ac = c[0] - a[0], c[1] - a[1]          # vector ac
         return fabs(ac[0] * n[0] + ac[1] * n[1])  # Projection of ac to n (the minimum distance)
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerStick)
+

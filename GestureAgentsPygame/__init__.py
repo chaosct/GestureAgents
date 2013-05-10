@@ -14,6 +14,8 @@ import GestureAgents.Gestures as Gestures
 import pygame.display
 import GestureAgents.Agent as Agent
 from pygame.time import Clock
+import GestureAgents.System
+from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
 
 class MemSummary:
@@ -46,55 +48,64 @@ class MemSummary:
         Reactor.schedule_after(2, self, MemSummary.digest)
 
 
-running = False
 
 
-def run_apps(debugMem=False):
-    global running
-    pygame.init()
-    initializeDisplay()
-    tscreen = pygame.Surface(Screen.size, flags=SRCALPHA)
-    sensors = (
-        Tuio.TuioAgentGenerator(Screen.size), MouseAsTuioAgentGenerator())
+class System(GestureAgents.System.System):
 
-    clock = Clock()
+    def __init__(self):
+        sources = [TuioCursorEvents]
+        GestureAgents.System.System.__init__(self, sources)
+        self.sensors = None
+        self.clock = None
 
-    if Gestures.recognizers_loaded:
-        print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
-        for r in Gestures.recognizers:
-            print "\t%s" % str(r)
+    def print_info(self, debugMem=False):
+        if self.recognizers:
+            print "Loaded %d gesture recognizers:" % len(self.recognizers)
+            for r in self.recognizers:
+                print "\t%s" % str(r)
 
-    def input(events):
-        global running
-        for event in events:
-            if event.type == QUIT:
-                running = False
-            if event.type == KEYDOWN and event.key == K_ESCAPE:
-                running = False
-            if event.type == KEYDOWN and event.key == K_f:
-                pygame.display.toggle_fullscreen()
-            else:
-                for s in sensors:
-                    if hasattr(s, 'event'):
-                        s.event(event)
-                ConfKey(event)
-    running = True
+        print "=" * 5 + " Agent.completion_policy Policy rules " + "=" * 5
+        print Agent.Agent.completion_policy
+        print "=" * 5 + " Agent.compatibility_policy Policy rules " + "=" * 5
+        print Agent.Agent.compatibility_policy
 
-    print "=" * 5 + " Agent.completion_policy Policy rules " + "=" * 5
-    print Agent.Agent.completion_policy
-    print "=" * 5 + " Agent.compatibility_policy Policy rules " + "=" * 5
-    print Agent.Agent.compatibility_policy
+        if debugMem:
+            MemSummary().digest()
 
-    if debugMem:
-        MemSummary().digest()
 
-    while running:
+    def run_apps(self, debugMem=False):
+        pygame.init()
+        initializeDisplay()
+        tscreen = pygame.Surface(Screen.size, flags=SRCALPHA)
+        self.sensors = (
+            Tuio.TuioAgentGenerator(Screen.size), MouseAsTuioAgentGenerator())
+
+        self.clock = Clock()
+
+        self.print_info(debugMem)
+
+        GestureAgents.System.System.run_apps(self)
+
+    def update(self):
         calibrate()
-        input(pygame.event.get())
-        Reactor.run_all_now()
-        for s in sensors:
+        for s in self.sensors:
             if hasattr(s, 'update'):
                 s.update()
         Screen.ScreenDraw.call()
         pygame.display.flip()
-        clock.tick_busy_loop(30)
+        self.clock.tick_busy_loop(30)
+        self.input(pygame.event.get())
+
+    def input(self, events):
+        for event in events:
+            if event.type == QUIT:
+                self.stop()
+            if event.type == KEYDOWN and event.key == K_ESCAPE:
+                self.stop()
+            if event.type == KEYDOWN and event.key == K_f:
+                pygame.display.toggle_fullscreen()
+            else:
+                for s in self.sensors:
+                    if hasattr(s, 'event'):
+                        s.event(event)
+                ConfKey(event)
