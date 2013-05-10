@@ -35,15 +35,16 @@ def loadImage(image):
 
 
 class MapApp:
-    def __init__(self):
+    def __init__(self, system):
         Screen.ScreenDraw.register(MapApp.draw, self)
-        AppRecognizer(
+        AppRecognizer(system,
             RecognizerMove).newAgent.register(MapApp.newAgentMove, self)
-        AppRecognizer(RecognizerZoomRotate).newAgent.register(
+        AppRecognizer(system,
+            RecognizerZoomRotate).newAgent.register(
             MapApp.newAgentZoomRotate, self)
-        AppRecognizer(
+        AppRecognizer(system,
             RecognizerStick).newAgent.register(MapApp.newAgentStick, self)
-        AppRecognizer(
+        AppRecognizer(system,
             RecognizerTap).newAgent.register(MapApp.newAgentTap, self)
         self.texname = "earth-map-big.jpg"
         self.texture = None
@@ -157,6 +158,7 @@ def zoom_over_stick(r1, r2):
         return True
 
 if __name__ == "__main__":
-    import GestureAgentsPygame
-    app = MapApp()
-    GestureAgentsPygame.run_apps()
+    from GestureAgentsPygame import System
+    system = System()
+    app = MapApp(system)
+    system.run_apps()
