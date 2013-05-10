@@ -95,9 +95,9 @@ class TestSystem(object):
             datetime.datetime = newdatetime
 
         if debug:
-            if Gestures.recognizers_loaded:
-                print "Loaded %d gesture recognizers:" % len(Gestures.recognizers)
-                for r in Gestures.recognizers:
+            if self.recognizers:
+                print "Loaded %d gesture recognizers:" % len(self.recognizers)
+                for r in self.recognizers:
                     print "\t%s" % str(r)
 
             print "=" * 5 + "Agent.completion_policy Policy rules:" + "=" * 5
