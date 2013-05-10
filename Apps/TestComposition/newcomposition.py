@@ -15,7 +15,11 @@ class FakeRecognizer(Recognizer):
 
     @newHypothesis
     def newAgent(self, agent):
-        self.agent = FakeAgent(agent)
+        self.agent = FakeAgent(agent, self)
+        self.system.newAgent()
+        if not self.agent.is_someone_subscribed():
+            self.fail("Noone interested")
+
 
 def class_FeatureGesture(feature):
     class FeatureGesture(Recognizer):
@@ -43,13 +47,13 @@ def class_FeatureGesture(feature):
             self.newAgent(agent)
 
         def newAgent(self, recognizer):
-        if recognizer not in self.new_agents:
-            if recognizer is TuioCursorEvents:
-                self.new_agents[recognizer] = TuioCursorEvents.newAgent
-            else:
-                self.new_agents[recognizer] = Event()
-                self.recognizers.append(recognizer(self))
-        return self.new_agents[recognizer]
+            if recognizer not in self.new_agents:
+                if recognizer is TuioCursorEvents:
+                    self.new_agents[recognizer] = TuioCursorEvents.newAgent
+                else:
+                    self.new_agents[recognizer] = Event()
+                    self.recognizers.append(recognizer(self))
+            return self.new_agents[recognizer]
 
         def fail(self, cause):
             print "FeatureGesture.fail({})".format(cause)

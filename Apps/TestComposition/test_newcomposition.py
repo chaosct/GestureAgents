@@ -22,7 +22,7 @@ events_2tap = [
      (0.4, 'out'))),
 ]
 
-
+'''
 class FeatureTapTestCase1(t_r(
         events_tap,
         class_FeatureGesture(class_FeatureTap()),
@@ -35,3 +35,4 @@ class FeatureTapTestCase2(t_r(
         class_FeatureGesture(class_FeatureTap()),
         ("newTap",), 2)):
     pass
+'''
