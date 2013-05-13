@@ -69,9 +69,20 @@ class TripleTapWinsOverDoubleTapTestCaseMixed1(t_rs(events_3tap,
     pass
 
 
+class TripleTapWinsOverDoubleTapTestCaseMixed1b(t_rs(events_3tap,
+                                               [(RecognizerTT2, ("newTripleTap",), 1),
+                                                (RecognizerDT1, ("newDoubleTap",), 0)])):
+    pass
+
+
 class TripleTapWinsOverDoubleTapTestCaseMixed2(t_rs(events_3tap,
                                                [(RecognizerDT2, ("newDoubleTap",), 0),
                                                 (RecognizerTT1, ("newTripleTap",), 1)])):
+    pass
+
+class TripleTapWinsOverDoubleTapTestCaseMixed2b(t_rs(events_3tap,
+                                               [(RecognizerTT1, ("newTripleTap",), 1),
+                                                (RecognizerDT2, ("newDoubleTap",), 0)])):
     pass
 
 
