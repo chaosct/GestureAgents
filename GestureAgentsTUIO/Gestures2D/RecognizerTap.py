@@ -32,7 +32,7 @@ class RecognizerTap(Recognizer):
         if not self.agent.is_someone_subscribed():
             self.fail("Noone interested")
         else:
-            self.unregister_event(self.cursorEvents.newAgent)
+            self.unregister_event(self.system.newAgent(self.cursorEvents))
             self.register_event(Cursor.newCursor, RecognizerTap.EventNewCursor)
 
     def EventNewCursor(self, Cursor):
