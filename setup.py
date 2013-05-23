@@ -8,7 +8,7 @@ Created on 02/07/2012
 from setuptools import setup
 
 setup(
-    name='AgentGestures',
+    name='GestureAgents',
     version='0.1dev',
     author='Carles F. Julià',
     author_email='carles.fernandez@upf.edu',
