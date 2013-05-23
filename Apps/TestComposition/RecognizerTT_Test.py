@@ -9,7 +9,7 @@ from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
 
 def build_and_register_TT(RTKlass=RecognizerTap):
 
-    class RecognizerDT_Test(Recognizer):
+    class RecognizerTT_Test(Recognizer):
         rtotal = 0
 
         def __init__(self, system):
@@ -20,10 +20,10 @@ def build_and_register_TT(RTKlass=RecognizerTap):
             self.secondtap = None
             self.thirdtap = None
             self.register_event(
-                self.system.newAgent(RTKlass), RecognizerDT_Test.EventNewAgent)
+                self.system.newAgent(RTKlass), RecognizerTT_Test.EventNewAgent)
             self.time = 0.3
             self.maxd = 10
-            self.newAgent = self.system.newAgent(RecognizerDT_Test)
+            self.newAgent = self.system.newAgent(RecognizerTT_Test)
 
         @newHypothesis
         def EventNewAgent(self, Tap):
@@ -34,13 +34,13 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.fail(cause="Noone Interested")
             else:
                 self.unregister_event(self.system.newAgent(RTKlass))
-                self.register_event(Tap.newTap, RecognizerDT_Test.FirstTap)
+                self.register_event(Tap.newTap, RecognizerTT_Test.FirstTap)
 
         def FirstTap(self, Tap):
             self.firstap = Tap
             self.unregister_event(Tap.newTap)
             self.register_event(
-                self.system.newAgent(RTKlass), RecognizerDT_Test.EventNewAgent2)
+                self.system.newAgent(RTKlass), RecognizerTT_Test.EventNewAgent2)
             self.expire_in(self.time)
             self.acquire(Tap)
 
@@ -50,7 +50,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.fail(cause="Max distance")
             else:
                 self.unregister_event(self.system.newAgent(RTKlass))
-                self.register_event(Tap.newTap, RecognizerDT_Test.SecondTap)
+                self.register_event(Tap.newTap, RecognizerTT_Test.SecondTap)
 
         def SecondTap(self, Tap):
             if self.dist(Tap.pos, self.firstap.pos) > self.maxd:
@@ -60,7 +60,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.unregister_event(Tap.newTap)
                 self.cancel_expire()
                 self.register_event(
-                    self.system.newAgent(RTKlass), RecognizerDT_Test.EventNewAgent3)
+                    self.system.newAgent(RTKlass), RecognizerTT_Test.EventNewAgent3)
                 self.expire_in(self.time)
                 self.acquire(Tap)
 
@@ -70,7 +70,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.fail(cause="Max distance")
             else:
                 self.unregister_event(self.system.newAgent(RTKlass))
-                self.register_event(Tap.newTap, RecognizerDT_Test.ThirdTap)
+                self.register_event(Tap.newTap, RecognizerTT_Test.ThirdTap)
 
         def ThirdTap(self, Tap):
             if self.dist(Tap.pos, self.firstap.pos) > self.maxd:
@@ -111,7 +111,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
 
         # def fail(self, cause="Unknown"):
         #     print self, "fail, cause=" + cause
-        #     #raise Exception("RecognizerDT_Test fail")
+        #     #raise Exception("RecognizerTT_Test fail")
         #     Recognizer.fail(self)
 
-    return RecognizerDT_Test
+    return RecognizerTT_Test
