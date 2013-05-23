@@ -100,6 +100,10 @@ class Recognizer(EventClient, Autonamed):
             return
         self.failedcause = cause
         self.failed = True
+        if self.agent and (self.agent.owners == [self]):
+            willfail = True
+        else:
+            willfail = False
         for a in self._agentsAcquired + self._agentsConfirmed:
             a.discard(self)
         self._agentsAcquired = []
@@ -108,7 +112,7 @@ class Recognizer(EventClient, Autonamed):
         # we have to fail only if we are the solely owner of self.agent.
         if self.agent:
             self.agent.owners.remove(self)
-            if not self.agent.owners:
+            if not self.agent.owners and willfail:
                 self.agent.fail()
             self.agent = None
         raise RecognizerFailedException()
