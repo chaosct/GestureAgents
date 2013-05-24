@@ -21,7 +21,7 @@ def build_and_register_DT(RTKlass=RecognizerTap):
             self.register_event(
                 self.system.newAgent(RTKlass), RecognizerDT_Test.EventNewAgent)
             self.time = 0.3
-            self.maxd = 10
+            self.maxd = 0.1
             self.newAgent = self.system.newAgent(RecognizerDT_Test)
 
         @newHypothesis
