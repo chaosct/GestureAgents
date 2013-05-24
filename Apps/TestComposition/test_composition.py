@@ -86,6 +86,37 @@ class TripleTapWinsOverDoubleTapTestCaseMixed2b(t_rs(events_3tap,
     pass
 
 
+events_nodtap = [
+    ('f', 1, (0.5, 0.5), (
+     (0, 'in'),
+     (0.1, 'out'))),
+    ('f', 2, (0.5, 0.5), (
+     (0.8, 'in'),
+     (0.9, 'out'))),
+]
+
+
+class DoubleTapTestCase3(t_r(events_nodtap,
+                         RecognizerDT1,
+                         ("newDoubleTap",), 0)):
+    pass
+
+
+events_nodtap2 = [
+    ('f', 1, (0.5, 0.5), (
+     (0, 'in'),
+     (0.1, 'out'))),
+    ('f', 2, (0.7, 0.7), (
+     (0.2, 'in'),
+     (0.3, 'out'))),
+]
+
+
+class DoubleTapTestCase4(t_r(events_nodtap2,
+                         RecognizerDT1,
+                         ("newDoubleTap",), 0)):
+    pass
+
 if __name__ == '__main__':
     import unittest
     unittest.main()

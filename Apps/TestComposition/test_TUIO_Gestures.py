@@ -81,6 +81,23 @@ class TUIODoubleTapTestCase3(t_r(events_nodtap,
                                  ("newDoubleTap",), 0)):
     pass
 
+
+events_nodtap2 = [
+    ('f', 1, (0.5, 0.5), (
+     (0, 'in'),
+     (0.1, 'out'))),
+    ('f', 2, (0.8, 0.8), (
+     (0.2, 'in'),
+     (0.3, 'out'))),
+]
+
+
+class TUIODoubleTapTestCase4(t_r(events_nodtap2,
+                                 RecognizerDoubleTap,
+                                 ("newDoubleTap",), 0)):
+    pass
+
+
 events_3tap = [
     ('f', 1, (0.5, 0.5), (
      (0, 'in'),
