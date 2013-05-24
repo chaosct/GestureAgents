@@ -31,16 +31,10 @@ class SensorProxyAgent(Agent):
         self.owners[0].acquire(self.original_agent)
         return Agent.acquire(self, r)
 
-    @log
     def complete(self, r):
-        print "PASSA ALGO?"
-        print self.owners
-        #la pregunta és: qui està completant?
-        #r és el recognizer inmediat
-        #r.agent deu ser interessant per a algú
-        #r.agent.events conté els r interessats
-        #goto 0
-        #provem de buscar-ho
+        # We find all AppRecognizer2 possibliy requiring this completion
+        # and add to the SensorProxy list in order to finally complete in
+        # case of completion of gesture
         rlist = set([r])
         ARlist = set()
         while rlist:
@@ -52,7 +46,6 @@ class SensorProxyAgent(Agent):
                     for e in R.agent.events.itervalues():
                         for i in e.lookupf:
                             rlist.add(i)
-        print "ARLIST: ", ARlist
         self.owners[0].to_complete |= ARlist
         Agent.complete(self, r)
 
@@ -60,7 +53,6 @@ class SensorProxyAgent(Agent):
         if r == self._recognizer_complete:
             # finishing
             if not self.owners[0].executed:
-                # self.owners[0].host.safe_fail("Proxy was not confirmed")
                 self.to_discard = True
             else:
                 self.owners[0].finish()
@@ -86,7 +78,6 @@ class SensorProxy(Recognizer):
         self.host = host
         host.proxies.append(self)
 
-    @log
     @newHypothesis
     def _eventNewAgent(self, agent):
         self.unregister_event(self.system.newAgent(self.recognizer))
@@ -101,7 +92,6 @@ class SensorProxy(Recognizer):
                     a, eventname)
                 self.register_event(event, ffff)
 
-    @log
     def enqueueEvent(self, a, e):
         self.agent.original_agent = a
         if e == "finishAgent":
@@ -109,7 +99,6 @@ class SensorProxy(Recognizer):
         else:
             self.agent.events[e](self.agent)
 
-    @log
     def execute(self):
         self.executed = True
         if self.agent.to_discard:
@@ -123,7 +112,6 @@ class SensorProxy(Recognizer):
         a = SensorProxyAgent(agent, self)
         return a
 
-    @log
     def duplicate(self):
         d = self.get_copy(self.system, self.recognizer, self.host)
         d.newAgent = self.newAgent
@@ -182,26 +170,17 @@ class AppRecognizer2(AppRecognizer):
         c.proxies = self.proxies
         return c
 
-    @log
     def execute(self):
         AppRecognizer.execute(self)
         if self.to_finish:
             self.finish()
 
-    @log
     def enqueueEvent(self, a, e):
-        print "OLA K ASE"
         if not self.eventqueue:
-            print "ASE IN O K ASE"
             self.acquire(a)
             for p in self.proxies:
-                print "p: ", p
                 if self in p.to_complete:
-                    print "COMPLETE please:", p
                     p.host = self
-                    # if repr(p) == "SensorProxy(TuioCursorEvents) 5":
-                    #     import pdb
-                    #     pdb.set_trace()
                     p.complete()
         if self.willenqueue:
             #copyagent = copy.copy(self.agent)
@@ -217,17 +196,14 @@ class AppRecognizer2(AppRecognizer):
             else:
                 self.agent.events[e](self.agent)
 
-    @log
     def proxyexecuted(self, proxy):
         if not self.eventqueue:
             # ignore unsolicited completions
-            print "not for me"
             return
         waiting = [p for p in self.proxies if self in p.to_complete]
         if not waiting:
             self.complete()
 
-    @log
     def fail(self, cause="Unknown"):
         for p in self.proxies:
             if self in p.to_complete:
