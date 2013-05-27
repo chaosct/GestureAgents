@@ -126,6 +126,12 @@ class Recognizer(EventClient, Autonamed):
         else:
             self.fail("Acquire failed")
 
+    def discard(self, agent):
+        if self.failed:
+            return
+        self._agentsAcquired.remove(agent)
+        agent.discard(self)
+
     def complete(self):
         if self.failed:
             return
