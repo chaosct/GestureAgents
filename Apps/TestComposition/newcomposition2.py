@@ -202,6 +202,9 @@ class AppRecognizer2(Recognizer):
         self.eventqueue = []
         self.register_event(self.fksystem.newAgent(original_recognizer), AppRecognizer2._eventNewAgent)
         self.willenqueue = True
+        # is original_recognizer a sensor and we have to assume that we
+        # will be dealing directly with proxies
+        self.directProxy = False
         print self, "init"
 
     @newHypothesis
@@ -230,6 +233,9 @@ class AppRecognizer2(Recognizer):
         return self.new_agents[recognizer]
 
     def execute(self):
+        if self.directProxy:
+            # we wait!
+            return
         self.willenqueue = False
         for event_name, agent in self.eventqueue:
             self.agent.original_agent = agent
@@ -247,11 +253,14 @@ class AppRecognizer2(Recognizer):
         #     pdb.set_trace()
         if not self.eventqueue:
             self.acquire(a)
-            print "will try to complete all proxies:", [pr for pr in self.proxies if self in pr.to_complete]
-            for p in self.proxies:                
-                if self in p.to_complete:
-                    # p.host = self #innecessari!
-                    p.complete()
+            proxies = [pr for pr in self.proxies if self in pr.to_complete]
+            print "will try to complete all proxies:", proxies
+            if not proxies:
+                self.directProxy = True
+                self.complete()
+                proxies = [pr for pr in self.proxies if self in pr.to_complete]
+            for p in proxies:                
+                p.complete()
         if self.willenqueue:
             #copyagent = copy.copy(self.agent)
             original_agent = copy.copy(a)
@@ -273,7 +282,11 @@ class AppRecognizer2(Recognizer):
             return
         waiting = [p for p in self.proxies if self in p.to_complete]
         if not waiting:
-            self.complete()
+            if self.directProxy:
+                self.directProxy = False
+                self.execute()
+            else:
+                self.complete()
 
     @log
     def fail(self, cause="Unknown"):
