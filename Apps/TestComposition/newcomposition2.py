@@ -23,42 +23,52 @@ class SensorProxyAgent(Agent):
         self.original_agent = original
         self.to_discard = True
         self.acquired_dict = {}
+        self.sensorproxy = creator
         Agent.__init__(self, list(original.events), creator)
 
     def __getattr__(self, attrname):
         return getattr(self.original_agent, attrname)
 
-    @log
+    # @log
     def acquire(self, r):
-        if not self.acquired_dict and not self.owners[0].to_complete:
-            self.owners[0].acquire(self.original_agent)
+        # if not self.owners:
+        #     #if not owners, not acquiring is possible
+        #     return False
+
+        if not self.acquired_dict and not self.sensorproxy.to_complete:
+            self.sensorproxy.acquire(self.original_agent)
         self.acquired_dict[r] = self.get_AR(r)
         return Agent.acquire(self, r)
 
-    @log
+    # @log
     def complete(self, r):
         # We find all AppRecognizer2 possibliy requiring this completion
         # and add to the SensorProxy list in order to finally complete in
         # case of completion of gesture
         del self.acquired_dict[r]
         ARlist = self.get_AR(r)
-        self.owners[0].to_complete |= ARlist
+        self.sensorproxy.to_complete |= ARlist
         Agent.complete(self, r)
 
-    @log
+    # @log
     def discard(self, r):
+        # if self.owners:
         if r == self._recognizer_complete:
-            # finishing
-            if not self.owners[0].executed:
-                self.to_discard = True
+            if not self.sensorproxy.failed:
+                # finishing
+                if not self.sensorproxy.executed:
+                    self.to_discard = True
+                else:
+                    self.sensorproxy.finish()
             else:
-                self.owners[0].finish()
+                #Agent fail
+                pass
         else:
             # fail
             if r in self.acquired_dict:
                 del self.acquired_dict[r]
-                if not self.acquired_dict and not self._recognizer_complete:
-                    self.owners[0].discard(self.original_agent)
+                if not self.acquired_dict and not self._recognizer_complete:# and self.owners:
+                    self.sensorproxy.discard(self.original_agent)
         Agent.discard(self, r)
 
     def get_AR(self, r):
@@ -92,6 +102,7 @@ class SensorProxy(Recognizer):
         self.host = host
         print "Creat",self,"per",host
         host.proxies.append(self)
+        self.alreadycompleted = False
 
     @newHypothesis
     def _eventNewAgent(self, agent):
@@ -139,6 +150,9 @@ class SensorProxy(Recognizer):
 
     @log
     def complete(self):
+        if self.alreadycompleted:
+            return
+        self.alreadycompleted = True
         for r in self.otheragent._recognizers_acquired:
             print "C ", r, r.host
         Recognizer.complete(self)
@@ -232,9 +246,10 @@ class AppRecognizer2(Recognizer):
         #     pdb.set_trace()
         if not self.eventqueue:
             self.acquire(a)
-            for p in self.proxies:
+            print "will try to complete all proxies:", [pr for pr in self.proxies if self in pr.to_complete]
+            for p in self.proxies:                
                 if self in p.to_complete:
-                    p.host = self
+                    # p.host = self #innecessari!
                     p.complete()
         if self.willenqueue:
             #copyagent = copy.copy(self.agent)
