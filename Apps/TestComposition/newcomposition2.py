@@ -57,8 +57,8 @@ class SensorProxyAgent(Agent):
             # fail
             if r in self.acquired_dict:
                 del self.acquired_dict[r]
-            if not self.acquired_dict and not self._recognizer_complete:
-                self.owners[0].discard(self.original_agent)
+                if not self.acquired_dict and not self._recognizer_complete:
+                    self.owners[0].discard(self.original_agent)
         Agent.discard(self, r)
 
     def get_AR(self, r):
