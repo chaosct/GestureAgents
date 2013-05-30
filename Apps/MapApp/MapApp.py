@@ -5,7 +5,9 @@
 import GestureAgentsPygame.Screen as Screen
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
-from GestureAgents.AppRecognizer import AppRecognizer
+#from GestureAgents.AppRecognizer import AppRecognizer
+from newcomposition2 import AppRecognizer2 as AppRecognizer
+from newcomposition2 import SensorProxy
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
 import transformations as tr
@@ -145,6 +147,18 @@ class MapApp:
 
 from GestureAgents.Agent import Agent
 
+
+def priority(over,under):
+    def explicit_priority(r1, r2):
+        if type(r1) == SensorProxy and type(r2) == SensorProxy:
+            if r1.host.original_recognizer == under and \
+               r2.host.original_recognizer == over:
+                return True
+    explicit_priority.__doc__ = "explicit priority ({} > {})".format(over,under)
+    Agent.compatibility_policy.rule(0)(explicit_priority)
+
+priority(RecognizerZoomRotate, RecognizerMove)
+priority(RecognizerZoomRotate, RecognizerStick)
 
 @Agent.compatibility_policy.rule(0)
 def zoom_over_move(r1, r2):
