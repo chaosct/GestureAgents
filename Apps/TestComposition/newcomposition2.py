@@ -8,16 +8,6 @@ from GestureAgents.Agent import Agent
 from GestureAgents.Events import Event
 
 
-def log(f):
-    # return f
-    def logme(self, *args, **kwargs):
-        sargs = ", ".join([repr(a) for a in args])
-        skwargs = ", ".join(["{}={}".format(k, v) for (k, v) in kwargs.iteritems()])
-        print "{}.{}({})".format(self, f.__name__, ", ".join([sargs, skwargs]))
-        return f(self, *args, **kwargs)
-    return logme
-
-
 class SensorProxyAgent(Agent):
     def __init__(self, original, creator):
         self.original_agent = original
