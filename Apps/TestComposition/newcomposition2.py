@@ -30,18 +30,12 @@ class SensorProxyAgent(Agent):
     def __getattr__(self, attrname):
         return getattr(self.original_agent, attrname)
 
-    # @log
     def acquire(self, r):
-        # if not self.owners:
-        #     #if not owners, not acquiring is possible
-        #     return False
-
         if not self.acquired_dict and not self.sensorproxy.to_complete:
             self.sensorproxy.acquire(self.original_agent)
         self.acquired_dict[r] = self.get_AR(r)
         return Agent.acquire(self, r)
 
-    # @log
     def complete(self, r):
         # We find all AppRecognizer2 possibliy requiring this completion
         # and add to the SensorProxy list in order to finally complete in
@@ -51,9 +45,7 @@ class SensorProxyAgent(Agent):
         self.sensorproxy.to_complete |= ARlist
         Agent.complete(self, r)
 
-    # @log
     def discard(self, r):
-        # if self.owners:
         if r == self._recognizer_complete:
             if not self.sensorproxy.failed:
                 # finishing
@@ -95,20 +87,17 @@ class SensorProxy(Recognizer):
 
         self.recognizer = recognizer
         self.newAgent = Event()
-        # self.eventqueue = []
         self.register_event(self.system.newAgent(recognizer), SensorProxy._eventNewAgent)
         self.name = "SensorProxy(%s) %d" % (str(recognizer.__name__), SensorProxy.ninstances)
         SensorProxy.ninstances += 1
         self.to_complete = set()
         self.host = host
-        print "Creat",self,"per",host
         host.proxies.append(self)
         self.alreadycompleted = False
 
     @newHypothesis
     def _eventNewAgent(self, agent):
         self.unregister_event(self.system.newAgent(self.recognizer))
-        print "CREO AGENT"
         self.agent = self._makeAgentAgent(agent)
         self.newAgent(self.agent)
         self.otheragent = agent
@@ -149,24 +138,11 @@ class SensorProxy(Recognizer):
     def __repr__(self):
         return self.name
 
-    @log
     def complete(self):
         if self.alreadycompleted:
             return
         self.alreadycompleted = True
-        for r in self.otheragent._recognizers_acquired:
-            print "C ", r, r.host
         Recognizer.complete(self)
-
-    @log
-    def fail(self, cause="???"):
-        Recognizer.fail(self, cause)
-
-    @log
-    def acquire(self, agent):
-        Recognizer.acquire(self,agent)
-
-
 
 
 class fksystem(object):
@@ -205,7 +181,6 @@ class AppRecognizer2(Recognizer):
         # is original_recognizer a sensor and we have to assume that we
         # will be dealing directly with proxies
         self.directProxy = False
-        print self, "init"
 
     @newHypothesis
     def _eventNewAgent(self, agent):
@@ -225,7 +200,6 @@ class AppRecognizer2(Recognizer):
         if recognizer not in self.new_agents:
             if recognizer in [TuioCursorEvents]:
                 proxy = SensorProxy(self.systemsystem, recognizer, self)
-                # self.proxies.append(proxy)
                 self.new_agents[recognizer] = proxy.newAgent
             else:
                 self.new_agents[recognizer] = Event()
@@ -248,13 +222,9 @@ class AppRecognizer2(Recognizer):
 
     @log
     def enqueueEvent(self, a, e):
-        # if e == "finishAgent":
-        #     import pdb
-        #     pdb.set_trace()
         if not self.eventqueue:
             self.acquire(a)
             proxies = [pr for pr in self.proxies if self in pr.to_complete]
-            print "will try to complete all proxies:", proxies
             if not proxies:
                 self.directProxy = True
                 self.complete()
@@ -262,7 +232,6 @@ class AppRecognizer2(Recognizer):
             for p in proxies:                
                 p.complete()
         if self.willenqueue:
-            #copyagent = copy.copy(self.agent)
             original_agent = copy.copy(a)
             self.eventqueue.append((e, original_agent))
         else:
@@ -275,7 +244,6 @@ class AppRecognizer2(Recognizer):
             else:
                 self.agent.events[e](self.agent)
 
-    @log
     def proxyexecuted(self, proxy):
         if not self.eventqueue:
             # ignore unsolicited completions
@@ -288,19 +256,14 @@ class AppRecognizer2(Recognizer):
             else:
                 self.complete()
 
-    @log
     def fail(self, cause="Unknown"):
         for p in list(self.proxies):
-            print "fail {}?".format(p)
             if self in p.to_complete:
-                print "yes?"
                 p.to_complete.remove(self)
-                print self, ">", p.to_complete
                 if not p.to_complete:
                     p.fail()
                     self.proxies.remove(p)
             else:
-                print "no?"
                 if p.agent:
                     print p.agent.acquired_dict
 
