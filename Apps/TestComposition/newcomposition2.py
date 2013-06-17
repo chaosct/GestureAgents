@@ -220,7 +220,6 @@ class AppRecognizer2(Recognizer):
         if self.to_finish:
             self.finish()
 
-    @log
     def enqueueEvent(self, a, e):
         if not self.eventqueue:
             self.acquire(a)
@@ -263,9 +262,9 @@ class AppRecognizer2(Recognizer):
                 if not p.to_complete:
                     p.fail()
                     self.proxies.remove(p)
-            else:
-                if p.agent:
-                    print p.agent.acquired_dict
+            # else:
+            #     if p.agent:
+            #         print p.agent.acquired_dict
 
     def _makeAgentAgent(self, agent):
         a = FakeAgent(agent, self)
