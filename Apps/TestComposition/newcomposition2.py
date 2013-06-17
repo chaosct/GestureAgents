@@ -160,7 +160,7 @@ class fksystem(object):
 class AppRecognizer2(Recognizer):
     ninstances = 0
 
-    def __init__(self, system, original_recognizer, fksys=None):
+    def __init__(self, system, original_recognizer, fksys=None, sensors=None):
         self.new_agents = {}
         self.recognizers = []
         self.proxies = []
@@ -171,6 +171,13 @@ class AppRecognizer2(Recognizer):
         else:
             self.fksystem = fksys
         self.to_finish = False
+
+        #list of sensors that require a Proxy
+        if sensors is None:
+            #Default is TUIO cursor events only
+            sensors = [TuioCursorEvents]
+        self.sensorlist = sensors 
+
         Recognizer.__init__(self, self.fksystem)
         self.name = "AppRecognizer2(%s) %d" % (str(self.original_recognizer.__name__), AppRecognizer2.ninstances)
         AppRecognizer2.ninstances += 1
@@ -198,7 +205,7 @@ class AppRecognizer2(Recognizer):
 
     def AR2_newAgent(self, recognizer):
         if recognizer not in self.new_agents:
-            if recognizer in [TuioCursorEvents]:
+            if recognizer in self.sensorlist:
                 proxy = SensorProxy(self.systemsystem, recognizer, self)
                 self.new_agents[recognizer] = proxy.newAgent
             else:
