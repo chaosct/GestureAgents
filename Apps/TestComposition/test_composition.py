@@ -6,6 +6,7 @@ from RecognizerTT_Test import build_and_register_TT
 from RecognizerT_Test import RecognizerT_Test
 from recognizer_testing import t_r, t_rs
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
+from AppRecognizer_old import AppRecognizer
 
 
 events_3tap = [
@@ -22,7 +23,7 @@ events_3tap = [
 
 
 # Test Composition sharing sub-gestures
-#Test 1: 2 recognizers share a sub recognzer (Tap)
+# Test 1: 2 recognizers share a sub recognzer (Tap)
 
 
 RecognizerDT1 = build_and_register_DT()
@@ -31,58 +32,59 @@ RecognizerDT2 = build_and_register_DT(RecognizerT_Test)
 RecognizerTT2 = build_and_register_TT(RecognizerT_Test)
 
 
-class TapTestCase(t_r(events_3tap, RecognizerTap, ("newTap",), 3)):
+class TapTestCase(t_r(events_3tap, RecognizerTap, ("newTap",), 3, AppRecognizerClass=AppRecognizer)):
     pass
 
 
-class DoubleTapTestCase(t_r(events_3tap, RecognizerDT1, ("newDoubleTap",), 1)):
+class DoubleTapTestCase(t_r(events_3tap, RecognizerDT1, ("newDoubleTap",), 1, AppRecognizerClass=AppRecognizer)):
     pass
 
 
-class TripleTapTestCase(t_r(events_3tap, RecognizerTT1, ("newTripleTap",), 1)):
+class TripleTapTestCase(t_r(events_3tap, RecognizerTT1, ("newTripleTap",), 1, AppRecognizerClass=AppRecognizer)):
     pass
 
 
-class DoubleTapTestCase2(t_r(events_3tap, RecognizerDT2, ("newDoubleTap",), 1)):
+class DoubleTapTestCase2(t_r(events_3tap, RecognizerDT2, ("newDoubleTap",), 1, AppRecognizerClass=AppRecognizer)):
     pass
 
 
-class TripleTapTestCase2(t_r(events_3tap, RecognizerTT2, ("newTripleTap",), 1)):
+class TripleTapTestCase2(t_r(events_3tap, RecognizerTT2, ("newTripleTap",), 1, AppRecognizerClass=AppRecognizer)):
     pass
 
 
 class TripleTapWinsOverDoubleTapTestCase(t_rs(events_3tap,
                                          [(RecognizerDT1, ("newDoubleTap",), 0),
-                                          (RecognizerTT1, ("newTripleTap",), 1)])):
+                                          (RecognizerTT1, ("newTripleTap",), 1)], AppRecognizerClass=AppRecognizer)):
     pass
 
 
 class TripleTapWinsOverDoubleTapTestCase2(t_rs(events_3tap,
                                           [(RecognizerDT2, ("newDoubleTap",), 0),
-                                           (RecognizerTT2, ("newTripleTap",), 1)])):
+                                           (RecognizerTT2, ("newTripleTap",), 1)], AppRecognizerClass=AppRecognizer)):
     pass
 
 
 class TripleTapWinsOverDoubleTapTestCaseMixed1(t_rs(events_3tap,
                                                [(RecognizerDT1, ("newDoubleTap",), 0),
-                                                (RecognizerTT2, ("newTripleTap",), 1)])):
+                                                (RecognizerTT2, ("newTripleTap",), 1)], AppRecognizerClass=AppRecognizer)):
     pass
 
 
 class TripleTapWinsOverDoubleTapTestCaseMixed1b(t_rs(events_3tap,
-                                               [(RecognizerTT2, ("newTripleTap",), 1),
-                                                (RecognizerDT1, ("newDoubleTap",), 0)])):
+                                                     [(RecognizerTT2, ("newTripleTap",), 1),
+                                                (RecognizerDT1, ("newDoubleTap",), 0)], AppRecognizerClass=AppRecognizer)):
     pass
 
 
 class TripleTapWinsOverDoubleTapTestCaseMixed2(t_rs(events_3tap,
                                                [(RecognizerDT2, ("newDoubleTap",), 0),
-                                                (RecognizerTT1, ("newTripleTap",), 1)])):
+                                                (RecognizerTT1, ("newTripleTap",), 1)], AppRecognizerClass=AppRecognizer)):
     pass
 
+
 class TripleTapWinsOverDoubleTapTestCaseMixed2b(t_rs(events_3tap,
-                                               [(RecognizerTT1, ("newTripleTap",), 1),
-                                                (RecognizerDT2, ("newDoubleTap",), 0)])):
+                                                     [(RecognizerTT1, ("newTripleTap",), 1),
+                                                (RecognizerDT2, ("newDoubleTap",), 0)], AppRecognizerClass=AppRecognizer)):
     pass
 
 
@@ -98,7 +100,7 @@ events_nodtap = [
 
 class DoubleTapTestCase3(t_r(events_nodtap,
                          RecognizerDT1,
-                         ("newDoubleTap",), 0)):
+                         ("newDoubleTap",), 0, AppRecognizerClass=AppRecognizer)):
     pass
 
 
@@ -114,7 +116,7 @@ events_nodtap2 = [
 
 class DoubleTapTestCase4(t_r(events_nodtap2,
                          RecognizerDT1,
-                         ("newDoubleTap",), 0)):
+                         ("newDoubleTap",), 0, AppRecognizerClass=AppRecognizer)):
     pass
 
 if __name__ == '__main__':

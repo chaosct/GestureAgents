@@ -5,9 +5,7 @@
 import GestureAgentsPygame.Screen as Screen
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
-#from GestureAgents.AppRecognizer import AppRecognizer
-from newcomposition2 import AppRecognizer2 as AppRecognizer
-from newcomposition2 import SensorProxy
+from GestureAgents.AppRecognizer import AppRecognizer, SensorProxy
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
 import transformations as tr
