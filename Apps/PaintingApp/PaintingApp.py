@@ -13,8 +13,7 @@ import GestureAgentsPygame.Screen as Screen
 from GestureAgentsTUIO.Gestures2D.RecognizerStick import RecognizerStick
 from GestureAgentsTUIO.Gestures2D.RecognizerDoubleTap import RecognizerDoubleTap
 from GestureAgentsTUIO.Gestures2D.RecognizerTap import RecognizerTap
-# from GestureAgents.AppRecognizer import AppRecognizer
-from newcomposition2 import AppRecognizer2 as AppRecognizer
+from GestureAgents.AppRecognizer import AppRecognizer
 import GestureAgentsPygame.Render as Render
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
