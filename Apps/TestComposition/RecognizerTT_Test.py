@@ -106,7 +106,7 @@ def build_and_register_TT(RTKlass=RecognizerTap):
             return math.sqrt(dx ** 2 + dy ** 2)
 
         def make_DoubleTapAgent(self):
-            a = Agent(("newTripleTap",), self)
+            a = Agent(self,("newTripleTap",))
             return a
 
         # def fail(self, cause="Unknown"):

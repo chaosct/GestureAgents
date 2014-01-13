@@ -77,7 +77,7 @@ def class_FeatureTap():
             return d
 
         def make_TapAgent(self):
-            a = Agent(("newTap",), self)
+            a = Agent(self,("newTap",))
             return a
 
     return FeatureTap

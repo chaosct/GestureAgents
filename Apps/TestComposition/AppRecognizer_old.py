@@ -10,7 +10,7 @@ from GestureAgents.Events import Event
 class FakeAgent(Agent):
     def __init__(self, original, creator):
         self.original_agent = original
-        Agent.__init__(self, list(original.events), creator)
+        Agent.__init__(self, creator, list(original.events))
 
     def __getattr__(self, attrname):
         return getattr(self.original_agent, attrname)

@@ -33,7 +33,7 @@ def class_FeatureGesture(feature):
             # feature.gesture = self  # we assign the parent
             self.register_event(self.feature.newAgent,
                                 FeatureGesture.EventNewFeatureAgent)
-            self.agent = Agent([], self)  #legacy, for finishing
+            self.agent = Agent(self,[])  #legacy, for finishing
 
         @newHypothesis
         def EventnewAgent(self, agent):

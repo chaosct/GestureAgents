@@ -88,7 +88,7 @@ def class_FeatureDT(RTKlass):
             return math.sqrt(dx ** 2 + dy ** 2)
 
         def make_DoubleTapAgent(self):
-            a = Agent(("newDoubleTap",), self)
+            a = Agent(self,("newDoubleTap",))
             return a
 
     import GestureAgents.Gestures as Gestures

@@ -89,7 +89,7 @@ def build_and_register_DT(RTKlass=RecognizerTap):
             return math.sqrt(dx ** 2 + dy ** 2)
 
         def make_DoubleTapAgent(self):
-            a = Agent(("newDoubleTap",), self)
+            a = Agent(self,("newDoubleTap",))
             return a
 
     return RecognizerDT_Test

@@ -14,7 +14,7 @@ class SensorProxyAgent(Agent):
         self.to_discard = True
         self.acquired_dict = {}
         self.sensorproxy = creator
-        Agent.__init__(self, list(original.events), creator)
+        Agent.__init__(self, creator, list(original.events))
         self.recycled = self.original_agent.recycled
 
     def __getattr__(self, attrname):

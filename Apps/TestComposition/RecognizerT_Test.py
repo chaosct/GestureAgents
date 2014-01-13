@@ -73,5 +73,5 @@ class RecognizerT_Test(Recognizer):
         return d
 
     def make_TapAgent(self):
-        a = Agent(("newTap",), self)
+        a = Agent(self,("newTap",))
         return a
