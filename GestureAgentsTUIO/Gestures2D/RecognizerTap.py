@@ -74,10 +74,3 @@ class RecognizerTap(Recognizer):
         d.finger = self.finger
         d.origin = self.origin
         return d
-
-    # def make_TapAgent(self):
-    #     a = Agent(("newTap",), self)
-    #     return a
-
-# import GestureAgents.Gestures as Gestures
-# Gestures.load_recognizer(RecognizerTap)

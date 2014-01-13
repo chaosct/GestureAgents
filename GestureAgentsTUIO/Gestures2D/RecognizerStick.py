@@ -92,10 +92,6 @@ class RecognizerStick (Recognizer):
         self.agent.newStick.call(self.agent)
         self.finish()
 
-    # def make_StickAgent(self):
-    #     a = Agent(("newStick",), self)
-    #     return a
-
     @staticmethod
     def pdis(a, b, c):
         t = b[0] - a[0], b[1] - a[1]           # Vector ab

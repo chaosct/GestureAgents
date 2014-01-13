@@ -129,11 +129,6 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.endZoomRotate(self.agent)
         self.finish()
 
-    # def makeAgentZoomRotate(self):
-    #     events = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
-    #     a = Agent(events, self)
-    #     return a
-
     def duplicate(self):
         d = self.get_copy(self.system)
         d.cursor1 = self.cursor1

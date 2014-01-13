@@ -66,11 +66,6 @@ class RecognizerMove(Recognizer):
         self.agent.endMove(self.agent)
         self.finish()
 
-    # def makeAgentMove(self):
-    #     events = ("newMove", "newTranslation", "endMove")
-    #     a = Agent(events, self)
-    #     return a
-
     def duplicate(self):
         d = self.get_copy(self.system)
         d.cursor = self.cursor

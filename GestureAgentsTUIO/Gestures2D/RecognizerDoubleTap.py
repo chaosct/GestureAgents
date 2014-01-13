@@ -87,11 +87,3 @@ class RecognizerDoubleTap(Recognizer):
     def dist(a, b):
         dx, dy = (a[0] - b[0], a[1] - b[1])
         return math.sqrt(dx ** 2 + dy ** 2)
-
-    # def make_DoubleTapAgent(self):
-    #     a = Agent(("newDoubleTap",), self)
-    #     return a
-
-
-# import GestureAgents.Gestures as Gestures
-# Gestures.load_recognizer(RecognizerDoubleTap)
