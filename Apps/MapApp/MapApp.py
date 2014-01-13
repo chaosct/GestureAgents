@@ -11,7 +11,7 @@ from RecognizerZoomRotate import RecognizerZoomRotate
 import transformations as tr
 import pygame.image
 import OpenGL.GL as GL
-
+from GestureAgents.Policy import set_gesture_priority
 
 def loadImage(image):
     textureSurface = pygame.image.load(image)
@@ -146,17 +146,8 @@ class MapApp:
 from GestureAgents.Agent import Agent
 
 
-def priority(over,under):
-    def explicit_priority(r1, r2):
-        if type(r1) == SensorProxy and type(r2) == SensorProxy:
-            if r1.host.original_recognizer == under and \
-               r2.host.original_recognizer == over:
-                return True
-    explicit_priority.__doc__ = "explicit priority ({} > {})".format(over,under)
-    Agent.compatibility_policy.rule(0)(explicit_priority)
-
-priority(RecognizerZoomRotate, RecognizerMove)
-priority(RecognizerZoomRotate, RecognizerStick)
+set_gesture_priority(RecognizerZoomRotate, RecognizerMove)
+set_gesture_priority(RecognizerZoomRotate, RecognizerStick)
 
 @Agent.compatibility_policy.rule(0)
 def zoom_over_move(r1, r2):

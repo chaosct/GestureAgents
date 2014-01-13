@@ -64,3 +64,15 @@ class PolicyRuleset(object):
         def myrule(..):
         """
         return lambda f: self.add_rule(f, priority)
+
+
+def set_gesture_priority(over,under):
+    from GestureAgents.AppRecognizer import SensorProxy
+    from GestureAgents.Agent import Agent
+    def explicit_priority(r1, r2):
+        if type(r1) == SensorProxy and type(r2) == SensorProxy:
+            if r1.host.original_recognizer == under and \
+               r2.host.original_recognizer == over:
+                return True
+    explicit_priority.__doc__ = "explicit priority ({} > {})".format(over,under)
+    Agent.compatibility_policy.rule(0)(explicit_priority)
