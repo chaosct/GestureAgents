@@ -45,6 +45,7 @@ class Agent(object):
         #is this agent recycled?
         self.recycled = False
         self.finished = False
+        eventnames = eventnames or self.eventnames
         for ename in list(eventnames) + ["finishAgent"]:
             self.events[ename] = Event()
             setattr(self, ename, self.events[ename])
