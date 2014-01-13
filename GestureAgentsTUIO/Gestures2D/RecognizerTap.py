@@ -7,6 +7,10 @@ from GestureAgents.Agent import Agent
 import math
 
 
+class AgentTap(Agent):
+    eventnames = ("newTap",)
+
+
 class RecognizerTap(Recognizer):
 
     def __init__(self, system):
@@ -26,7 +30,7 @@ class RecognizerTap(Recognizer):
         if Cursor.recycled:
             self.fail("Cursor is recycled")
         # Let's ask our subscribbers
-        self.agent = self.make_TapAgent()
+        self.agent = AgentTap(self)
         self.agent.pos = Cursor.pos
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
@@ -71,9 +75,9 @@ class RecognizerTap(Recognizer):
         d.origin = self.origin
         return d
 
-    def make_TapAgent(self):
-        a = Agent(("newTap",), self)
-        return a
+    # def make_TapAgent(self):
+    #     a = Agent(("newTap",), self)
+    #     return a
 
 # import GestureAgents.Gestures as Gestures
 # Gestures.load_recognizer(RecognizerTap)

@@ -9,6 +9,10 @@ from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
 
 
+class AgentStick(Agent):
+    eventnames = ("newStick",)
+
+
 class RecognizerStick (Recognizer):
 
     def __init__(self, system):
@@ -24,7 +28,7 @@ class RecognizerStick (Recognizer):
     def EventNewAgent(self, Cursor):
         if Cursor.recycled:
             self.fail(cause="Agent is recycled")
-        self.agent = self.make_StickAgent()
+        self.agent = AgentStick(self)
         self.agent.pos = Cursor.pos
         self.newAgent(self.agent)
         if not self.agent.is_someone_subscribed():
@@ -88,9 +92,9 @@ class RecognizerStick (Recognizer):
         self.agent.newStick.call(self.agent)
         self.finish()
 
-    def make_StickAgent(self):
-        a = Agent(("newStick",), self)
-        return a
+    # def make_StickAgent(self):
+    #     a = Agent(("newStick",), self)
+    #     return a
 
     @staticmethod
     def pdis(a, b, c):

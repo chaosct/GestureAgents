@@ -31,7 +31,7 @@ class Agent(object):
     #finish another gesture to complete.
     compatibility_policy = PolicyRuleset(debugname="compatibility_policy", debug=False)
 
-    def __init__(self, eventnames, creator):
+    def __init__(self, creator, eventnames=None):
         """eventnames is a list of names that will become member events.
         creator is a class or instance with newAgent event to be called when recycling this agent."""
         self._recognizers_acquired = []

@@ -7,6 +7,10 @@ from GestureAgents.Agent import Agent
 import math
 
 
+class DoubleTapAgent(Agent):
+    eventnames = ("newDoubleTap",)
+
+
 class RecognizerDoubleTap(Recognizer):
 
     def __init__(self, system):
@@ -22,7 +26,7 @@ class RecognizerDoubleTap(Recognizer):
 
     @newHypothesis
     def EventNewAgent(self, Tap):
-        self.agent = self.make_DoubleTapAgent()
+        self.agent = DoubleTapAgent(self)
         self.agent.pos = Tap.pos
         self.newAgent.call(self.agent)
         if not self.agent.is_someone_subscribed():
@@ -84,9 +88,9 @@ class RecognizerDoubleTap(Recognizer):
         dx, dy = (a[0] - b[0], a[1] - b[1])
         return math.sqrt(dx ** 2 + dy ** 2)
 
-    def make_DoubleTapAgent(self):
-        a = Agent(("newDoubleTap",), self)
-        return a
+    # def make_DoubleTapAgent(self):
+    #     a = Agent(("newDoubleTap",), self)
+    #     return a
 
 
 # import GestureAgents.Gestures as Gestures

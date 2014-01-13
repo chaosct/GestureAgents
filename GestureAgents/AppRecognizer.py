@@ -11,7 +11,7 @@ class FakeAgent(Agent):
 
     def __init__(self, original, creator):
         self.original_agent = original
-        Agent.__init__(self, list(original.events), creator)
+        Agent.__init__(self, creator, list(original.events))
 
     def __getattr__(self, attrname):
         return getattr(self.original_agent, attrname)
@@ -24,7 +24,7 @@ class SensorProxyAgent(Agent):
         self.to_discard = True
         self.acquired_dict = {}
         self.sensorproxy = creator
-        Agent.__init__(self, list(original.events), creator)
+        Agent.__init__(self, creator, list(original.events))
         self.recycled = self.original_agent.recycled
 
     def __getattr__(self, attrname):
@@ -100,7 +100,7 @@ class SensorProxy(Recognizer):
     @newHypothesis
     def _eventNewAgent(self, agent):
         self.unregister_event(self.system.newAgent(self.recognizer))
-        self.agent = self._makeAgentAgent(agent)
+        self.agent = SensorProxyAgent(agent, self)
         self.newAgent(self.agent)
         self.otheragent = agent
         if not self.agent.is_someone_subscribed():
@@ -129,9 +129,9 @@ class SensorProxy(Recognizer):
         for r in to_complete:
             r.proxyexecuted(self)
 
-    def _makeAgentAgent(self, agent):
-        a = SensorProxyAgent(agent, self)
-        return a
+    # def _makeAgentAgent(self, agent):
+    #     a = SensorProxyAgent(agent, self)
+    #     return a
 
     def duplicate(self):
         d = self.get_copy(self.system, self.recognizer, self.host)
@@ -197,7 +197,7 @@ class AppRecognizer(Recognizer):
     @newHypothesis
     def _eventNewAgent(self, agent):
         self.unregister_event(self.fksystem.newAgent(self.original_recognizer))
-        self.agent = self._makeAgentAgent(agent)
+        self.agent = FakeAgent(agent, self)
         self.newAgent(self.agent)
         self.otheragent = agent
         if not self.agent.is_someone_subscribed():
@@ -278,9 +278,9 @@ class AppRecognizer(Recognizer):
             #     if p.agent:
             #         print p.agent.acquired_dict
 
-    def _makeAgentAgent(self, agent):
-        a = FakeAgent(agent, self)
-        return a
+    # def _makeAgentAgent(self, agent):
+    #     a = FakeAgent(agent, self)
+    #     return a
 
     def duplicate(self):
         d = self.get_copy(

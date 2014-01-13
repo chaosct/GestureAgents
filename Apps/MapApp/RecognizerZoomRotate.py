@@ -9,6 +9,10 @@ from GestureAgents.Agent import Agent
 import math
 
 
+def AgentZoomRotate(Agent):
+    eventnames = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
+
+
 class RecognizerZoomRotate(Recognizer):
 
     def __init__(self, system):
@@ -23,7 +27,7 @@ class RecognizerZoomRotate(Recognizer):
 
     @newHypothesis
     def EventnewAgent1(self, Cursor):
-        self.agent = self.makeAgentZoomRotate()
+        self.agent = AgentZoomRotate(self)
         self.agent.pos1 = Cursor.pos
         self.agent.pos2 = Cursor.pos
         self.agent.pos = self.agent.pos1
@@ -125,10 +129,10 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.endZoomRotate(self.agent)
         self.finish()
 
-    def makeAgentZoomRotate(self):
-        events = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
-        a = Agent(events, self)
-        return a
+    # def makeAgentZoomRotate(self):
+    #     events = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
+    #     a = Agent(events, self)
+    #     return a
 
     def duplicate(self):
         d = self.get_copy(self.system)
