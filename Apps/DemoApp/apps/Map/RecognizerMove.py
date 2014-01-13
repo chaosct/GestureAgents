@@ -9,14 +9,14 @@ from GestureAgents.Agent import Agent
 
 
 class RecognizerMove(Recognizer):
-    newAgent = Event()
 
-    def __init__(self):
-        Recognizer.__init__(self)
+    def __init__(self, system):
+        Recognizer.__init__(self, system)
         self.register_event(
-            TuioCursorEvents.newAgent, RecognizerMove.EventnewAgent)
+            system.newAgent(TuioCursorEvents), RecognizerMove.EventnewAgent)
         self.cursor = None
         self.cursorpos = None
+        self.newAgent = system.newAgent(RecognizerMove)
 
     @newHypothesis
     def EventnewAgent(self, Cursor):
@@ -68,10 +68,9 @@ class RecognizerMove(Recognizer):
         return a
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.cursor = self.cursor
         d.cursorpos = self.cursorpos
         return d
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerMove)
+

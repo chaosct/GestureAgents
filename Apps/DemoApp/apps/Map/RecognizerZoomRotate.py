@@ -10,16 +10,16 @@ import math
 
 
 class RecognizerZoomRotate(Recognizer):
-    newAgent = Event()
 
-    def __init__(self):
-        Recognizer.__init__(self)
+    def __init__(self, system):
+        Recognizer.__init__(self, system)
         self.register_event(
-            TuioCursorEvents.newAgent, RecognizerZoomRotate.EventnewAgent1)
+            system.newAgent(TuioCursorEvents), RecognizerZoomRotate.EventnewAgent1)
         self.cursor1 = None
         self.cursor1pos = None
         self.cursor2 = None
         self.cursor2pos = None
+        self.newAgent = system.newAgent(RecognizerZoomRotate)
 
     @newHypothesis
     def EventnewAgent1(self, Cursor):
@@ -46,7 +46,7 @@ class RecognizerZoomRotate(Recognizer):
         self.cursor1 = Cursor
         self.acquire(self.cursor1)
         self.register_event(
-            TuioCursorEvents.newAgent, RecognizerZoomRotate.EventnewAgent2)
+            self.system.newAgent(TuioCursorEvents), RecognizerZoomRotate.EventnewAgent2)
         self.register_event(self.cursor1.removeCursor,
                             RecognizerZoomRotate.EventRemoveCursorpre)
 
@@ -131,12 +131,11 @@ class RecognizerZoomRotate(Recognizer):
         return a
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.cursor1 = self.cursor1
         d.cursor1pos = self.cursor1pos
         d.cursor2 = self.cursor2
         d.cursor2pos = self.cursor2pos
         return d
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerZoomRotate)
+
