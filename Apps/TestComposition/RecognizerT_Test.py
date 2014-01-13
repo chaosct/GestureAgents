@@ -18,7 +18,6 @@ class RecognizerT_Test(Recognizer):
         self.maxd = 10
         self.time = 0.5
         self.origin = None
-        self.newAgent = self.system.newAgent(RecognizerT_Test)
 
     @newHypothesis
     def EventNewAgent(self, Cursor):
@@ -29,12 +28,9 @@ class RecognizerT_Test(Recognizer):
         # Let's ask our subscribbers
         self.agent = self.make_TapAgent()
         self.agent.pos = Cursor.pos
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
-        else:
-            self.unregister_event(self.system.newAgent(self.cursorEvents))
-            self.register_event(Cursor.newCursor, RecognizerT_Test.EventNewCursor)
+        self.announce()
+        self.unregister_event(self.system.newAgent(self.cursorEvents))
+        self.register_event(Cursor.newCursor, RecognizerT_Test.EventNewCursor)
 
     def EventNewCursor(self, Cursor):
         self.finger = Cursor

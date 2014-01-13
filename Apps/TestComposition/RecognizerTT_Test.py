@@ -23,18 +23,14 @@ def build_and_register_TT(RTKlass=RecognizerTap):
                 self.system.newAgent(RTKlass), RecognizerTT_Test.EventNewAgent)
             self.time = 0.3
             self.maxd = 10
-            self.newAgent = self.system.newAgent(RecognizerTT_Test)
 
         @newHypothesis
         def EventNewAgent(self, Tap):
             self.agent = self.make_DoubleTapAgent()
             self.agent.pos = Tap.pos
-            self.newAgent.call(self.agent)
-            if not self.agent.is_someone_subscribed():
-                self.fail(cause="Noone Interested")
-            else:
-                self.unregister_event(self.system.newAgent(RTKlass))
-                self.register_event(Tap.newTap, RecognizerTT_Test.FirstTap)
+            self.announce()
+            self.unregister_event(self.system.newAgent(RTKlass))
+            self.register_event(Tap.newTap, RecognizerTT_Test.FirstTap)
 
         def FirstTap(self, Tap):
             self.firstap = Tap
