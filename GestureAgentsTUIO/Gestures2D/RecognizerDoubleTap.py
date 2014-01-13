@@ -22,18 +22,14 @@ class RecognizerDoubleTap(Recognizer):
             self.system.newAgent(RecognizerTap), RecognizerDoubleTap.EventNewAgent)
         self.time = 0.3
         self.maxd = 10
-        self.newAgent = self.system.newAgent(RecognizerDoubleTap)
 
     @newHypothesis
     def EventNewAgent(self, Tap):
         self.agent = DoubleTapAgent(self)
         self.agent.pos = Tap.pos
-        self.newAgent.call(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail(cause="Noone Interested")
-        else:
-            self.unregister_event(self.system.newAgent(RecognizerTap))
-            self.register_event(Tap.newTap, RecognizerDoubleTap.FirstTap)
+        self.announce()
+        self.unregister_event(self.system.newAgent(RecognizerTap))
+        self.register_event(Tap.newTap, RecognizerDoubleTap.FirstTap)
 
     def FirstTap(self, Tap):
         self.firstap = Tap

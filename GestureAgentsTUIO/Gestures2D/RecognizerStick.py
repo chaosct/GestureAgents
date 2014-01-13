@@ -22,7 +22,6 @@ class RecognizerStick (Recognizer):
         self.register_event(
             system.newAgent(self.cursorEvents), RecognizerStick.EventNewAgent)
         self.positions = []
-        self.newAgent = system.newAgent(RecognizerStick)
 
     @newHypothesis
     def EventNewAgent(self, Cursor):
@@ -30,13 +29,10 @@ class RecognizerStick (Recognizer):
             self.fail(cause="Agent is recycled")
         self.agent = AgentStick(self)
         self.agent.pos = Cursor.pos
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail(cause="Noone interested")
-        else:
-            self.unregister_all()
-            self.register_event(
-                Cursor.newCursor, RecognizerStick.EventNewCursor)
+        self.announce()
+        self.unregister_all()
+        self.register_event(
+            Cursor.newCursor, RecognizerStick.EventNewCursor)
 
     def EventNewCursor(self, Cursor):
         #cursor is an Agent

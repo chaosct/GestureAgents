@@ -64,7 +64,7 @@ class Recognizer(EventClient, Autonamed):
 
     __metaclass__ = ClassLogged
 
-    def __init__(self, system):
+    def __init__(self, system, newAgent=None):
         EventClient.__init__(self)
         self._agentsAcquired = []
         self._agentsConfirmed = []
@@ -74,6 +74,7 @@ class Recognizer(EventClient, Autonamed):
         self.executed = False
         #self.parent = False
         self.system = system
+        self.newAgent = newAgent or system.newAgent(self.__class__)
 
     def finish(self):
         assert(not self.failed)
@@ -193,6 +194,13 @@ class Recognizer(EventClient, Autonamed):
 
     def cancel_expire(self):
         Reactor.cancel_schedule(self)
+
+    def announce(self):
+        """ Present the new Agent to the Applications, to see if someone is
+            interested. If not it fails."""
+        self.newAgent(self.agent)
+        if not self.agent.is_someone_subscribed():
+            self.fail(cause="Noone Interested")
 
 
 def newHypothesis(f):

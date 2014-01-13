@@ -20,15 +20,12 @@ class RecognizerMove(Recognizer):
             system.newAgent(TuioCursorEvents), RecognizerMove.EventnewAgent)
         self.cursor = None
         self.cursorpos = None
-        self.newAgent = system.newAgent(RecognizerMove)
 
     @newHypothesis
     def EventnewAgent(self, Cursor):
         self.agent = AgentMove(self)
         self.agent.pos = Cursor.pos
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
+        self.announce()
         self.unregister_all()
         if Cursor.recycled:
             self.register_event(

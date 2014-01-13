@@ -83,10 +83,10 @@ class SensorProxy(Recognizer):
     ninstances = 0
 
     def __init__(self, system, recognizer, host):
-        Recognizer.__init__(self, system)
+        Recognizer.__init__(self, system, Event())
 
         self.recognizer = recognizer
-        self.newAgent = Event()
+        # self.newAgent = Event()
         self.register_event(self.system.newAgent(
             recognizer), SensorProxy._eventNewAgent)
         self.name = "SensorProxy(%s) %d" % (str(
@@ -181,11 +181,11 @@ class AppRecognizer(Recognizer):
             sensors = [TuioCursorEvents]
         self.sensorlist = sensors
 
-        Recognizer.__init__(self, self.fksystem)
+        Recognizer.__init__(self, self.fksystem, Event())
         self.name = "AppRecognizer(%s) %d" % (str(
             self.original_recognizer.__name__), AppRecognizer.ninstances)
         AppRecognizer.ninstances += 1
-        self.newAgent = Event()
+        # self.newAgent = Event()
         self.eventqueue = []
         self.register_event(self.fksystem.newAgent(
             original_recognizer), AppRecognizer._eventNewAgent)

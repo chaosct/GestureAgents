@@ -20,10 +20,9 @@ class AppRecognizer(Recognizer):
     ninstances = 0
 
     def __init__(self, system, recognizer):
-        Recognizer.__init__(self, system)
+        Recognizer.__init__(self, system, Event())
 
         self.recognizer = recognizer
-        self.newAgent = Event()
         self.eventqueue = []
         self.register_event(self.system.newAgent(recognizer), AppRecognizer._eventNewAgent)
         self.willenqueue = True
