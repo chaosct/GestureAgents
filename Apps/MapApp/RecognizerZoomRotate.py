@@ -9,7 +9,7 @@ from GestureAgents.Agent import Agent
 import math
 
 
-def AgentZoomRotate(Agent):
+class AgentZoomRotate(Agent):
     eventnames = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
 
 
