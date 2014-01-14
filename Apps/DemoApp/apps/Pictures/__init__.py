@@ -16,13 +16,14 @@ loader = Loader([IMAGESPATH])
 
 
 class AppPictureBrowser(object):
-    def __init__(self, group=None):
+    def __init__(self, system, group=None):
         self.group = group
         dir = Path(IMAGESPATH)
-        files = [f.name for f in list(dir.listdir("*.jpg"))]
+        files = [f.name for f in list(dir.listdir("*.jpeg"))]
         self.pictures = []
-        for f in files[:20]:
-            self.pictures.append(Picture(f, group=group))
+        for f in files[:min(len(files),20)]:
+            print f
+            self.pictures.append(Picture(system, f, group=group))
 
 
 def dist(p1, p2):
@@ -32,7 +33,7 @@ def dist(p1, p2):
 
 
 class Picture(object):
-    def __init__(self, image, group=None):
+    def __init__(self, system, image, group=None):
         self.texture = loader.image(image)
         self.texture.anchor_x = self.texture.width / 2
         self.texture.anchor_y = self.texture.height / 2
@@ -41,8 +42,8 @@ class Picture(object):
         self.x = DynamicValue(randrange(100, w - 100))
         self.y = DynamicValue(randrange(100, h - 100))
         self.sprite.scale = 0.1
-        AppRecognizer(RecognizerTap).newAgent.register(Picture.newTapAgent, self)
-        AppRecognizer(RecognizerStick).newAgent.register(Picture.newStickAgent, self)
+        AppRecognizer(system, RecognizerTap).newAgent.register(Picture.newTapAgent, self)
+        AppRecognizer(system, RecognizerStick).newAgent.register(Picture.newStickAgent, self)
         Update.register(Picture.update, self)
 
     def newStickAgent(self, agent):
