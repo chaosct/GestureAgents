@@ -99,7 +99,7 @@ class FingerFollower(object):
         anteriors = set(self.recognizersymbols)
         pending = actuals - anteriors
         for r in pending:
-            name = r.recognizer.__name__
+            name = r.original_recognizer.__name__
             self.recognizersymbols[r] = create_recognizer_icon(name, self.group)
         if pending:
             self.updateCursor(None)
@@ -108,7 +108,7 @@ class FingerFollower(object):
 class FingerShadow(object):
     DebugApp = True
 
-    def __init__(self, group=None):
+    def __init__(self, system, group=None):
         self.group = group
         TuioCursorEvents.newAgent.register(FingerShadow.newAgentCursor, self)
         self.curshadows = WeakKeyDictionary()
