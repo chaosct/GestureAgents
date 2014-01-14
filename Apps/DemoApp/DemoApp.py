@@ -25,13 +25,14 @@ from GestureAgentsTUIO.Gestures2D.RecognizerDoubleTap import RecognizerDoubleTap
 
 class ShellApp(object):
     """docstring for ShellApp"""
-    def __init__(self):
+    def __init__(self, system):
         self.possible_apps = [DemoApp]
         self.running = {}
         self.maxid = 0
-        AppRecognizer(RecognizerDoubleTap).newAgent.register(
+        AppRecognizer(system, RecognizerDoubleTap).newAgent.register(
             ShellApp.newAgentDoubleTap, self)
         self.minimized = False
+        self.system = system
 
     def launch(self, App):
         id = self.maxid
@@ -81,17 +82,18 @@ class DemoApp(object):
 
 
 if __name__ == '__main__':
-    import GestureAgentsDemo
+    from GestureAgentsDemo import System
     from apps.Map import DemoMapApp
     from apps.Shadows import FingerShadow
     from apps.Pictures import AppPictureBrowser
     from apps.Calibrator import CalibratorApp
     # from apps.DebugRecognizers import DebugRecognizer
-    shell = ShellApp()
+    system = System()
+    shell = ShellApp(system)
     shell.launch(DemoMapApp)
     shell.launch(AppPictureBrowser)
     shell.launch(FingerShadow)
     shell.launch(CalibratorApp)
     # shell.launch(DebugRecognizer)
     # shell.launch(DemoApp)
-    GestureAgentsDemo.run_apps()
+    system.run_apps()
