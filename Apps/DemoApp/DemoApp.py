@@ -38,7 +38,7 @@ class ShellApp(object):
         id = self.maxid
         group = ShellAppGroup(id, parent=basegroup)
         self.maxid += 1
-        app = App(group=group)
+        app = App(self.system, group=group)
         self.running[app] = dict(id=id, group=group, program=App, instance=app)
 
     def newAgentDoubleTap(self, agent):
