@@ -9,6 +9,10 @@ from GestureAgents.Agent import Agent
 import math
 
 
+class AgentZoomRotate(Agent):
+    eventnames = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
+
+
 class RecognizerZoomRotate(Recognizer):
 
     def __init__(self, system):
@@ -19,17 +23,14 @@ class RecognizerZoomRotate(Recognizer):
         self.cursor1pos = None
         self.cursor2 = None
         self.cursor2pos = None
-        self.newAgent = system.newAgent(RecognizerZoomRotate)
 
     @newHypothesis
     def EventnewAgent1(self, Cursor):
-        self.agent = self.makeAgentZoomRotate()
+        self.agent = AgentZoomRotate(self)
         self.agent.pos1 = Cursor.pos
         self.agent.pos2 = Cursor.pos
         self.agent.pos = self.agent.pos1
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
+        self.announce()
         self.unregister_all()
         if Cursor.recycled:
             self.register_event(
@@ -55,9 +56,7 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.pos1 = self.cursor1.pos
         self.agent.pos2 = Cursor.pos
         self.agent.pos = self.agent.pos2
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
+        self.announce()
         self.unregister_all()
         if Cursor.recycled:
             self.fail("Cursor2 is recycled")
@@ -124,11 +123,6 @@ class RecognizerZoomRotate(Recognizer):
         self.cursor2 = None
         self.agent.endZoomRotate(self.agent)
         self.finish()
-
-    def makeAgentZoomRotate(self):
-        events = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
-        a = Agent(events, self)
-        return a
 
     def duplicate(self):
         d = self.get_copy(self.system)

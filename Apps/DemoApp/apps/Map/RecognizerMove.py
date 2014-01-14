@@ -8,6 +8,10 @@ from GestureAgentsTUIO.Tuio import TuioCursorEvents
 from GestureAgents.Agent import Agent
 
 
+class AgentMove(Agent):
+    eventnames = ("newMove", "newTranslation", "endMove")
+
+
 class RecognizerMove(Recognizer):
 
     def __init__(self, system):
@@ -16,15 +20,12 @@ class RecognizerMove(Recognizer):
             system.newAgent(TuioCursorEvents), RecognizerMove.EventnewAgent)
         self.cursor = None
         self.cursorpos = None
-        self.newAgent = system.newAgent(RecognizerMove)
 
     @newHypothesis
     def EventnewAgent(self, Cursor):
-        self.agent = self.makeAgentMove()
+        self.agent = AgentMove(self)
         self.agent.pos = Cursor.pos
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
+        self.announce()
         self.unregister_all()
         if Cursor.recycled:
             self.register_event(
@@ -61,11 +62,6 @@ class RecognizerMove(Recognizer):
         self.cursor = None
         self.agent.endMove(self.agent)
         self.finish()
-
-    def makeAgentMove(self):
-        events = ("newMove", "newTranslation", "endMove")
-        a = Agent(events, self)
-        return a
 
     def duplicate(self):
         d = self.get_copy(self.system)
