@@ -129,10 +129,6 @@ class SensorProxy(Recognizer):
         for r in to_complete:
             r.proxyexecuted(self)
 
-    # def _makeAgentAgent(self, agent):
-    #     a = SensorProxyAgent(agent, self)
-    #     return a
-
     def duplicate(self):
         d = self.get_copy(self.system, self.recognizer, self.host)
         d.newAgent = self.newAgent
@@ -185,7 +181,6 @@ class AppRecognizer(Recognizer):
         self.name = "AppRecognizer(%s) %d" % (str(
             self.original_recognizer.__name__), AppRecognizer.ninstances)
         AppRecognizer.ninstances += 1
-        # self.newAgent = Event()
         self.eventqueue = []
         self.register_event(self.fksystem.newAgent(
             original_recognizer), AppRecognizer._eventNewAgent)
@@ -277,10 +272,6 @@ class AppRecognizer(Recognizer):
             # else:
             #     if p.agent:
             #         print p.agent.acquired_dict
-
-    # def _makeAgentAgent(self, agent):
-    #     a = FakeAgent(agent, self)
-    #     return a
 
     def duplicate(self):
         d = self.get_copy(
