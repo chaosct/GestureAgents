@@ -267,11 +267,12 @@ class AppRecognizer(Recognizer):
             if self in p.to_complete:
                 p.to_complete.remove(self)
                 if not p.to_complete:
-                    p.fail()
+                    p.safe_fail()
                     self.proxies.remove(p)
             # else:
             #     if p.agent:
             #         print p.agent.acquired_dict
+        Recognizer.fail(self, cause)
 
     def duplicate(self):
         d = self.get_copy(
