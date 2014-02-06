@@ -172,9 +172,11 @@ class AppRecognizer(Recognizer):
 
         # list of sensors that require a Proxy
         if sensors is None:
+            #BAD IDEA. Just use system sources?
             # Default is TUIO cursor events only
-            from GestureAgentsTUIO.Tuio import TuioCursorEvents
-            sensors = [TuioCursorEvents]
+            #from GestureAgentsTUIO.Tuio import TuioCursorEvents
+            #sensors = [TuioCursorEvents]
+            sensors = system.sources
         self.sensorlist = sensors
 
         Recognizer.__init__(self, self.fksystem, Event())
@@ -276,7 +278,7 @@ class AppRecognizer(Recognizer):
 
     def duplicate(self):
         d = self.get_copy(
-            self.system, self.original_recognizer, fksys=self.fksystem)
+            self.system, self.original_recognizer, fksys=self.fksystem, sensors=self.sensorlist)
         d.new_agents = self.new_agents
         d.recognizers = self.recognizers
         d.proxies = self.proxies
