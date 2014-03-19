@@ -18,8 +18,39 @@ import GestureAgentsPygame.Render as Render
 from GestureAgentsTUIO.Tuio import TuioCursorEvents
 
 
+class ErasingApp:
+    def __init__(self,system):
+        Screen.ScreenDraw.register(ErasingApp.draw, self)
+        AppRecognizer(system, RecognizerDoubleTap).newAgent.register(
+            ErasingApp.newAgentDoubleTap, self)
+        self.button = (400, 400)
+        self.buttoncolor = (0, 100, 255)
+        self.buttonrad = 50
+        self.surface = PaintingApp.instance.surface
+        
+    def newAgentDoubleTap(self, agent):
+        #context here
+        if self.dist(agent.pos, self.button) < self.buttonrad:
+            agent.newDoubleTap.register(ErasingApp.event_new_dtap, self)
+
+    def event_new_dtap(self, Tap):
+        #pygame.draw.circle(self.surface, (0,255,100) , map(int,Tap.pos), 10, 0)
+        self.buttoncolor = [random.randint(100, 255) for _ in self.buttoncolor]
+        self.surface.fill(0)
+
+    def draw(self):
+        pygame.draw.circle(
+            self.surface, self.buttoncolor, self.button, self.buttonrad, 3)
+
+    @staticmethod
+    def dist(a, b):
+        dx, dy = (a[0] - b[0], a[1] - b[1])
+        return math.sqrt(dx ** 2 + dy ** 2)
+
+
 class PaintingApp:
     def __init__(self, system):
+        PaintingApp.instance = self
         Screen.ScreenDraw.register(PaintingApp.draw, self)
         self.surface = pygame.Surface(
             Screen.size, flags=pygame.locals.SRCALPHA)
@@ -27,17 +58,8 @@ class PaintingApp:
             PaintingApp.newAgentStick, self)
         AppRecognizer(system, TuioCursorEvents).newAgent.register(
             PaintingApp.newAgentPaint, self)
-        AppRecognizer(system, RecognizerDoubleTap).newAgent.register(
-            PaintingApp.newAgentDoubleTap, self)
         AppRecognizer(system,
             RecognizerTap).newAgent.register(PaintingApp.newAgentTap, self)
-        self.button = (400, 400)
-        self.buttoncolor = (0, 100, 255)
-
-    def newAgentDoubleTap(self, agent):
-        #context here
-        if self.dist(agent.pos, self.button) < 50:
-            agent.newDoubleTap.register(PaintingApp.event_new_dtap, self)
 
     def newAgentTap(self, agent):
         agent.newTap.register(PaintingApp.event_new_tap, self)
@@ -51,8 +73,6 @@ class PaintingApp:
         agent.newStick.register(PaintingApp.event_finish_stick, self)
 
     def draw(self):
-        pygame.draw.circle(
-            self.surface, self.buttoncolor, self.button, 50, 3)
         Render.drawT(self.surface)
 
     def event_finish_stick(self, Stick):
@@ -63,22 +83,13 @@ class PaintingApp:
         pygame.draw.circle(
             self.surface, (255, 100, 100), map(int, Point.pos), 10, 0)
 
-    def event_new_dtap(self, Tap):
-        #pygame.draw.circle(self.surface, (0,255,100) , map(int,Tap.pos), 10, 0)
-        self.buttoncolor = [random.randint(0, 255) for _ in self.buttoncolor]
-        self.surface.fill(0)
-
     def event_new_tap(self, Tap):
         pygame.draw.circle(
             self.surface, (0, 100, 200), map(int, Tap.pos), 10, 0)
-
-    @staticmethod
-    def dist(a, b):
-        dx, dy = (a[0] - b[0], a[1] - b[1])
-        return math.sqrt(dx ** 2 + dy ** 2)
 
 if __name__ == "__main__":
     from GestureAgentsPygame import System
     s = System()
     app = PaintingApp(s)
+    app2 = ErasingApp(s)
     s.run_apps()
