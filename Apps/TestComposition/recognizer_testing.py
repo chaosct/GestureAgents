@@ -69,6 +69,7 @@ class TestSystem(object):
     def __init__(self):
         self.new_agents = {}
         self.recognizers = []
+        self.sources = [TuioCursorEvents]
 
     def newAgent(self, recognizer):
         if recognizer not in self.new_agents:
