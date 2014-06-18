@@ -96,8 +96,8 @@ class Recognizer(EventClient, Autonamed):
         # assert (not self.failed),"%s already failed!" % repr(self)
         if self.failed:
             print "%s already failed!" % repr(self)
-            print "\tOriginal cause:", cause
-            print "\tNew cause:", self.failedcause
+            print "\tOriginal cause:", self.failedcause
+            print "\tNew cause:", cause
             return
         self.failedcause = cause
         self.failed = True
