@@ -198,9 +198,27 @@ class Recognizer(EventClient, Autonamed):
     def announce(self):
         """ Present the new Agent to the Applications, to see if someone is
             interested. If not it fails."""
-        self.newAgent(self.agent)
+        self.notify(self.newAgent)
         if not self.agent.is_someone_subscribed():
             self.fail(cause="Noone Interested")
+
+    def notify(self, event):
+        """ Notify an agent's event.
+            Instead of calling self.agent.myEvent(...) directly
+            self.notify(...) takes into account the possibility that 
+            a notification may result into a Recognizer failure and raises
+            RecognizerFailedException accordingly; preventing further instructions to be executed.
+
+            Prefer using self.notify() over self.agent.myEvent() to avoid errors.
+
+            event may be either an event (self.agent.myEvent) or a string ("myEvent")."""
+
+        if type(event) is str:
+            event = self.agent.events[event]
+
+        event(self.agent)
+        if self.failed:
+            raise RecognizerFailedException()
 
 
 def newHypothesis(f):
