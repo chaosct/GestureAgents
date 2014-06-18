@@ -105,11 +105,11 @@ class Recognizer(EventClient, Autonamed):
             willfail = True
         else:
             willfail = False
+        self.unregister_all()
         for a in self._agentsAcquired + self._agentsConfirmed:
             a.discard(self)
         self._agentsAcquired = []
         self._agentsConfirmed = []
-        self.unregister_all()
         # we have to fail only if we are the solely owner of self.agent.
         if self.agent:
             self.agent.owners.remove(self)
