@@ -10,7 +10,7 @@ from OpenGL.GL import glPushMatrix, glPopMatrix, glMultMatrixf
 from GestureAgents.AppRecognizer import AppRecognizer
 from RecognizerMove import RecognizerMove
 from RecognizerZoomRotate import RecognizerZoomRotate
-
+from GestureAgents.Policy import set_gesture_priority
 
 class GroupTransform(Group):
     def __init__(self, *args, **kwargs):
@@ -26,7 +26,7 @@ class GroupTransform(Group):
 
 
 class DemoMapApp(object):
-    def __init__(self, group=None):
+    def __init__(self, system, group=None):
         self.tgroup = GroupTransform(parent=group)
         self.fggroup = OrderedGroup(1, parent=self.tgroup)
         self.bggroup = OrderedGroup(0, parent=self.tgroup)
@@ -36,9 +36,9 @@ class DemoMapApp(object):
         self.map = Rectangle(self.mapimage.width, self.mapimage.height,
             group=TextureGroup(self.maptexture, parent=self.bggroup),
             texture=self.maptexture)
-        AppRecognizer(
+        AppRecognizer(system, 
             RecognizerMove).newAgent.register(DemoMapApp.newAgentMove, self)
-        AppRecognizer(RecognizerZoomRotate).newAgent.register(
+        AppRecognizer(system, RecognizerZoomRotate).newAgent.register(
             DemoMapApp.newAgentZoomRotate, self)
 
     def newAgentMove(self, Move):
@@ -78,6 +78,8 @@ class DemoMapApp(object):
 
 from GestureAgents.Agent import Agent
 
+set_gesture_priority(RecognizerZoomRotate, RecognizerMove)
+# set_gesture_priority(RecognizerZoomRotate, RecognizerStick)
 
 @Agent.compatibility_policy.rule(0)
 def zoom_over_move(r1, r2):
@@ -89,3 +91,4 @@ def zoom_over_move(r1, r2):
 # def zoom_over_stick(r1, r2):
 #     if type(r1) == RecognizerStick and type(r2) == RecognizerZoomRotate:
 #         return True
+

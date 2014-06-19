@@ -7,17 +7,14 @@ from GestureAgents.Agent import Agent
 import math
 
 
-class AgentTap(Agent):
-    eventnames = ("newTap",)
-
-
-class RecognizerTap(Recognizer):
+class RecognizerT_Test(Recognizer):
 
     def __init__(self, system):
         self.finger = None
         Recognizer.__init__(self, system)
         self.cursorEvents = Tuio.TuioCursorEvents
-        self.register_event(self.system.newAgent(self.cursorEvents), RecognizerTap.EventNewAgent)
+        self.register_event(
+            self.system.newAgent(self.cursorEvents), RecognizerT_Test.EventNewAgent)
         self.maxd = 10
         self.time = 0.5
         self.origin = None
@@ -29,18 +26,18 @@ class RecognizerTap(Recognizer):
         if Cursor.recycled:
             self.fail("Cursor is recycled")
         # Let's ask our subscribbers
-        self.agent = AgentTap(self)
+        self.agent = self.make_TapAgent()
         self.agent.pos = Cursor.pos
         self.announce()
         self.unregister_event(self.system.newAgent(self.cursorEvents))
-        self.register_event(Cursor.newCursor, RecognizerTap.EventNewCursor)
+        self.register_event(Cursor.newCursor, RecognizerT_Test.EventNewCursor)
 
     def EventNewCursor(self, Cursor):
         self.finger = Cursor
         self.unregister_event(Cursor.newCursor)
-        self.register_event(Cursor.updateCursor, RecognizerTap.EventMoveCursor)
+        self.register_event(Cursor.updateCursor, RecognizerT_Test.EventMoveCursor)
         self.register_event(
-            Cursor.removeCursor, RecognizerTap.EventRemoveCursor)
+            Cursor.removeCursor, RecognizerT_Test.EventRemoveCursor)
         self.expire_in(self.time)
         self.origin = Cursor.pos
         self.acquire(Cursor)
@@ -70,3 +67,7 @@ class RecognizerTap(Recognizer):
         d.finger = self.finger
         d.origin = self.origin
         return d
+
+    def make_TapAgent(self):
+        a = Agent(self,("newTap",))
+        return a

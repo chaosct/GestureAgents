@@ -1,24 +1,14 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from GestureAgents.AppRecognizer import FakeAgent
+from GestureAgentsTUIO.Tuio import TuioCursorEvents
+from GestureAgents.Events import Event
 from GestureAgents.Recognizer import Recognizer, newHypothesis
 import copy
 from GestureAgents.Agent import Agent
 from GestureAgents.Events import Event
 
 
-class FakeAgent(Agent):
-
-    def __init__(self, original, creator):
-        self.original_agent = original
-        Agent.__init__(self, creator, list(original.events))
-
-    def __getattr__(self, attrname):
-        return getattr(self.original_agent, attrname)
-
-
 class SensorProxyAgent(Agent):
-
     def __init__(self, original, creator):
         self.original_agent = original
         self.to_discard = True
@@ -37,7 +27,7 @@ class SensorProxyAgent(Agent):
         return Agent.acquire(self, r)
 
     def complete(self, r):
-        # We find all AppRecognizer possibliy requiring this completion
+        # We find all AppRecognizer2 possibliy requiring this completion
         # and add to the SensorProxy list in order to finally complete in
         # case of completion of gesture
         del self.acquired_dict[r]
@@ -54,13 +44,13 @@ class SensorProxyAgent(Agent):
                 else:
                     self.sensorproxy.finish()
             else:
-                # Agent fail
+                #Agent fail
                 pass
         else:
             # fail
             if r in self.acquired_dict:
                 del self.acquired_dict[r]
-                if not self.acquired_dict and not self._recognizer_complete:  # and self.owners:
+                if not self.acquired_dict and not self._recognizer_complete:# and self.owners:
                     self.sensorproxy.discard(self.original_agent)
         Agent.discard(self, r)
 
@@ -69,7 +59,7 @@ class SensorProxyAgent(Agent):
         ARlist = set()
         while rlist:
             R = rlist.pop()
-            if isinstance(R, AppRecognizer):
+            if isinstance(R, AppRecognizer2):
                 ARlist.add(R)
             else:
                 if R.agent:
@@ -83,14 +73,12 @@ class SensorProxy(Recognizer):
     ninstances = 0
 
     def __init__(self, system, recognizer, host):
-        Recognizer.__init__(self, system, Event())
+        Recognizer.__init__(self, system)
 
         self.recognizer = recognizer
-        # self.newAgent = Event()
-        self.register_event(self.system.newAgent(
-            recognizer), SensorProxy._eventNewAgent)
-        self.name = "SensorProxy(%s) %d" % (str(
-            recognizer.__name__), SensorProxy.ninstances)
+        self.newAgent = Event()
+        self.register_event(self.system.newAgent(recognizer), SensorProxy._eventNewAgent)
+        self.name = "SensorProxy(%s) %d" % (str(recognizer.__name__), SensorProxy.ninstances)
         SensorProxy.ninstances += 1
         self.to_complete = set()
         self.host = host
@@ -100,7 +88,7 @@ class SensorProxy(Recognizer):
     @newHypothesis
     def _eventNewAgent(self, agent):
         self.unregister_event(self.system.newAgent(self.recognizer))
-        self.agent = SensorProxyAgent(agent, self)
+        self.agent = self._makeAgentAgent(agent)
         self.newAgent(self.agent)
         self.otheragent = agent
         if not self.agent.is_someone_subscribed():
@@ -129,6 +117,10 @@ class SensorProxy(Recognizer):
         for r in to_complete:
             r.proxyexecuted(self)
 
+    def _makeAgentAgent(self, agent):
+        a = SensorProxyAgent(agent, self)
+        return a
+
     def duplicate(self):
         d = self.get_copy(self.system, self.recognizer, self.host)
         d.newAgent = self.newAgent
@@ -155,7 +147,7 @@ class fksystem(object):
         return getattr(self.instance, attr)
 
 
-class AppRecognizer(Recognizer):
+class AppRecognizer2(Recognizer):
     ninstances = 0
 
     def __init__(self, system, original_recognizer, fksys=None, sensors=None):
@@ -170,31 +162,27 @@ class AppRecognizer(Recognizer):
             self.fksystem = fksys
         self.to_finish = False
 
-        # list of sensors that require a Proxy
+        #list of sensors that require a Proxy
         if sensors is None:
-            #BAD IDEA. Just use system sources?
-            # Default is TUIO cursor events only
-            #from GestureAgentsTUIO.Tuio import TuioCursorEvents
-            #sensors = [TuioCursorEvents]
-            sensors = system.sources
-        self.sensorlist = sensors
+            #Default is TUIO cursor events only
+            sensors = [TuioCursorEvents]
+        self.sensorlist = sensors 
 
-        Recognizer.__init__(self, self.fksystem, Event())
-        self.name = "AppRecognizer(%s) %d" % (str(
-            self.original_recognizer.__name__), AppRecognizer.ninstances)
-        AppRecognizer.ninstances += 1
+        Recognizer.__init__(self, self.fksystem)
+        self.name = "AppRecognizer2(%s) %d" % (str(self.original_recognizer.__name__), AppRecognizer2.ninstances)
+        AppRecognizer2.ninstances += 1
+        self.newAgent = Event()
         self.eventqueue = []
-        self.register_event(self.fksystem.newAgent(
-            original_recognizer), AppRecognizer._eventNewAgent)
+        self.register_event(self.fksystem.newAgent(original_recognizer), AppRecognizer2._eventNewAgent)
         self.willenqueue = True
         # is original_recognizer a sensor and we have to assume that we
         # will be dealing directly with proxies
-        self.directProxy = original_recognizer in self.sensorlist
+        self.directProxy = False
 
     @newHypothesis
     def _eventNewAgent(self, agent):
         self.unregister_event(self.fksystem.newAgent(self.original_recognizer))
-        self.agent = FakeAgent(agent, self)
+        self.agent = self._makeAgentAgent(agent)
         self.newAgent(self.agent)
         self.otheragent = agent
         if not self.agent.is_someone_subscribed():
@@ -234,10 +222,10 @@ class AppRecognizer(Recognizer):
             self.acquire(a)
             proxies = [pr for pr in self.proxies if self in pr.to_complete]
             if not proxies:
-                # self.directProxy = True
+                self.directProxy = True
                 self.complete()
                 proxies = [pr for pr in self.proxies if self in pr.to_complete]
-            for p in proxies:
+            for p in proxies:                
                 p.complete()
         if self.willenqueue:
             original_agent = copy.copy(a)
@@ -274,11 +262,14 @@ class AppRecognizer(Recognizer):
             # else:
             #     if p.agent:
             #         print p.agent.acquired_dict
-        Recognizer.fail(self, cause)
+        Recognizer.fail(self,cause)
+
+    def _makeAgentAgent(self, agent):
+        a = FakeAgent(agent, self)
+        return a
 
     def duplicate(self):
-        d = self.get_copy(
-            self.system, self.original_recognizer, fksys=self.fksystem, sensors=self.sensorlist)
+        d = self.get_copy(self.system, self.original_recognizer, fksys=self.fksystem)
         d.new_agents = self.new_agents
         d.recognizers = self.recognizers
         d.proxies = self.proxies

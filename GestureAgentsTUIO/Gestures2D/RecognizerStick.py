@@ -9,30 +9,30 @@ from GestureAgents.Events import Event
 from GestureAgents.Agent import Agent
 
 
-class RecognizerStick (Recognizer):
-    newAgent = Event()
+class AgentStick(Agent):
+    eventnames = ("newStick",)
 
-    def __init__(self):
-        Recognizer.__init__(self)
+
+class RecognizerStick (Recognizer):
+
+    def __init__(self, system):
+        Recognizer.__init__(self, system)
         self.finger = None
         self.cursorEvents = Tuio.TuioCursorEvents
         self.register_event(
-            self.cursorEvents.newAgent, RecognizerStick.EventNewAgent)
+            system.newAgent(self.cursorEvents), RecognizerStick.EventNewAgent)
         self.positions = []
 
     @newHypothesis
     def EventNewAgent(self, Cursor):
         if Cursor.recycled:
             self.fail(cause="Agent is recycled")
-        self.agent = self.make_StickAgent()
+        self.agent = AgentStick(self)
         self.agent.pos = Cursor.pos
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail(cause="Noone interested")
-        else:
-            self.unregister_all()
-            self.register_event(
-                Cursor.newCursor, RecognizerStick.EventNewCursor)
+        self.announce()
+        self.unregister_all()
+        self.register_event(
+            Cursor.newCursor, RecognizerStick.EventNewCursor)
 
     def EventNewCursor(self, Cursor):
         #cursor is an Agent
@@ -76,7 +76,7 @@ class RecognizerStick (Recognizer):
             self.fail(cause="Is not line")
 
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.finger = self.finger
         d.positions = list(self.positions)
         return d
@@ -88,10 +88,6 @@ class RecognizerStick (Recognizer):
         self.agent.newStick.call(self.agent)
         self.finish()
 
-    def make_StickAgent(self):
-        a = Agent(("newStick",), self)
-        return a
-
     @staticmethod
     def pdis(a, b, c):
         t = b[0] - a[0], b[1] - a[1]           # Vector ab
@@ -101,5 +97,4 @@ class RecognizerStick (Recognizer):
         ac = c[0] - a[0], c[1] - a[1]          # vector ac
         return fabs(ac[0] * n[0] + ac[1] * n[1])  # Projection of ac to n (the minimum distance)
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerStick)
+

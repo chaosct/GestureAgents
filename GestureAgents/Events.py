@@ -47,8 +47,9 @@ class EventClient(object):
         self.registers[event] = f
 
     def unregister_event(self, event):
-        del self.registers[event]
-        event.unregister(self)
+        if event in self.registers:
+            del self.registers[event]
+            event.unregister(self)
 
     def unregister_all(self):
         for event in self.registers:

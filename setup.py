@@ -8,7 +8,7 @@ Created on 02/07/2012
 from setuptools import setup
 
 setup(
-    name='AgentGestures',
+    name='GestureAgents',
     version='0.1dev',
     author='Carles F. Julià',
     author_email='carles.fernandez@upf.edu',
@@ -18,10 +18,11 @@ setup(
               'GestureAgentsTUIO.tuio',
               'GestureAgentsTUIO.Gestures2D',
               'GestureAgentsPygame',
+              'GestureAgentsDemo',
               ],
     #url='http://pypi.python.org/pypi/TowelStuff/',
     license='LICENSE.txt',
-    description='Agent-Exclusivity-based Gesture Ecology Framework',
+    description='Agent-Exclusivity-based Gesture Disambiguation Framework',
     long_description=open('README.txt').read(),
     install_requires=[
         "pygame",

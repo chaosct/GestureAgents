@@ -64,7 +64,7 @@ class Recognizer(EventClient, Autonamed):
 
     __metaclass__ = ClassLogged
 
-    def __init__(self):
+    def __init__(self, system, newAgent=None):
         EventClient.__init__(self)
         self._agentsAcquired = []
         self._agentsConfirmed = []
@@ -73,6 +73,8 @@ class Recognizer(EventClient, Autonamed):
         self.agent = None
         self.executed = False
         #self.parent = False
+        self.system = system
+        self.newAgent = newAgent or system.newAgent(self.__class__)
 
     def finish(self):
         assert(not self.failed)
@@ -94,20 +96,24 @@ class Recognizer(EventClient, Autonamed):
         # assert (not self.failed),"%s already failed!" % repr(self)
         if self.failed:
             print "%s already failed!" % repr(self)
-            print "\tOriginal cause:", cause
-            print "\tNew cause:", self.failedcause
+            print "\tOriginal cause:", self.failedcause
+            print "\tNew cause:", cause
             return
         self.failedcause = cause
         self.failed = True
+        if self.agent and (self.agent.owners == [self]):
+            willfail = True
+        else:
+            willfail = False
+        self.unregister_all()
         for a in self._agentsAcquired + self._agentsConfirmed:
             a.discard(self)
         self._agentsAcquired = []
         self._agentsConfirmed = []
-        self.unregister_all()
         # we have to fail only if we are the solely owner of self.agent.
         if self.agent:
             self.agent.owners.remove(self)
-            if not self.agent.owners:
+            if not self.agent.owners and willfail:
                 self.agent.fail()
             self.agent = None
         raise RecognizerFailedException()
@@ -120,6 +126,12 @@ class Recognizer(EventClient, Autonamed):
             self._agentsAcquired.append(agent)
         else:
             self.fail("Acquire failed")
+
+    def discard(self, agent):
+        if self.failed:
+            return
+        self._agentsAcquired.remove(agent)
+        agent.discard(self)
 
     def complete(self):
         if self.failed:
@@ -145,7 +157,7 @@ class Recognizer(EventClient, Autonamed):
         d.unregister_all()
         for a in self._agentsAcquired:
             d.acquire(a)
-        EventClient.copy_to(self, d)
+        self.copy_to(d)
         Reactor.duplicate_instance(self, d)
         #we duplicate agents
         if self.agent:
@@ -182,6 +194,31 @@ class Recognizer(EventClient, Autonamed):
 
     def cancel_expire(self):
         Reactor.cancel_schedule(self)
+
+    def announce(self):
+        """ Present the new Agent to the Applications, to see if someone is
+            interested. If not it fails."""
+        self.notify(self.newAgent)
+        if not self.agent.is_someone_subscribed():
+            self.fail(cause="Noone Interested")
+
+    def notify(self, event):
+        """ Notify an agent's event.
+            Instead of calling self.agent.myEvent(...) directly
+            self.notify(...) takes into account the possibility that 
+            a notification may result into a Recognizer failure and raises
+            RecognizerFailedException accordingly; preventing further instructions to be executed.
+
+            Prefer using self.notify() over self.agent.myEvent() to avoid errors.
+
+            event may be either an event (self.agent.myEvent) or a string ("myEvent")."""
+
+        if type(event) is str:
+            event = self.agent.events[event]
+
+        event(self.agent)
+        if self.failed:
+            raise RecognizerFailedException()
 
 
 def newHypothesis(f):

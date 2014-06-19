@@ -6,7 +6,7 @@ from pyglet.gl import GL_LINES
 
 
 class CalibratorApp(object):
-    def __init__(self, group=None):
+    def __init__(self, system, group=None):
         self.group = group
         self.ring1 = None
         self.label = None

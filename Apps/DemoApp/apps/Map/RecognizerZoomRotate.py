@@ -9,13 +9,16 @@ from GestureAgents.Agent import Agent
 import math
 
 
-class RecognizerZoomRotate(Recognizer):
-    newAgent = Event()
+class AgentZoomRotate(Agent):
+    eventnames = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
 
-    def __init__(self):
-        Recognizer.__init__(self)
+
+class RecognizerZoomRotate(Recognizer):
+
+    def __init__(self, system):
+        Recognizer.__init__(self, system)
         self.register_event(
-            TuioCursorEvents.newAgent, RecognizerZoomRotate.EventnewAgent1)
+            system.newAgent(TuioCursorEvents), RecognizerZoomRotate.EventnewAgent1)
         self.cursor1 = None
         self.cursor1pos = None
         self.cursor2 = None
@@ -23,13 +26,11 @@ class RecognizerZoomRotate(Recognizer):
 
     @newHypothesis
     def EventnewAgent1(self, Cursor):
-        self.agent = self.makeAgentZoomRotate()
+        self.agent = AgentZoomRotate(self)
         self.agent.pos1 = Cursor.pos
         self.agent.pos2 = Cursor.pos
         self.agent.pos = self.agent.pos1
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
+        self.announce()
         self.unregister_all()
         if Cursor.recycled:
             self.register_event(
@@ -46,7 +47,7 @@ class RecognizerZoomRotate(Recognizer):
         self.cursor1 = Cursor
         self.acquire(self.cursor1)
         self.register_event(
-            TuioCursorEvents.newAgent, RecognizerZoomRotate.EventnewAgent2)
+            self.system.newAgent(TuioCursorEvents), RecognizerZoomRotate.EventnewAgent2)
         self.register_event(self.cursor1.removeCursor,
                             RecognizerZoomRotate.EventRemoveCursorpre)
 
@@ -55,9 +56,7 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.pos1 = self.cursor1.pos
         self.agent.pos2 = Cursor.pos
         self.agent.pos = self.agent.pos2
-        self.newAgent(self.agent)
-        if not self.agent.is_someone_subscribed():
-            self.fail("Noone interested")
+        self.announce()
         self.unregister_all()
         if Cursor.recycled:
             self.fail("Cursor2 is recycled")
@@ -125,18 +124,12 @@ class RecognizerZoomRotate(Recognizer):
         self.agent.endZoomRotate(self.agent)
         self.finish()
 
-    def makeAgentZoomRotate(self):
-        events = ("newZoomRotate", "newRotation", "newScale", "endZoomRotate")
-        a = Agent(events, self)
-        return a
-
     def duplicate(self):
-        d = self.get_copy()
+        d = self.get_copy(self.system)
         d.cursor1 = self.cursor1
         d.cursor1pos = self.cursor1pos
         d.cursor2 = self.cursor2
         d.cursor2pos = self.cursor2pos
         return d
 
-import GestureAgents.Gestures as Gestures
-Gestures.load_recognizer(RecognizerZoomRotate)
+

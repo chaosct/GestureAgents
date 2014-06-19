@@ -41,7 +41,7 @@ class customSprite(object):
 
 
 def create_recognizer_icon(r, group):
-    print Path(ICONPATH, r + ".png")
+    # print Path(ICONPATH, r + ".png")
     if Path(ICONPATH, r + ".png").exists():
         t = loader.image(r + ".png")
         sprite = Sprite(t, batch=drawBatch, group=group)
@@ -78,7 +78,7 @@ class FingerFollower(object):
         self.ring.getCentered(self.pos())
         self.ring.updateDisplay()
         cx, cy = self.pos()
-        for n, c in enumerate(self.recognizersymbols.itervalues()):
+        for n, c in enumerate(self.recognizersymbols.values()):
             x = cx + 20 * cos(n * pi / 5)
             y = cy + 20 * sin(n * pi / 5)
             c.getCentered((x, y))
@@ -99,7 +99,7 @@ class FingerFollower(object):
         anteriors = set(self.recognizersymbols)
         pending = actuals - anteriors
         for r in pending:
-            name = r.recognizer.__name__
+            name = r.original_recognizer.__name__
             self.recognizersymbols[r] = create_recognizer_icon(name, self.group)
         if pending:
             self.updateCursor(None)
@@ -108,7 +108,7 @@ class FingerFollower(object):
 class FingerShadow(object):
     DebugApp = True
 
-    def __init__(self, group=None):
+    def __init__(self, system, group=None):
         self.group = group
         TuioCursorEvents.newAgent.register(FingerShadow.newAgentCursor, self)
         self.curshadows = WeakKeyDictionary()
@@ -136,8 +136,8 @@ class FingerShadow(object):
 
 def recognizers_subscribed(agent):
     recognizers = set()
-    for event in agent.events.itervalues():
-        recognizers = recognizers.union(event.lookupf.iterkeys())
+    for event in agent.events.values():
+        recognizers = recognizers.union(event.lookupf.keys())
     return recognizers
 
 

@@ -10,6 +10,10 @@ class TuioCursorEvents:
     newAgent = Event()
 
 
+class CursorAgent(Agent):
+    eventnames = ('newCursor', 'updateCursor', 'removeCursor')
+
+
 class TuioAgentGenerator:
     def __init__(self, screensize, inverse_x=False, inverse_y=False):
         self.tracking = tuio.Tracking(host='0.0.0.0')
@@ -74,5 +78,4 @@ class TuioAgentGenerator:
 
     @staticmethod
     def makeCursorAgent():
-        evts = ('newCursor', 'updateCursor', 'removeCursor')
-        return Agent(evts, TuioCursorEvents)
+        return CursorAgent(TuioCursorEvents)
