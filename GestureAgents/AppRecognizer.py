@@ -189,7 +189,7 @@ class AppRecognizer(Recognizer):
         self.willenqueue = True
         # is original_recognizer a sensor and we have to assume that we
         # will be dealing directly with proxies
-        self.directProxy = False
+        self.directProxy = original_recognizer in self.sensorlist
 
     @newHypothesis
     def _eventNewAgent(self, agent):
@@ -234,7 +234,7 @@ class AppRecognizer(Recognizer):
             self.acquire(a)
             proxies = [pr for pr in self.proxies if self in pr.to_complete]
             if not proxies:
-                self.directProxy = True
+                # self.directProxy = True
                 self.complete()
                 proxies = [pr for pr in self.proxies if self in pr.to_complete]
             for p in proxies:
