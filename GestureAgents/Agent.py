@@ -88,8 +88,8 @@ class Agent(object):
         elif Recognizer in self._recognizers_acquired:
             self._recognizers_acquired.remove(Recognizer)
             if self._can_confirm():
-                self._recognizer_complete.confirm(self)
                 self.completed = True
+                self._recognizer_complete.confirm(self)
 
     def _can_confirm(self):
         "[internal] Decides if self._recognizer_complete can be confirmed"
