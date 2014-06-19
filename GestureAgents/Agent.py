@@ -45,6 +45,7 @@ class Agent(object):
         #is this agent recycled?
         self.recycled = False
         self.finished = False
+        self.failed = False
         eventnames = eventnames or self.eventnames
         for ename in list(eventnames) + ["finishAgent"]:
             self.events[ename] = Event()
@@ -52,6 +53,8 @@ class Agent(object):
 
     def acquire(self, Recognizer):
         "The recognizer is interested on this agent"
+        if self.failed:
+            return False
         #can we acquire even if there is someone confirmed?
         if self.completed and self.compatibility_policy.result(self._recognizer_complete, Recognizer) != True:
             return False
@@ -61,6 +64,7 @@ class Agent(object):
 
     def finish(self):
         "The owner of the event will not generate events anymore"
+        if self.failed: return
         self.finished = True
         self.finishAgent(self)
 
@@ -68,6 +72,7 @@ class Agent(object):
         """The recognizer is no longer interested in this agent.
         This should occur after acquiring the agent. If it happens
         after confirming, the agent will be recycled."""
+        if self.failed: return
         if Recognizer == self._recognizer_complete:
             #import traceback
             #traceback.print_stack()
@@ -102,6 +107,7 @@ class Agent(object):
 
     def _complete(self, Recognizer):
         "[internal] "
+        if self.failed: return
         assert(Recognizer is not self._recognizer_complete)
         # According to the policy we choose the best Recognizer
         #print "CCC", self, type(Recognizer), type(self._recognizer_complete)
@@ -125,6 +131,7 @@ class Agent(object):
             self.completed = True
 
     def complete(self, Recognizer):
+        if self.failed: return
         assert(Recognizer in self._recognizers_acquired)
         Reactor.run_after(lambda Recognizer=Recognizer, self=self:
                           self._complete(Recognizer))
@@ -137,9 +144,14 @@ class Agent(object):
 
     def fail(self):
         "The Recognizer owner of this agent fails before really existing, so All the recognizers based on it must fail"
+        if self.failed: return
         if self.finished:
             return
-        for r in self._get_recognizers_subscribed():
+        self.failed = True
+        recognizerstofail = list(self._get_recognizers_subscribed())
+        self._recognizers_acquired = []
+        self._recognizer_complete = None
+        for r in recognizerstofail:
             r.safe_fail("Agent failed: " + repr(self))
 
     def _get_recognizers_subscribed(self):
@@ -151,6 +163,7 @@ class Agent(object):
             lambda winner=winner, self=self: self._fail_all_others(winner))
 
     def _fail_all_others(self, winner):
+        if self.failed: return
         #assert(self._recognizer_complete is winner) we are all consenting adults here
         target = type(winner)
         #print "fail_all_others :",winner,"wants to fail",target
