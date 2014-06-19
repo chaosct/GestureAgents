@@ -108,6 +108,8 @@ class Agent(object):
     def _complete(self, Recognizer):
         "[internal] "
         if self.failed: return
+        if Recognizer.failed:
+            return
         assert(Recognizer is not self._recognizer_complete)
         # According to the policy we choose the best Recognizer
         #print "CCC", self, type(Recognizer), type(self._recognizer_complete)
@@ -164,7 +166,9 @@ class Agent(object):
 
     def _fail_all_others(self, winner):
         if self.failed: return
-        #assert(self._recognizer_complete is winner) we are all consenting adults here
+        if winner.failed:
+            printlog("ignoring failed")
+            return        #assert(self._recognizer_complete is winner) we are all consenting adults here
         target = type(winner)
         #print "fail_all_others :",winner,"wants to fail",target
         for r in list(self._recognizers_acquired):
